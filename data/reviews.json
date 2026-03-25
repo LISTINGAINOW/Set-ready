@@ -1,0 +1,22 @@
+[
+  {
+    "id": "review-1",
+    "propertyId": "hillside-view-los-angeles",
+    "rating": 5,
+    "text": "Incredible location with stunning views. Perfect for our photo shoot. Host communication was clear, access was straightforward, and the space gave us multiple polished looks without needing a company move.",
+    "reviewer": "Alex M.",
+    "date": "2026-03-15",
+    "verified": false,
+    "featured": true
+  },
+  {
+    "id": "review-2",
+    "propertyId": "hillside-view-los-angeles",
+    "rating": 5,
+    "text": "Clean, professional, and exactly as presented. We booked it for a small content team and it felt easy to work in, from setup through wrap. I would absolutely keep it on our shortlist for future shoots.",
+    "reviewer": "Jordan K.",
+    "date": "2026-03-10",
+    "verified": false,
+    "featured": true
+  }
+]

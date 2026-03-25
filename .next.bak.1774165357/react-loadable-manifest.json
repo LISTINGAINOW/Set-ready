@@ -1,0 +1,14 @@
+{
+  "components/AreaMap.tsx -> leaflet": {
+    "id": 759,
+    "files": [
+      "static/chunks/d0deef33-cbec4048868e02fb.js"
+    ]
+  },
+  "components/BookingModal.tsx -> @/components/AreaMap": {
+    "id": 9101,
+    "files": [
+      "static/chunks/9101.6b9fb7766cff5f4c.js"
+    ]
+  }
+}

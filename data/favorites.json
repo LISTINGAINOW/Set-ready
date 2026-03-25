@@ -1,0 +1,46 @@
+{
+  "favorites": [
+    {
+      "id": "fav_001",
+      "producerId": "producer_001",
+      "locationId": "1",
+      "createdAt": "2026-03-21T08:00:00Z"
+    },
+    {
+      "id": "fav_002",
+      "producerId": "producer_001",
+      "locationId": "3",
+      "createdAt": "2026-03-20T14:30:00Z"
+    },
+    {
+      "id": "fav_003",
+      "producerId": "producer_001",
+      "locationId": "5",
+      "createdAt": "2026-03-19T11:20:00Z"
+    },
+    {
+      "id": "fav_004",
+      "producerId": "producer_002",
+      "locationId": "2",
+      "createdAt": "2026-03-18T09:15:00Z"
+    },
+    {
+      "id": "fav_005",
+      "producerId": "producer_001",
+      "locationId": "7",
+      "createdAt": "2026-03-17T16:45:00Z"
+    },
+    {
+      "id": "fav_006",
+      "producerId": "producer_003",
+      "locationId": "4",
+      "createdAt": "2026-03-16T13:10:00Z"
+    },
+    {
+      "id": "fav_007",
+      "producerId": "producer_001",
+      "locationId": "8",
+      "createdAt": "2026-03-15T10:05:00Z"
+    }
+  ]
+}

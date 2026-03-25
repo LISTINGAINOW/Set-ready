@@ -1,0 +1,2182 @@
+{
+  "city": "Los Angeles",
+  "industry": "film_production",
+  "leads": [
+    {
+      "name": "Osyley Makeup Studio",
+      "industry": "Film Production",
+      "url": "https://makeup.osyley.com/",
+      "description": "923 Main St, Los Angeles, CA 90015",
+      "contact": {
+        "phones": [
+          "+13233508552"
+        ],
+        "website": "https://makeup.osyley.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Spirinity Productions",
+      "industry": "Film Production",
+      "url": "https://spirinityproductions.com/",
+      "description": "1811 Tamarind Ave #125, Hollywood, CA 90028",
+      "contact": {
+        "phones": [
+          "+13232191804"
+        ],
+        "website": "https://spirinityproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Full Moon Empire, Inc",
+      "industry": "Film Production",
+      "url": "https://fullmoonhorror.com/",
+      "description": "1465 Tamarind Ave Suite 474, Hollywood, CA 90028, United States",
+      "contact": {
+        "phones": [
+          "+13238222100"
+        ],
+        "website": "https://fullmoonhorror.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "LocalEyes Video Production",
+      "industry": "Film Production",
+      "url": "https://localeyesit.com/los-angeles-video-production-company",
+      "description": "6600 W Sunset Blvd 2nd Floor, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13104486460"
+        ],
+        "website": "https://localeyesit.com/los-angeles-video-production-company"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Good Pictures",
+      "industry": "Film Production",
+      "url": "https://bit.ly/good-pictures",
+      "description": "1270 Wilcox Ave #7, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13105715207"
+        ],
+        "website": "https://bit.ly/good-pictures"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "CreatorLA - Standing Sets for Film Production",
+      "industry": "Film Production",
+      "url": "https://creatorla.com/",
+      "description": "1105 Kearney St, Los Angeles, CA 90033",
+      "contact": {
+        "phones": [
+          "+12137884482"
+        ],
+        "website": "https://creatorla.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Augustus Films - Post Production Company Los Angeles",
+      "industry": "Film Production",
+      "url": "https://augustusfilms.com/",
+      "description": "801 S Gramercy Dr, Los Angeles, CA 90005",
+      "contact": {
+        "phones": [
+          "+13109801224"
+        ],
+        "website": "https://augustusfilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "West Coast Sign Supply",
+      "industry": "Film Production",
+      "url": "N/A (local listing: 2240 W Washington Blvd, Los Angeles, CA 90018)",
+      "description": "2240 W Washington Blvd, Los Angeles, CA 90018",
+      "contact": {
+        "phones": [
+          "+13237326666"
+        ]
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Pacific Traffic Control",
+      "industry": "Film Production",
+      "url": "https://pacifictc.com/",
+      "description": "2840 Lugo St, Los Angeles, CA 90023",
+      "contact": {
+        "phones": [
+          "+13239810600"
+        ],
+        "website": "https://pacifictc.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Digital Vortechs",
+      "industry": "Film Production",
+      "url": "https://digitalvortechs.com/",
+      "description": "1513 W Temple St, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+13233005029"
+        ],
+        "website": "https://digitalvortechs.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Void Studios",
+      "industry": "Film Production",
+      "url": "https://voidstudios.la/",
+      "description": "677 Imperial St, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+18189226937"
+        ],
+        "website": "https://voidstudios.la/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "AW Production Studio",
+      "industry": "Film Production",
+      "url": "https://awproduction.com/",
+      "description": "1458 San Pedro St UNIT 201, Los Angeles, CA 90015",
+      "contact": {
+        "phones": [
+          "+12137479911"
+        ],
+        "website": "https://awproduction.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Legacy Pictures",
+      "industry": "Film Production",
+      "url": "https://legacy.film/",
+      "description": "7400 Beverly Blvd, Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+13233649049"
+        ],
+        "website": "https://legacy.film/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Tyche Films LLC",
+      "industry": "Film Production",
+      "url": "https://tychefilms.com/",
+      "description": "200 N Edgemont St # 11, Los Angeles, CA 90004",
+      "contact": {
+        "phones": [
+          "+12139266175"
+        ],
+        "website": "https://tychefilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Apollo Studios",
+      "industry": "Film Production",
+      "url": "https://theapollopost.com/",
+      "description": "680 E Colorado Blvd, Pasadena, CA 91101",
+      "contact": {
+        "phones": [
+          "+13855286148"
+        ],
+        "website": "https://theapollopost.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Sugar Studios LA Post Production",
+      "industry": "Film Production",
+      "url": "https://sugarstudios.com/",
+      "description": "3780 Wilshire Blvd #800, Los Angeles, CA 90010",
+      "contact": {
+        "phones": [
+          "+13106966230"
+        ],
+        "website": "https://sugarstudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "PREMIERE ENTERTAINMENT GROUP",
+      "industry": "Film Production",
+      "url": "https://premiereent.com/",
+      "description": "1201 W 5th St suite m-120, Los Angeles, CA 90017",
+      "contact": {
+        "phones": [
+          "+12135343139"
+        ],
+        "website": "https://premiereent.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Stink Films",
+      "industry": "Film Production",
+      "url": "https://stinkfilms.com/united-states",
+      "description": "4406 W Jefferson Blvd, Los Angeles, CA 90016",
+      "contact": {
+        "phones": [
+          "+14243458800"
+        ],
+        "website": "https://stinkfilms.com/united-states"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Good Company",
+      "industry": "Film Production",
+      "url": "https://goodco.tv/",
+      "description": "2825 Glendale Blvd #2722, Los Angeles, CA 90039",
+      "contact": {
+        "phones": [
+          "+13233006276"
+        ],
+        "website": "https://goodco.tv/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Soto Stages",
+      "industry": "Film Production",
+      "url": "https://sotostages.com/",
+      "description": "5610 S Soto St Suite D, Huntington Park, CA 90255",
+      "contact": {
+        "phones": [
+          "+13236161833"
+        ],
+        "website": "https://sotostages.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Duroo Productions",
+      "industry": "Film Production",
+      "url": "https://duroo.com/",
+      "description": "2593 W Pico Blvd, Los Angeles, CA 90006",
+      "contact": {
+        "phones": [
+          "+12133835978"
+        ],
+        "website": "https://duroo.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Bishop Drones - Drone & Aerial Filming",
+      "industry": "Film Production",
+      "url": "https://bishopdrones.com/",
+      "description": "5146 Deane Ave, Los Angeles, CA 90043, United States",
+      "contact": {
+        "phones": [
+          "+13235965918"
+        ],
+        "website": "https://bishopdrones.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Brainiac - Video Production Company in Los Angeles, California",
+      "industry": "Film Production",
+      "url": "https://video-production.co/",
+      "description": "600 Wilshire Blvd 5th floor ste 76, Los Angeles, CA 90017",
+      "contact": {
+        "phones": [
+          "+13233630562"
+        ],
+        "website": "https://video-production.co/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "LV Productions - Videography & Video production LA",
+      "industry": "Film Production",
+      "url": "https://lv-prod.com/",
+      "description": "807 N Hudson Ave, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+17472939482"
+        ],
+        "website": "https://lv-prod.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Paranoiia Productions",
+      "industry": "Film Production",
+      "url": "https://paranoiia.productions/",
+      "description": "1340 E 6th St UNIT 523, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+12139887104"
+        ],
+        "website": "https://paranoiia.productions/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Production Sound Mixer, Boom Operator (Jorge Rend\u00f3n)",
+      "industry": "Film Production",
+      "url": "https://jorgerendonv.wixsite.com/sound",
+      "description": "143 N Commonwealth Ave, Los Angeles, CA 90004",
+      "contact": {
+        "phones": [
+          "+17862127450"
+        ],
+        "website": "https://jorgerendonv.wixsite.com/sound"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Art Asylum",
+      "industry": "Film Production",
+      "url": "https://artasylumstudios.com/",
+      "description": "5088 Valley Blvd, Los Angeles, CA 90032",
+      "contact": {
+        "phones": [
+          "+13106631281"
+        ],
+        "website": "https://artasylumstudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Film & Television Production",
+      "industry": "Film Production",
+      "url": "https://cinema.usc.edu/production/index.cfm",
+      "description": "SCA 434, 900 W 34th St, Los Angeles, CA 90007",
+      "contact": {
+        "phones": [
+          "+12137403317"
+        ],
+        "website": "https://cinema.usc.edu/production/index.cfm"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Pierce Production Company",
+      "industry": "Film Production",
+      "url": "https://pierceproductioncompany.com/",
+      "description": "611 Wilshire Blvd suite 900 602, Los Angeles, CA 90017",
+      "contact": {
+        "phones": [
+          "+13235178143"
+        ],
+        "website": "https://pierceproductioncompany.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Production LA",
+      "industry": "Film Production",
+      "url": "https://production-la.com/",
+      "description": "2222 Beachwood Dr APT 414, Los Angeles, CA 90068",
+      "contact": {
+        "phones": [
+          "+13237012088"
+        ],
+        "website": "https://production-la.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Synergy Motion Production Agency",
+      "industry": "Film Production",
+      "url": "https://synergymotion.com/",
+      "description": "305 E 9th St Suite 308, Los Angeles, CA 90015",
+      "contact": {
+        "phones": [
+          "+12132668037"
+        ],
+        "website": "https://synergymotion.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "LOLA Production",
+      "industry": "Film Production",
+      "url": "https://lolaproduction.com/",
+      "description": "6311 Romaine St Suite 7311, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13109541019"
+        ],
+        "website": "https://lolaproduction.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Paradox Studio & Production",
+      "industry": "Film Production",
+      "url": "https://paradoxproductions.com/",
+      "description": "6200 De Longpre Ave C, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13239626688"
+        ],
+        "website": "https://paradoxproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Constant Production",
+      "industry": "Film Production",
+      "url": "https://constantproduction.com/contact.html",
+      "description": "1152 Gordon St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13239605018"
+        ],
+        "website": "https://constantproduction.com/contact.html"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "World Impact Productions",
+      "industry": "Film Production",
+      "url": "https://worldimpactproductions.com/",
+      "description": "450 S Bixel St, Los Angeles, CA 90017",
+      "contact": {
+        "phones": [
+          "+13109335991"
+        ],
+        "website": "https://worldimpactproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Kareli Media LLC",
+      "industry": "Film Production",
+      "url": "https://karelimedia.com/",
+      "description": "777 S Alameda St 2nd floor, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+18339333344"
+        ],
+        "website": "https://karelimedia.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Andre Hyland",
+      "industry": "Film Production",
+      "url": "https://blondchili.com/contact",
+      "description": "530 Main St, Los Angeles, CA 90013",
+      "contact": {
+        "phones": [
+          "+12136225100"
+        ],
+        "website": "https://blondchili.com/contact"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Dunia",
+      "industry": "Film Production",
+      "url": "https://duniafilms.com/",
+      "description": "935 N Vignes St, Los Angeles, CA 90012",
+      "contact": {
+        "phones": [
+          "+17192315343"
+        ],
+        "website": "https://duniafilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "D dot Films",
+      "industry": "Film Production",
+      "url": "https://ddotfilms.com/",
+      "description": "1440 Redondo Blvd, Los Angeles, CA 90019",
+      "contact": {
+        "phones": [
+          "+12023526953"
+        ],
+        "website": "https://ddotfilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "MICHAEL R BARNARD PRODUCTIONS",
+      "industry": "Film Production",
+      "url": "https://michaelrbarnard.com/",
+      "description": "",
+      "contact": {
+        "phones": [
+          "+19174097294"
+        ],
+        "website": "https://michaelrbarnard.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "The Stealth Crew",
+      "industry": "Film Production",
+      "url": "https://thestealthcrew.com/",
+      "description": "1621 Vista Del Mar Ave, Hollywood, CA 90028",
+      "contact": {
+        "phones": [
+          "+13238648751"
+        ],
+        "website": "https://thestealthcrew.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Viaduct Pictures",
+      "industry": "Film Production",
+      "url": "https://viaductpictures.com/",
+      "description": "1917 Hillhurst Ave UNIT 206, Los Angeles, CA 90027",
+      "contact": {
+        "phones": [
+          "+12139994223"
+        ],
+        "website": "https://viaductpictures.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Wide + Close Productions",
+      "industry": "Film Production",
+      "url": "https://wide-close.com/",
+      "description": "201 Westmoreland Ave #105, Los Angeles, CA 90004",
+      "contact": {
+        "phones": [
+          "+13234527172"
+        ],
+        "website": "https://wide-close.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Ithyle Griffiths and Angela Kohler",
+      "industry": "Film Production",
+      "url": "https://angelaandithyle.com/",
+      "description": "814 E Edgeware Rd, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+14152723116"
+        ],
+        "website": "https://angelaandithyle.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Black Powder Works",
+      "industry": "Film Production",
+      "url": "https://blackpowderworks.com/",
+      "description": "Back of the Boat, 6671 Sunset Blvd, Hollywood, CA 90028",
+      "contact": {
+        "phones": [
+          "+14242099328"
+        ],
+        "website": "https://blackpowderworks.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Odenkirk Provissiero Entertainment",
+      "industry": "Film Production",
+      "url": "https://odenkirk-provissiero.com/",
+      "description": "1936 N Bronson Ave, Los Angeles, CA 90068, United States",
+      "contact": {
+        "phones": [
+          "+13237857700"
+        ],
+        "website": "https://odenkirk-provissiero.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Cannonball Productions",
+      "industry": "Film Production",
+      "url": "https://cannonballproduction.com/",
+      "description": "43 S Fair Oaks Ave, Pasadena, CA 91105",
+      "contact": {
+        "phones": [
+          "+16266577217"
+        ],
+        "website": "https://cannonballproduction.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Truant Pictures",
+      "industry": "Film Production",
+      "url": "https://truantpictures.com/",
+      "description": "1670 Beverly Blvd #8, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+18183334777"
+        ],
+        "website": "https://truantpictures.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Vibrant Penguin",
+      "industry": "Film Production",
+      "url": "https://vibrantpenguin.com/",
+      "description": "453 S Spring St, Los Angeles, CA 90013",
+      "contact": {
+        "phones": [
+          "+13108624262"
+        ],
+        "website": "https://vibrantpenguin.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Little Cinema Digital - LA Studio",
+      "industry": "Film Production",
+      "url": "https://littlecinema.net/",
+      "description": "2305 E 52nd St, Vernon, CA 90058",
+      "contact": {
+        "phones": [
+          "+19099793396"
+        ],
+        "website": "https://littlecinema.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "MOBCITY PRODUCTIONS",
+      "industry": "Film Production",
+      "url": "https://mobcityproductions.com/",
+      "description": "1333 N Curson Ave, Los Angeles, CA 90046",
+      "contact": {
+        "phones": [
+          "+13103598661"
+        ],
+        "website": "https://mobcityproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Logan Industry",
+      "industry": "Film Production",
+      "url": "https://loganindustry.com/contact",
+      "description": "333 S Grand Ave, Los Angeles, CA 90071",
+      "contact": {
+        "phones": [
+          "+13105255877"
+        ],
+        "website": "https://loganindustry.com/contact"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Jacob Rennert - Dreamward Productions",
+      "industry": "Film Production",
+      "url": "https://instagram.com/rennertmedia",
+      "description": "Lake, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+16504459752"
+        ],
+        "website": "https://instagram.com/rennertmedia"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Custom Built Films, LLC",
+      "industry": "Film Production",
+      "url": "https://custombuiltfilms.com/",
+      "description": "Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+19178219978"
+        ],
+        "website": "https://custombuiltfilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Strato Films",
+      "industry": "Film Production",
+      "url": "https://stratofilms.com/",
+      "description": "4859 College View Ave, Los Angeles, CA 90041",
+      "contact": {
+        "phones": [
+          "+13233448905"
+        ],
+        "website": "https://stratofilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Supersonix Entertainment Group, LLC",
+      "industry": "Film Production",
+      "url": "https://teamsupersonix.com/",
+      "description": "1502 Cassil Pl, Hollywood, CA 90028",
+      "contact": {
+        "phones": [
+          "+18182330528"
+        ],
+        "website": "https://teamsupersonix.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Flying Stone Films | Top Film Production Company in Mumbai, India | LA | USA | Films | Series | Documentaries | Ad Shoots",
+      "industry": "Film Production",
+      "url": "https://flyingstonefilms.com/",
+      "description": "503 Lincoln Ave, Glendale, CA 91205",
+      "contact": {
+        "phones": [
+          "+918169210519"
+        ],
+        "website": "https://flyingstonefilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Sidestilt",
+      "industry": "Film Production",
+      "url": "https://sidestilt.com/",
+      "description": "465 Converse Alley, Pasadena, CA 91101",
+      "contact": {
+        "phones": [
+          "+16264216312"
+        ],
+        "website": "https://sidestilt.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Mark Haynes Productions, LLC",
+      "industry": "Film Production",
+      "url": "https://markhaynesproductions.com/",
+      "description": "1139 N Gower St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13234827655"
+        ],
+        "website": "https://markhaynesproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Steakhaus Productions",
+      "industry": "Film Production",
+      "url": "https://steakhaus.com/",
+      "description": "5850 W 3rd St #222, Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+13109254399"
+        ],
+        "website": "https://steakhaus.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Lalaland",
+      "industry": "Film Production",
+      "url": "https://lalaland-production.com/",
+      "description": "1340 E 6th St UNIT 507, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+19177220848"
+        ],
+        "website": "https://lalaland-production.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "MILE 44",
+      "industry": "Film Production",
+      "url": "https://milefortyfour.com/",
+      "description": "1912 Raymond Ave, Los Angeles, CA 90007",
+      "contact": {
+        "phones": [
+          "+12139261421"
+        ],
+        "website": "https://milefortyfour.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "GPS FilmWorks Inc.",
+      "industry": "Film Production",
+      "url": "https://gpsfilmworks.com/",
+      "description": "633 W 5th St, Los Angeles, CA 90071",
+      "contact": {
+        "phones": [
+          "+13104044302"
+        ],
+        "website": "https://gpsfilmworks.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "The American Egypt",
+      "industry": "Film Production",
+      "url": "https://theamericanegypt.com/",
+      "description": "593 Glendale Blvd, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+12134131333"
+        ],
+        "website": "https://theamericanegypt.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Picture North",
+      "industry": "Film Production",
+      "url": "https://picturenorth.com/",
+      "description": "304 S Broadway Suite 515, Los Angeles, CA 90013",
+      "contact": {
+        "phones": [
+          "+13127247136"
+        ],
+        "website": "https://picturenorth.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Los Angeles Center Studios",
+      "industry": "Film Production",
+      "url": "https://lacenterstudios.com/",
+      "description": "450 S Bixel St, Los Angeles, CA 90017",
+      "contact": {
+        "phones": [
+          "+12135343000"
+        ],
+        "website": "https://lacenterstudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Paramount Pictures Studio Store",
+      "industry": "Film Production",
+      "url": "https://paramountstudios.com/",
+      "description": "5555 Melrose Ave, Los Angeles, CA 90038, United States",
+      "contact": {
+        "phones": [
+          "+13239565000"
+        ],
+        "website": "https://paramountstudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "DTLA Dr Self Tape",
+      "industry": "Film Production",
+      "url": "https://dtladrselftape.com/",
+      "description": "2333 Beverly Blvd ste 305, Los Angeles, CA 90057",
+      "contact": {
+        "phones": [
+          "+13235058548"
+        ],
+        "website": "https://dtladrselftape.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "BLT Studios and Soundstages",
+      "industry": "Film Production",
+      "url": "https://bltsoundstages.com/",
+      "description": "6309 Eleanor Ave, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13239731121"
+        ],
+        "website": "https://bltsoundstages.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "West Coast Creative Studio",
+      "industry": "Film Production",
+      "url": "https://westcoastcreativestudio.com/",
+      "description": "1141 Seward St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13233808847"
+        ],
+        "website": "https://westcoastcreativestudio.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Quixote Griffith Park Studios",
+      "industry": "Film Production",
+      "url": "https://quixote.com/?y_source=1_NjQyMTc2ODItNzE1LWxvY2F0aW9uLndlYnNpdGU=",
+      "description": "4585 Electronics Pl, Los Angeles, CA 90039",
+      "contact": {
+        "phones": [
+          "+13238608100"
+        ],
+        "website": "https://quixote.com/?y_source=1_NjQyMTc2ODItNzE1LWxvY2F0aW9uLndlYnNpdGU="
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "MainStream Entertainment",
+      "industry": "Film Production",
+      "url": "https://mstreament.com/",
+      "description": "5649 Hollywood Blvd, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13234879826"
+        ],
+        "website": "https://mstreament.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Willow Studios",
+      "industry": "Film Production",
+      "url": "https://willowstudios.net/",
+      "description": "1350 Palmetto St, Los Angeles, CA 90013",
+      "contact": {
+        "phones": [
+          "+13108495452"
+        ],
+        "website": "https://willowstudios.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Avenida Production Studios",
+      "industry": "Film Production",
+      "url": "https://avenida.tv/",
+      "description": "1908 Beverly Blvd, Los Angeles, CA 90057",
+      "contact": {
+        "phones": [
+          "+18883272543"
+        ],
+        "website": "https://avenida.tv/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Sutliff Studios: Virtual Productions",
+      "industry": "Film Production",
+      "url": "https://sutliffstudiosvp.com/",
+      "description": "2035 Bay St Suite 109, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+18134945145"
+        ],
+        "website": "https://sutliffstudiosvp.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Light Iron",
+      "industry": "Film Production",
+      "url": "https://panavision.com/post-production",
+      "description": "6381 De Longpre Ave, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13234728300"
+        ],
+        "website": "https://panavision.com/post-production"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Creative Deviants",
+      "industry": "Film Production",
+      "url": "https://creativedeviants.com/",
+      "description": "183 N Martel Ave ste 230, Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+13238100278"
+        ],
+        "website": "https://creativedeviants.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "MTI Film",
+      "industry": "Film Production",
+      "url": "https://mtifilm.com/",
+      "description": "1016 N Sycamore Ave, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13234656478"
+        ],
+        "website": "https://mtifilm.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Bell Sound Studios",
+      "industry": "Film Production",
+      "url": "https://bellsound.com/",
+      "description": "916 N Citrus Ave, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13234613036"
+        ],
+        "website": "https://bellsound.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "BARBER TECH",
+      "industry": "Film Production",
+      "url": "https://spincam.pro/",
+      "description": "5111 Via Corona St, East Los Angeles, CA 90022",
+      "contact": {
+        "phones": [
+          "+18186407775"
+        ],
+        "website": "https://spincam.pro/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Buta Media Video Production",
+      "industry": "Film Production",
+      "url": "N/A (local listing: 2500 Main St, Los Angeles, CA 90007)",
+      "description": "2500 Main St, Los Angeles, CA 90007",
+      "contact": {
+        "phones": [
+          "+12135140796"
+        ]
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Fat Eye Studios",
+      "industry": "Film Production",
+      "url": "https://fateyestudios.com/",
+      "description": "4466 Worth St unit g, Los Angeles, CA 90063",
+      "contact": {
+        "phones": [
+          "+12132550726"
+        ],
+        "website": "https://fateyestudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Company 3 Harlow",
+      "industry": "Film Production",
+      "url": "https://company3.com/",
+      "description": "1001 Seward St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13239886800"
+        ],
+        "website": "https://company3.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Video Kickstarter",
+      "industry": "Film Production",
+      "url": "https://videokickstarter.com/",
+      "description": "119 W 36th Pl #108, Los Angeles, CA 90007",
+      "contact": {
+        "phones": [
+          "+13238106307"
+        ],
+        "website": "https://videokickstarter.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Karga Seven Pictures Inc",
+      "industry": "Film Production",
+      "url": "https://karga7.com/",
+      "description": "1201 W 5th St, Los Angeles, CA 90017",
+      "contact": {
+        "phones": [
+          "+13235700507"
+        ],
+        "website": "https://karga7.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "The Reel Mobile LLC",
+      "industry": "Film Production",
+      "url": "https://thereelmobile.com/",
+      "description": "1122 Cole Ave, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13237468738"
+        ],
+        "website": "https://thereelmobile.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Focus Media Video Production",
+      "industry": "Film Production",
+      "url": "https://focusmediavp.com/",
+      "description": "5716 McKinley Ave, Los Angeles, CA 90011",
+      "contact": {
+        "phones": [
+          "+18582957550"
+        ],
+        "website": "https://focusmediavp.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Steez Studios",
+      "industry": "Film Production",
+      "url": "https://steezstudios.com/",
+      "description": "4321 W Adams Blvd, Los Angeles, CA 90018",
+      "contact": {
+        "phones": [
+          "+13105606564"
+        ],
+        "website": "https://steezstudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "BuzzFlick - Animation Studio In California",
+      "industry": "Film Production",
+      "url": "https://buzzflick.com/animation-studio-los-angeles/?utm_id=gmb-los-angeles",
+      "description": "445 S. Figueroa Street, 31st Floor, Los Angeles, CA 90071",
+      "contact": {
+        "phones": [
+          "+13467381001"
+        ],
+        "website": "https://buzzflick.com/animation-studio-los-angeles/?utm_id=gmb-los-angeles"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "TIMOTHY HOGAN STUDIO",
+      "industry": "Film Production",
+      "url": "https://timothy-hogan.com/",
+      "description": "530 E 8th St, Los Angeles, CA 90014",
+      "contact": {
+        "phones": [
+          "+13103155455"
+        ],
+        "website": "https://timothy-hogan.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Stargate Studios",
+      "industry": "Film Production",
+      "url": "https://stargatestudios.net/",
+      "description": "1001 El Centro St, South Pasadena, CA 91030",
+      "contact": {
+        "phones": [
+          "+16264038403"
+        ],
+        "website": "https://stargatestudios.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Broadcast Management Group",
+      "industry": "Film Production",
+      "url": "https://broadcastmgmt.com/location/los-angeles-ca",
+      "description": "1601 Vine St, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13108074635"
+        ],
+        "website": "https://broadcastmgmt.com/location/los-angeles-ca"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Dilated Pixels",
+      "industry": "Film Production",
+      "url": "https://dilatedpixels.net/",
+      "description": "1759 Glendale Blvd, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+13234660930"
+        ],
+        "website": "https://dilatedpixels.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "C&I Studios",
+      "industry": "Film Production",
+      "url": "https://c-istudios.com/",
+      "description": "1101 E 18th St, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+13238443326"
+        ],
+        "website": "https://c-istudios.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Animation Monster Studio - Animated Video Animation Services",
+      "industry": "Film Production",
+      "url": "https://animationmonster.us/",
+      "description": "417 S Hill St, Los Angeles, CA 90013",
+      "contact": {
+        "phones": [
+          "+12143829985"
+        ],
+        "website": "https://animationmonster.us/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Reel FX",
+      "industry": "Film Production",
+      "url": "https://reelfx.com/",
+      "description": "1575 N Gower St bldg 1 suite 380, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13102646440"
+        ],
+        "website": "https://reelfx.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "SIBLING",
+      "industry": "Film Production",
+      "url": "https://siblingla.com/",
+      "description": "3352 N San Fernando Rd, Los Angeles, CA 90065",
+      "contact": {
+        "phones": [
+          "+13235613033"
+        ],
+        "website": "https://siblingla.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Muse VFX",
+      "industry": "Film Production",
+      "url": "https://musevfx.com/",
+      "description": "6464 Sunset Blvd, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13238094386"
+        ],
+        "website": "https://musevfx.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "ISA AYDIN Beauty Product Photography",
+      "industry": "Film Production",
+      "url": "https://isa-aydin.com/los-angeles-beauty-product-photography",
+      "description": "958 N Western Ave #790, Los Angeles, CA 90029",
+      "contact": {
+        "phones": [
+          "+12134310030"
+        ],
+        "website": "https://isa-aydin.com/los-angeles-beauty-product-photography"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Unreel Locations",
+      "industry": "Film Production",
+      "url": "https://unreellocations.com/",
+      "description": "2950 Los Feliz Blvd #206, Los Angeles, CA 90039",
+      "contact": {
+        "phones": [
+          "+13239536189"
+        ],
+        "website": "https://unreellocations.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Video Production Los Angeles | VPLA",
+      "industry": "Film Production",
+      "url": "https://videoproductionlosangeles.com/",
+      "description": "4524 1/2 W 17th St, Los Angeles, CA 90019",
+      "contact": {
+        "phones": [
+          "+13236429531"
+        ],
+        "website": "https://videoproductionlosangeles.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "AMATO STUDIO",
+      "industry": "Film Production",
+      "url": "https://kevinamato.com/amatostudio",
+      "description": "3400 W Washington Blvd, Los Angeles, CA 90018",
+      "contact": {
+        "phones": [
+          "+13234020007"
+        ],
+        "website": "https://kevinamato.com/amatostudio"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "OBB Studios",
+      "industry": "Film Production",
+      "url": "https://obbmedia.com/",
+      "description": "1050 N Orange Dr, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13102712196"
+        ],
+        "website": "https://obbmedia.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "RED PIG VIDEO",
+      "industry": "Film Production",
+      "url": "https://redpigvideo.com/",
+      "description": "1545 Sunset Blvd, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+18004608065"
+        ],
+        "website": "https://redpigvideo.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Weatherman FIlms",
+      "industry": "Film Production",
+      "url": "https://weathermanfilms.com/",
+      "description": "5457 Virginia Ave, Los Angeles, CA 90029",
+      "contact": {
+        "phones": [
+          "+12133644092"
+        ],
+        "website": "https://weathermanfilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "ethos studio",
+      "industry": "Film Production",
+      "url": "https://ethos.studio/",
+      "description": "3009 Gilroy St, Los Angeles, CA 90039",
+      "contact": {
+        "phones": [
+          "+12132933303"
+        ],
+        "website": "https://ethos.studio/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Hyperion LA Photo & Video Production",
+      "industry": "Film Production",
+      "url": "https://hyperionla.com/",
+      "description": "1759 Glendale Blvd, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+14243229100"
+        ],
+        "website": "https://hyperionla.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Audio Perception",
+      "industry": "Film Production",
+      "url": "https://audioperception.com/",
+      "description": "716 S Los Angeles St, Los Angeles, CA 90014",
+      "contact": {
+        "phones": [
+          "+18186930134"
+        ],
+        "website": "https://audioperception.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Eyewax Films",
+      "industry": "Film Production",
+      "url": "https://eyewaxfilms.com/",
+      "description": "1617 Cosmo St #112, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13236387552"
+        ],
+        "website": "https://eyewaxfilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "[matrix] productions",
+      "industry": "Film Production",
+      "url": "https://matrixprod.com/",
+      "description": "1800 Vine St, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13237843890"
+        ],
+        "website": "https://matrixprod.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Eddie Delbridge Productions",
+      "industry": "Film Production",
+      "url": "https://livedigitalentertainment.com/",
+      "description": "5225 Wilshire Blvd, Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+13239320530"
+        ],
+        "website": "https://livedigitalentertainment.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Verit\u00e9 Entertainment",
+      "industry": "Film Production",
+      "url": "https://veriteentertainment.net/",
+      "description": "1930 Wilshire Blvd #1200, Los Angeles, CA 90057",
+      "contact": {
+        "phones": [
+          "+13234433439"
+        ],
+        "website": "https://veriteentertainment.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Moonhill Productions",
+      "industry": "Film Production",
+      "url": "https://moonhillproductions.com/",
+      "description": "107 S Fair Oaks Ave, Pasadena, CA 91105",
+      "contact": {
+        "phones": [
+          "+16265789749"
+        ],
+        "website": "https://moonhillproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "LA Production Studio",
+      "industry": "Film Production",
+      "url": "https://laproductionstudio.com/",
+      "description": "927 Main St #139, Los Angeles, CA 90015",
+      "contact": {
+        "phones": [
+          "+13234885282"
+        ],
+        "website": "https://laproductionstudio.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "HD Video Production",
+      "industry": "Film Production",
+      "url": "https://hdvideoproduction.biz/",
+      "description": "3175 S Hoover St #494, Los Angeles, CA 90007, United States",
+      "contact": {
+        "phones": [
+          "+13107709250"
+        ],
+        "website": "https://hdvideoproduction.biz/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Bestboy Media Video Production",
+      "industry": "Film Production",
+      "url": "https://bestboymedia.com/",
+      "description": "123 S Figueroa St, Los Angeles, CA 90012",
+      "contact": {
+        "phones": [
+          "+18442134951"
+        ],
+        "website": "https://bestboymedia.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Video Production Los Angeles Crash Productions",
+      "industry": "Film Production",
+      "url": "https://crashproductions.com/",
+      "description": "6775 Santa Monica Blvd #4, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13232056848"
+        ],
+        "website": "https://crashproductions.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Department 4",
+      "industry": "Film Production",
+      "url": "https://dept4.com/",
+      "description": "1340 E 6th St UNIT 503, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+17734560762"
+        ],
+        "website": "https://dept4.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "The Dojo Los Angeles",
+      "industry": "Film Production",
+      "url": "https://thedojolosangeles.com/",
+      "description": "155 W Washington Blvd #1004, Los Angeles, CA 90015",
+      "contact": {
+        "phones": [
+          "+13238278955"
+        ],
+        "website": "https://thedojolosangeles.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Louella Allen Studios",
+      "industry": "Film Production",
+      "url": "https://peerspace.com/pages/listings/5e0fc8c8f670ae000db2f725?sort_order=175",
+      "description": "1206 Maple Ave, Los Angeles, CA 90015",
+      "contact": {
+        "phones": [
+          "+13108903653"
+        ],
+        "website": "https://peerspace.com/pages/listings/5e0fc8c8f670ae000db2f725?sort_order=175"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Ms Robot",
+      "industry": "Film Production",
+      "url": "https://msrobot.com/",
+      "description": "2684 Lacy St, Los Angeles, CA 90031",
+      "contact": {
+        "phones": [
+          "+14244150865"
+        ],
+        "website": "https://msrobot.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Cinematic LA videographer",
+      "industry": "Film Production",
+      "url": "https://cinematicla.com/",
+      "description": "3223 W 6th St Ste 101, Los Angeles, CA 90020",
+      "contact": {
+        "phones": [
+          "+13239187919"
+        ],
+        "website": "https://cinematicla.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "ICON Gate - Sunset Bronson Studios",
+      "industry": "Film Production",
+      "url": "https://hudsonpacificproperties.com/",
+      "description": "1456 N Van Ness Ave, Los Angeles, CA 90028, United States",
+      "contact": {
+        "phones": [
+          "+13234605858"
+        ],
+        "website": "https://hudsonpacificproperties.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Sunset Studios",
+      "industry": "Film Production",
+      "url": "https://sunsetstudios.com/contact-us",
+      "description": "5800 Sunset Blvd, Hollywood, CA 90028",
+      "contact": {
+        "phones": [
+          "+13238600100"
+        ],
+        "website": "https://sunsetstudios.com/contact-us"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Orbital Studios",
+      "industry": "Film Production",
+      "url": "https://orbitalvs.com/",
+      "description": "667 S Santa Fe Ave, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+12135901547"
+        ],
+        "website": "https://orbitalvs.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Copernicus Studios",
+      "industry": "Film Production",
+      "url": "https://copernicusstudios.com/contact",
+      "description": "2538 Hyperion Ave #7, Los Angeles, CA 90027",
+      "contact": {
+        "phones": [
+          "+19024745194"
+        ],
+        "website": "https://copernicusstudios.com/contact"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "FS MEDIA",
+      "industry": "Film Production",
+      "url": "https://fsmediahouse.com/",
+      "description": "4321 W Adams Blvd, Los Angeles, CA 90018",
+      "contact": {
+        "phones": [
+          "+13105606564"
+        ],
+        "website": "https://fsmediahouse.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Wallace Productions",
+      "industry": "Film Production",
+      "url": "https://wallaceproductionsllc.com/",
+      "description": "777 S Alameda St, Los Angeles, CA 90021",
+      "contact": {
+        "phones": [
+          "+19185108572"
+        ],
+        "website": "https://wallaceproductionsllc.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "David's Video Editing",
+      "industry": "Film Production",
+      "url": "https://davidsvideo.com/",
+      "description": "1416 MacBeth St, Los Angeles, CA 90026",
+      "contact": {
+        "phones": [
+          "+12132509929"
+        ],
+        "website": "https://davidsvideo.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Mirror Films Inc",
+      "industry": "Film Production",
+      "url": "https://mirrorfilms.tv/",
+      "description": "963 Chung King Rd, Los Angeles, CA 90012",
+      "contact": {
+        "phones": [
+          "+12136252300"
+        ],
+        "website": "https://mirrorfilms.tv/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Rice Gorton Pictures Ltd",
+      "industry": "Film Production",
+      "url": "https://ricegortonpictures.com/",
+      "description": "3700 Eagle Rock Blvd #200, Los Angeles, CA 90065",
+      "contact": {
+        "phones": [
+          "+13236656200"
+        ],
+        "website": "https://ricegortonpictures.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Food Steez",
+      "industry": "Film Production",
+      "url": "https://fsmediahouse.com/food-steez",
+      "description": "4321 W Adams Blvd, Los Angeles, CA 90018",
+      "contact": {
+        "phones": [
+          "+13105606564"
+        ],
+        "website": "https://fsmediahouse.com/food-steez"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Liquid Animation",
+      "industry": "Film Production",
+      "url": "https://liquidanimation.com/index.php/contact",
+      "description": "2538 Hyperion Ave #7, Los Angeles, CA 90027",
+      "contact": {
+        "phones": [
+          "+12134008311"
+        ],
+        "website": "https://liquidanimation.com/index.php/contact"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Soundchef",
+      "industry": "Film Production",
+      "url": "https://soundchef.net/",
+      "description": "6311, 6311 Romaine St #6311, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13234646634"
+        ],
+        "website": "https://soundchef.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Dirty Robber",
+      "industry": "Film Production",
+      "url": "https://dirtyrobber.com/contact",
+      "description": "1305 N Catalina St, Los Angeles, CA 90027",
+      "contact": {
+        "phones": [
+          "+13236689394"
+        ],
+        "website": "https://dirtyrobber.com/contact"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Filmatics",
+      "industry": "Film Production",
+      "url": "https://filmatics.com/",
+      "description": "5757 Wilshire Blvd #530, Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+13239175006"
+        ],
+        "website": "https://filmatics.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "SMUGGLER",
+      "industry": "Film Production",
+      "url": "https://smugglersite.com/",
+      "description": "823 Seward St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13238173300"
+        ],
+        "website": "https://smugglersite.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "PICROW",
+      "industry": "Film Production",
+      "url": "https://picrow.com/",
+      "description": "736 Seward St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13239575400"
+        ],
+        "website": "https://picrow.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Maverick",
+      "industry": "Film Production",
+      "url": "https://maverick.group/",
+      "description": "7400 Beverly Blvd Suite 220, Los Angeles, CA 90036",
+      "contact": {
+        "phones": [
+          "+13233649049"
+        ],
+        "website": "https://maverick.group/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Duo Films",
+      "industry": "Film Production",
+      "url": "https://duofilms.net/",
+      "description": "420 San Pedro St APT 412, Los Angeles, CA 90013",
+      "contact": {
+        "phones": [
+          "+13239980415"
+        ],
+        "website": "https://duofilms.net/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Epoch Films",
+      "industry": "Film Production",
+      "url": "https://epochfilms.com/",
+      "description": "843 Seward St, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13102759333"
+        ],
+        "website": "https://epochfilms.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Aris",
+      "industry": "Film Production",
+      "url": "https://wearearis.com/",
+      "description": "120 E 8th St #704, Los Angeles, CA 90014",
+      "contact": {
+        "phones": [
+          "+12132673701"
+        ],
+        "website": "https://wearearis.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "UNIT9 Films",
+      "industry": "Film Production",
+      "url": "https://unit9.com/",
+      "description": "6525 Sunset Blvd, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13234605166"
+        ],
+        "website": "https://unit9.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Fabel Entertainment",
+      "industry": "Film Production",
+      "url": "https://fabelentertainment.com/",
+      "description": "6320 W Sunset Blvd #250, Los Angeles, CA 90028",
+      "contact": {
+        "phones": [
+          "+13237855600"
+        ],
+        "website": "https://fabelentertainment.com/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Milk and Honey Productions",
+      "industry": "Film Production",
+      "url": "https://milkandhoney.productions/",
+      "description": "717 Highland Ave STE 22, Los Angeles, CA 90038",
+      "contact": {
+        "phones": [
+          "+13239939600"
+        ],
+        "website": "https://milkandhoney.productions/"
+      },
+      "quality_score": "high"
+    },
+    {
+      "name": "Los Angeles Motion Picture Production Companies",
+      "industry": "Film Production",
+      "url": "https://la411.com/los-angeles-directory/motion-picture-production-companies/listings",
+      "description": "Los Angeles Film &amp; TV Production Directory",
+      "contact": {
+        "website": "https://la411.com/los-angeles-directory/motion-picture-production-companies/listings"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "THE BEST 10 Film Production Companies in Los Angeles, CA",
+      "industry": "Film Production",
+      "url": "https://www.yelp.com/search?find_desc=Film+Production+Companies&find_loc=Los+Angeles,+CA",
+      "description": "&quot;An absolutely stunning campus with excellent food, wonderful people, and fantastic films of course!&quot; more ... &quot;The best studios to work with for adult entertainment. Dillinger is a professional director who has...&quot; more ... &quot;Its truly a one of a kind production office facility. From the incredible and RESPONSIVE staff, the...&quot; more ... &quot;There are many reel production companies in LA, but what made it clear that Lucky Break was who...&quot; more",
+      "contact": {
+        "website": "https://www.yelp.com/search?find_desc=Film+Production+Companies&find_loc=Los+Angeles,+CA"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Film Production Companies in Los Angeles, California",
+      "industry": "Film Production",
+      "url": "https://www.productionhub.com/directory/profiles/film-production-companies/us/california/los-angeles",
+      "description": "<strong>Fokus Films</strong> is a Los Angeles\u2013based director-led commercial production studio delivering high-end brand campaigns with disciplined execution and cinematic precision. Founded by Emmy-nominated cinematographer Alexander Haessner, the studio partners ...",
+      "contact": {
+        "website": "https://www.productionhub.com/directory/profiles/film-production-companies/us/california/los-angeles"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Los Angeles Video Production Company",
+      "industry": "Film Production",
+      "url": "https://tigerhousefilms.com/",
+      "description": "We are a Los Angeles video production company known for commercial production &amp; brand media production, creating content for brands worldwide.",
+      "contact": {
+        "website": "https://tigerhousefilms.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Los Angeles Film Production Company",
+      "industry": "Film Production",
+      "url": "https://mixedmedia.co/",
+      "description": "<strong>Mixed Media</strong> is a Los Angeles based production company specializing in filmmaking &amp; video production services. We create feature films, music videos, short films, commercials, &amp; more.",
+      "contact": {
+        "website": "https://mixedmedia.co/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Media Pollution",
+      "industry": "Film Production",
+      "url": "https://mediapollution.tv/",
+      "description": "5344 Alhambra Ave, Los Angeles, CA 90032",
+      "contact": {
+        "website": "https://mediapollution.tv/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "TubeScience Studios",
+      "industry": "Film Production",
+      "url": "https://tubescience.com/",
+      "description": "655 S Santa Fe Ave, Los Angeles, CA 90021, United States",
+      "contact": {
+        "website": "https://tubescience.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Rosco Production",
+      "industry": "Film Production",
+      "url": "https://roscoproduction.com/",
+      "description": "949 Chung King Rd, Los Angeles, CA 90012",
+      "contact": {
+        "website": "https://roscoproduction.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "2DM PRODUCTION \u2013 LAX",
+      "industry": "Film Production",
+      "url": "https://2dm-production.com/",
+      "description": "304 S Broadway, Los Angeles, CA 90013",
+      "contact": {
+        "website": "https://2dm-production.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "HarisGrant Productions",
+      "industry": "Film Production",
+      "url": "https://harisgrantproductions.com/",
+      "description": "Burbank, CA 91505",
+      "contact": {
+        "website": "https://harisgrantproductions.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Special Order Inc",
+      "industry": "Film Production",
+      "url": "https://specialorder.co/",
+      "description": "448 S Hill St, Los Angeles, CA 90013",
+      "contact": {
+        "website": "https://specialorder.co/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Ac Prochi Productions",
+      "industry": "Film Production",
+      "url": "https://acprochi.com/",
+      "description": "1149 N Gower St Suite 286, Los Angeles, CA 90038",
+      "contact": {
+        "website": "https://acprochi.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Somesuch, Inc.",
+      "industry": "Film Production",
+      "url": "https://somesuch.co/",
+      "description": "4319 W Jefferson Blvd, Los Angeles, CA 90016",
+      "contact": {
+        "website": "https://somesuch.co/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Avenue B, Inc.",
+      "industry": "Film Production",
+      "url": "https://avenuebinc.com/",
+      "description": "575 N Arden Blvd, Los Angeles, CA 90004",
+      "contact": {
+        "website": "https://avenuebinc.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Video Production Company",
+      "industry": "Film Production",
+      "url": "https://www.zane-productions.com/",
+      "description": "We are an award-winning, full-service video production company serving brands, advertising agencies, artists, and networks across Los Angeles, New York City, and Chicago. From concept development to final delivery, we handle the entire production process. Whether you arrive with a fully developed script or just a rough idea, our team brings the vision to life \u2014 offering either hands-on collaboration or fully managed, hands-off production.",
+      "contact": {
+        "website": "https://www.zane-productions.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "BLARE Video",
+      "industry": "Film Production",
+      "url": "https://blarevideo.com/",
+      "description": "Full Service Video Production Company - Creative, crew, equipment, lighting, cameras and post-production. Los Angeles, Las Vegas, San Diego, Phoenix.....",
+      "contact": {
+        "website": "https://blarevideo.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Video Production Company Los Angeles",
+      "industry": "Film Production",
+      "url": "https://beast-losangeles.com/",
+      "description": "<strong>Beast</strong> is a leading video production company in Los Angeles and creative content agency specialising in corporate video production, branded content, TV commercials and digital campaigns across Southern California and beyond.",
+      "contact": {
+        "website": "https://beast-losangeles.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "VPLA",
+      "industry": "Film Production",
+      "url": "https://www.videoproductionlosangeles.com/",
+      "description": "Award-winning Los Angeles video production company specializing in commercial video production, brand films, and digital content for beauty, fashion, tech, and pharma brands. Cinematic storytelling that drives results.",
+      "contact": {
+        "website": "https://www.videoproductionlosangeles.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "VideoFresh | Premium Video Production Services",
+      "industry": "Film Production",
+      "url": "https://videofresh.co/",
+      "description": "300 S Raymond Ave Suite #6, Pasadena, CA 91105",
+      "contact": {
+        "website": "https://videofresh.co/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Lux Angeles Studios",
+      "industry": "Film Production",
+      "url": "https://luxangelesstudios.com/",
+      "description": "1377 N Serrano Ave, Los Angeles, CA 90027",
+      "contact": {
+        "website": "https://luxangelesstudios.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Storyforma | Video Production & Marketing | Los Angeles",
+      "industry": "Film Production",
+      "url": "https://storyforma.com/",
+      "description": "460 S Spring St, Los Angeles, CA 90013",
+      "contact": {
+        "website": "https://storyforma.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Glen Glenn Studios",
+      "industry": "Film Production",
+      "url": "https://bydeluxe.com/",
+      "description": "900 Seward St, Los Angeles, CA 90038",
+      "contact": {
+        "website": "https://bydeluxe.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Bridge City Media | Business Video Production",
+      "industry": "Film Production",
+      "url": "https://bridgecitymedia.com/",
+      "description": "1040 W 71st St, Los Angeles, CA 90044",
+      "contact": {
+        "website": "https://bridgecitymedia.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Nath Creation",
+      "industry": "Film Production",
+      "url": "https://nathanielsiri.com/",
+      "description": "1857 Wilton Pl, Los Angeles, CA 90028",
+      "contact": {
+        "website": "https://nathanielsiri.com/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Los Angeles Commercial Production Companies",
+      "industry": "Film Production",
+      "url": "https://la411.com/los-angeles-directory/commercial-production-companies/listings",
+      "description": "Los Angeles Film &amp; TV Production Directory",
+      "contact": {
+        "website": "https://la411.com/los-angeles-directory/commercial-production-companies/listings"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Los Angeles TV Commercial Production",
+      "industry": "Film Production",
+      "url": "https://beverlyboy.com/tv-commercial-production/los-angeles-tv-commercial-production/",
+      "description": "We have proudly provided Los Angeles TV commercial production services in CA for more than 20 years. We have created commercials in California that have a polished, high-quality look, but an affordable price tag. When you undertake the job of producing a TV spot audiences will remember, you need to choose the right video production company to ensure you get quality work.",
+      "contact": {
+        "website": "https://beverlyboy.com/tv-commercial-production/los-angeles-tv-commercial-production/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Creative Los Angeles Video Production Agency",
+      "industry": "Film Production",
+      "url": "https://www.synima.com/video-production-agency-los-angeles/",
+      "description": "<strong>Synima Los Angeles</strong>: Leading corporate video production with a record of innovative video marketing. Partner with us in LA to creatively reach your audience.",
+      "contact": {
+        "website": "https://www.synima.com/video-production-agency-los-angeles/"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Top Commercial Video Production Companies in Los Angeles",
+      "industry": "Film Production",
+      "url": "https://clutch.co/agencies/video-production/commercial/los-angeles",
+      "description": "Clients in Los Angeles commend <strong>7 Wonders Cinema</strong> for their dedication to creative collaboration and professionalism in post-production. Their expertise spans editing, sound, and color correction, consistently exceeding expectations and ensuring ...",
+      "contact": {
+        "website": "https://clutch.co/agencies/video-production/commercial/los-angeles"
+      },
+      "quality_score": "medium"
+    },
+    {
+      "name": "Entertainment One",
+      "industry": "Film Production",
+      "url": "https://entertainmentone.com/contact-us",
+      "description": "4218-4200 Wilshire Blvd, Los Angeles, CA 90010",
+      "contact": {
+        "website": "https://entertainmentone.com/contact-us"
+      },
+      "quality_score": "medium"
+    }
+  ],
+  "timestamp": "2026-03-23T14:29:28.100901",
+  "total_leads": 174,
+  "leads_with_contact": 145
+}

@@ -1,0 +1,108 @@
+{
+  "campaigns": [
+    {
+      "campaign": "guest_welcome",
+      "sequence": 1,
+      "subject": "Welcome to SetVenue",
+      "body": "Welcome to SetVenue. Browse production-ready locations, crew stays, and event venues by city, type, price, and availability. Save favorites, compare options, and review each listing for rates, amenities, and booking details before you decide.",
+      "sendDelay": "immediate",
+      "active": true
+    },
+    {
+      "campaign": "guest_welcome",
+      "sequence": 2,
+      "subject": "How booking works — and why production teams trust us",
+      "body": "When you're ready to move forward, submit a booking request with your preferred date, timing, and production details. Our process is built around clear communication, reliable hosts, and production-friendly spaces so you can book with confidence.",
+      "sendDelay": "1 day",
+      "active": true
+    },
+    {
+      "campaign": "guest_welcome",
+      "sequence": 3,
+      "subject": "Featured locations to start with",
+      "body": "Need a place to begin? Start with our featured locations for standout homes, studios, lofts, and specialty spaces selected for quality and visual impact. It's the fastest way to discover listings that tend to perform well for bookings and productions.",
+      "sendDelay": "3 days",
+      "active": true
+    },
+    {
+      "campaign": "guest_welcome",
+      "sequence": 4,
+      "subject": "Questions? Here are the answers guests ask most",
+      "body": "If you're wondering about availability, rules, production fit, or support, you're not alone. Our FAQ and support team can help you understand the process, narrow your options, and move from browsing to booking without guesswork.",
+      "sendDelay": "5 days",
+      "active": true
+    },
+    {
+      "campaign": "guest_welcome",
+      "sequence": 5,
+      "subject": "A little extra for your first booking",
+      "body": "As a thank-you for joining SetVenue, here's an exclusive first-booking offer to help you get started. Use this incentive to lock in a location you love and make your first booking feel easier, faster, and more rewarding.",
+      "sendDelay": "7 days",
+      "active": true
+    },
+    {
+      "campaign": "host_onboarding",
+      "sequence": 1,
+      "subject": "Welcome — here's how to list on SetVenue",
+      "body": "Welcome to SetVenue. Getting started is simple: submit your property basics, highlight what makes the space unique, and share the details guests need to book confidently. We're building for hosts who want quality inquiries and a clean listing experience — with 0% host fees.",
+      "sendDelay": "immediate",
+      "active": true
+    },
+    {
+      "campaign": "host_onboarding",
+      "sequence": 2,
+      "subject": "Pricing tips that help serious hosts win bookings",
+      "body": "Strong pricing is a balance between market demand, uniqueness, amenities, and production-readiness. Competitive rates attract better inquiries, while clear fees and minimums reduce friction. Review similar spaces in your area and position your listing around its actual value.",
+      "sendDelay": "2 days",
+      "active": true
+    },
+    {
+      "campaign": "host_onboarding",
+      "sequence": 3,
+      "subject": "Better photos, better first impressions",
+      "body": "Photography does heavy lifting for bookings. Use bright, high-resolution images that show layout, exterior access, standout features, and the mood of the space. Clean staging, wide angles, and honest coverage help guests qualify themselves before they ever reach out.",
+      "sendDelay": "4 days",
+      "active": true
+    },
+    {
+      "campaign": "host_onboarding",
+      "sequence": 4,
+      "subject": "How to get more bookings from the right guests",
+      "body": "Listings convert better when the description is specific, the rules are clear, and response expectations are obvious. Make logistics, parking, power, sound, and access easy to understand. The less ambiguity a guest sees, the easier it is for them to commit.",
+      "sendDelay": "6 days",
+      "active": true
+    },
+    {
+      "campaign": "host_onboarding",
+      "sequence": 5,
+      "subject": "What success can look like for hosts here",
+      "body": "The best-performing hosts treat their listing like a product: strong presentation, fair pricing, reliable communication, and a space that delivers what the photos promise. That combination builds repeat demand, stronger reviews, and more efficient bookings over time.",
+      "sendDelay": "8 days",
+      "active": true
+    },
+    {
+      "campaign": "abandoned_booking_recovery",
+      "sequence": 1,
+      "subject": "Still interested in that booking?",
+      "body": "You were close to requesting a booking on SetVenue. If you got pulled away, your search doesn't have to start over. Come back, review the listing details, and pick up where you left off when you're ready.",
+      "sendDelay": "1 hour",
+      "active": true
+    },
+    {
+      "campaign": "abandoned_booking_recovery",
+      "sequence": 2,
+      "subject": "Any questions before you book?",
+      "body": "If something slowed you down, it's usually a question about availability, fit, pricing, or booking logistics. This is the point where a little clarity makes the difference. Review the listing again or reach out for support before the opportunity passes.",
+      "sendDelay": "24 hours",
+      "active": true
+    },
+    {
+      "campaign": "abandoned_booking_recovery",
+      "sequence": 3,
+      "subject": "Last chance — here's an offer to finish your booking",
+      "body": "If you're still considering the space, this is your last reminder along with a limited-time incentive to complete your booking. Use the discount while it's available and secure the location before dates or availability shift.",
+      "sendDelay": "48 hours",
+      "active": true
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "templates": [
+    {
+      "id": "newsletter-welcome",
+      "name": "Newsletter Welcome Email",
+      "subject": "Thanks for joining SetVenue",
+      "previewText": "Here's what to expect from your newsletter subscription.",
+      "body": {
+        "headline": "Thanks for joining — here's what to expect",
+        "intro": "You're on the list for new locations, exclusive deals, and occasional production tips from SetVenue.",
+        "sections": [
+          {
+            "title": "How to browse",
+            "content": "Use the marketplace to compare locations, crew stays, and event venues. Filter by city, type, price, or production need. Start with featured listings for standout options."
+          },
+          {
+            "title": "How to list",
+            "content": "If you have a property to offer, use the List Your Property page to submit the basics. SetVenue is built for hosts who want clear expectations and quality bookings — with 0% host fees."
+          },
+          {
+            "title": "FAQ",
+            "content": "Need more detail first? Visit the FAQ for booking flow, privacy tiers, and host requirements."
+          }
+        ],
+        "footer": "We do not sell your email. You can update preferences or unsubscribe in one click at any time."
+      }
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "productionCompany": {
+    "subjectOptions": [
+      "Partnership opportunity with SetVenue",
+      "A cleaner location pipeline for your production team",
+      "Locations, stays, events — all in one platform"
+    ],
+    "template": {
+      "audience": "Production companies",
+      "body": "Hi {{firstName}},\n\nI'm reaching out from SetVenue. We're a production marketplace built for teams that need locations, crew housing, and event venues — all in one place.\n\nIf your team regularly sources homes, lofts, studios, or specialty spaces, we can support you with lower fees (10% vs Giggster's 15-25%), curated inventory, and partnership options for teams with recurring booking needs.\n\nIf this is relevant, I'd be glad to send over a short partnership overview or set up a quick conversation.\n\nBest,\n{{senderName}}\nSetVenue"
+    }
+  },
+  "talentAgency": {
+    "subjectOptions": [
+      "Location partnership for agency-led shoots",
+      "SetVenue x {{agencyName}}",
+      "Reliable shoot locations for recurring talent and campaign work"
+    ],
+    "template": {
+      "audience": "Talent agencies",
+      "body": "Hi {{firstName}},\n\nI'm reaching out from SetVenue. We help teams source production-friendly locations with a cleaner booking experience and lower fees than competitors.\n\nFor agencies managing recurring creator, editorial, or branded-content work, we offer a streamlined way to source spaces and build a repeatable location workflow. We're also open to discussing preferred partner support for teams with ongoing booking needs.\n\nIf useful, I can send a short partnership deck with more detail on how we work.\n\nBest,\n{{senderName}}\nSetVenue"
+    }
+  },
+  "contentCreator": {
+    "subjectOptions": [
+      "Production-ready shoot locations",
+      "A better way to book polished shoot spaces",
+      "Partnership idea for recurring creator shoots"
+    ],
+    "template": {
+      "audience": "Individual creators",
+      "body": "Hi {{firstName}},\n\nI'm reaching out from SetVenue. We're a production marketplace with polished, camera-ready locations — plus crew housing and event venues — for creators who need professionalism and a smoother booking experience.\n\nIf you regularly produce content and need dependable spaces, we'd love to explore whether a partnership makes sense. Depending on volume, that could mean easier repeat bookings, curated location access, or a more direct support path.\n\nIf that sounds relevant, I can send over a short overview.\n\nBest,\n{{senderName}}\nSetVenue"
+    }
+  }
+}
