@@ -93,20 +93,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const cancellationPolicy = cancellationPolicyContent[cancellationPolicyTier];
   const houseRules = location.houseRules?.length ? location.houseRules : getDefaultHouseRules(location, maxGuestsValue);
 
-  // Compliance banner logic
-  const cityLower = location.city.toLowerCase();
-  let regulationsBanner: string | null = null;
-  if (cityLower.includes('los angeles') || cityLower.includes('malibu') || cityLower.includes('la')) {
-    regulationsBanner = location.totLicenseNumber
-      ? `TOT Certificate #: ${location.totLicenseNumber}`
-      : 'TOT Certificate required for short-term rentals in LA County';
-  } else if (cityLower.includes('new york') || cityLower.includes('nyc')) {
-    regulationsBanner = 'Class B Multiple Dwelling registered';
-  } else if (cityLower.includes('atlanta') || cityLower.includes('atl')) {
-    regulationsBanner = 'STR Registration Required';
-  } else if (cityLower.includes('miami')) {
-    regulationsBanner = 'Transient Rental License Required';
-  }
+  // Compliance banner removed from browse view — TOT/STR info is for hosts only (list-property page)
+  const regulationsBanner: string | null = null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
