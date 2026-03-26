@@ -22,7 +22,7 @@ export default function HostListingsPage() {
     const normalized = query.trim().toLowerCase();
     return listings.filter((listing) => {
       if (!normalized) return true;
-      return [listing.title, listing.city, listing.state, listing.propertyType].join(' ').toLowerCase().includes(normalized);
+      return [listing.name, listing.city, listing.state, listing.propertyType].join(' ').toLowerCase().includes(normalized);
     });
   }, [listings, query]);
 
@@ -101,7 +101,7 @@ export default function HostListingsPage() {
             <div key={listing.id} className="grid gap-4 rounded-3xl border border-white/10 bg-black/40 p-4 lg:grid-cols-[1.5fr_0.8fr_0.7fr] lg:items-center">
               <div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <h2 className="text-lg font-semibold text-white">{listing.title}</h2>
+                  <h2 className="text-lg font-semibold text-white">{listing.name}</h2>
                   <span className={`rounded-full border px-3 py-1 text-xs font-medium ${badgeClasses(listing.active)}`}>
                     {listing.active ? 'Active' : 'Inactive'}
                   </span>
@@ -109,7 +109,7 @@ export default function HostListingsPage() {
                 <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-blue-100/75">
                   <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4" />{listing.city}, {listing.state}</span>
                   <span>{listing.propertyType}</span>
-                  <span>{listing.privacyTier}</span>
+                  <span>{listing.style}</span>
                 </div>
                 <p className="mt-3 text-sm text-white/70 line-clamp-2">{listing.description}</p>
               </div>
@@ -117,7 +117,7 @@ export default function HostListingsPage() {
               <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4 lg:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
                   <p className="text-blue-100/70">Rate</p>
-                  <p className="mt-1 font-semibold text-white">${listing.price}/hr</p>
+                  <p className="mt-1 font-semibold text-white">${listing.pricePerHour}/hr</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
                   <p className="text-blue-100/70">Views</p>

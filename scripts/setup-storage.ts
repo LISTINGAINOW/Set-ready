@@ -59,10 +59,10 @@ CREATE POLICY "Authenticated users can delete"
 console.log('=== Supabase Storage Setup ===\n');
 for (const s of steps) {
   console.log(`Step ${s.step}: ${s.title}`);
-  if ('instructions' in s) {
+  if ('instructions' in s && s.instructions) {
     s.instructions.forEach((line) => console.log(`  • ${line}`));
   }
-  if ('sql' in s) {
+  if ('sql' in s && s.sql) {
     console.log('\n  SQL (run in Supabase SQL Editor or Dashboard → Policies):\n');
     console.log(s.sql.split('\n').map((l) => `  ${l}`).join('\n'));
   }

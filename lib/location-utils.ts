@@ -2,19 +2,8 @@ import type { Location } from '@/types/location';
 
 export type BookingMode = 'instant' | 'request';
 
-export function getPrivacyLabel(tier: Location['privacyTier']) {
-  return tier === 'Private' ? 'Production' : tier;
-}
-
-export function getPrivacyDescription(tier: Location['privacyTier']) {
-  if (tier === 'Public') return 'Standard listing details are visible to signed-in guests.';
-  if (tier === 'NDA Required') return 'Address and access details unlock only after NDA approval.';
-  return 'Exact address stays hidden until the host approves contact or booking.';
-}
-
 export function getDisplayAddress(location: Location) {
-  if (location.privacyTier === 'Public') return `${location.address}, ${location.city}, ${location.state}`;
-  return `${location.neighborhood || `${location.city}, ${location.state}`} · Exact address hidden`;
+  return `${location.address}, ${location.city}, ${location.state}`;
 }
 
 export function getBookingMode(location: Location) {

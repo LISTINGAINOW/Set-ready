@@ -103,10 +103,10 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
                     {location.propertyType}
                   </span>
                   <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-xs font-medium text-black/70">
-                    ${location.price}/hour
+                    ${location.pricePerHour}/hour
                   </span>
                   <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-xs font-medium text-black/70">
-                    {location.privacyTier}
+                    {location.style}
                   </span>
                 </div>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">

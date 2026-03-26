@@ -21,7 +21,7 @@ type Booking = {
 
 type Location = {
   id: string;
-  title: string;
+  name: string;
   city: string;
   state: string;
 };
@@ -150,7 +150,7 @@ export default function ProducerBookingsPage() {
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-xl font-bold">
-                          {location ? location.title : `Location ${booking.locationId}`}
+                          {location ? location.name : `Location ${booking.locationId}`}
                         </h3>
                         <div className="flex items-center text-blue-500 mt-2">
                           <MapPin className="w-4 h-4 mr-2" />

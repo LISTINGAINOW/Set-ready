@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/toast';
 import { Location, VerificationBadge } from '@/types/location';
-import { Heart, MapPin, Star, Shield, Clock, Users, X } from 'lucide-react';
+import { Heart, MapPin, Star, Clock, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { isLocationFavorited, subscribeToFavorites, toggleFavoriteLocation } from '@/lib/favorites';
 import BookingCalendar from '@/components/BookingCalendar';
@@ -11,7 +11,7 @@ import BookingModal from '@/components/BookingModal';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
 import { getLocationBlockedDates } from '@/lib/availability';
-import { getBookingMode, getPrivacyLabel, getVerificationHighlights } from '@/lib/location-utils';
+import { getBookingMode, getVerificationHighlights } from '@/lib/location-utils';
 
 type VerifiedLocation = Location & {
   isVerified?: boolean;
@@ -41,7 +41,7 @@ function formatPropertyType(propertyType: string) {
 }
 
 function getPrimaryPhoto(location: Location) {
-  const firstPhoto = location.photos?.find((photo) => typeof photo === 'string' && photo.trim().length > 0);
+  const firstPhoto = location.images?.find((photo) => typeof photo === 'string' && photo.trim().length > 0);
   return firstPhoto || fallbackPhotos[location.propertyType] || fallbackPhotos.house;
 }
 
@@ -64,7 +64,6 @@ export default function LocationCard({ location }: LocationCardProps) {
   const heroPhoto = getPrimaryPhoto(location);
   const blockedDates = getLocationBlockedDates(location.id);
   const bookingMode = getBookingMode(location);
-  const privacyLabel = getPrivacyLabel(location.privacyTier);
   const verificationBadges = [...getVerificationHighlights(location), ...(location.verificationBadges || [])];
 
   return (
@@ -79,7 +78,7 @@ export default function LocationCard({ location }: LocationCardProps) {
               setIsFavorited(nextState);
               toast({
                 title: nextState ? 'Saved to favorites' : 'Removed from favorites',
-                description: nextState ? `${location.title} is ready when you want to come back to it.` : `${location.title} was removed from your saved list.`,
+                description: nextState ? `${location.name} is ready when you want to come back to it.` : `${location.name} was removed from your saved list.`,
                 variant: nextState ? 'success' : 'info',
               });
             }}
@@ -88,7 +87,7 @@ export default function LocationCard({ location }: LocationCardProps) {
                 ? 'border-blue-500 bg-blue-500 text-white shadow-[0_14px_28px_rgba(59,130,246,0.24)]'
                 : 'border-white/70 bg-white/92 text-slate-700 hover:border-blue-200 hover:text-blue-600'
             }`}
-            aria-label={isFavorited ? `Remove ${location.title} from favorites` : `Save ${location.title} to favorites`}
+            aria-label={isFavorited ? `Remove ${location.name} from favorites` : `Save ${location.name} to favorites`}
             aria-pressed={isFavorited}
           >
             <Heart className={`h-4 w-4 ${isFavorited ? 'fill-current' : ''}`} />
@@ -99,7 +98,7 @@ export default function LocationCard({ location }: LocationCardProps) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={heroPhoto}
-                alt={location.title}
+                alt={location.name}
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
@@ -108,7 +107,7 @@ export default function LocationCard({ location }: LocationCardProps) {
                 {formatPropertyType(location.propertyType)}
               </div>
               <div className="absolute bottom-4 left-4 inline-flex items-baseline gap-1 rounded-full bg-white/94 px-4 py-2 text-slate-950 backdrop-blur-md">
-                <span className="text-xl font-semibold tracking-[-0.04em]">${location.price}</span>
+                <span className="text-xl font-semibold tracking-[-0.04em]">${location.pricePerHour}</span>
                 <span className="text-sm text-slate-500">/ hour</span>
               </div>
             </div>
@@ -119,11 +118,11 @@ export default function LocationCard({ location }: LocationCardProps) {
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <Link href={`/locations/${location.id}`} className="line-clamp-2 text-2xl font-semibold tracking-[-0.04em] text-slate-950 transition hover:text-blue-600">
-                {location.title}
+                {location.name}
               </Link>
               <div className="mt-3 flex items-center gap-2 text-sm text-slate-500">
                 <MapPin className="h-4 w-4 text-blue-500" />
-                <span className="truncate">{location.neighborhood || `${location.city}, ${location.state}`}</span>
+                <span className="truncate">{`${location.city}, ${location.state}`}</span>
               </div>
             </div>
             <div className="inline-flex shrink-0 items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-950">
@@ -133,10 +132,6 @@ export default function LocationCard({ location }: LocationCardProps) {
           </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-sm font-medium text-blue-700">
-              <Shield className="h-4 w-4" />
-              {privacyLabel}
-            </span>
             <span className={`rounded-full px-3 py-1.5 text-sm ${bookingMode === 'instant' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
               {bookingMode === 'instant' ? 'Instant book' : 'Request to book'}
             </span>
@@ -162,7 +157,7 @@ export default function LocationCard({ location }: LocationCardProps) {
                 <Users className="h-4 w-4 text-blue-500" />
                 Capacity
               </div>
-              <p className="mt-2 font-semibold text-slate-950">{location.maxAttendees || location.maxCapacity || 8} guests</p>
+              <p className="mt-2 font-semibold text-slate-950">{location.maxGuests || location.maxCapacity || 8} guests</p>
             </div>
           </div>
 
@@ -185,7 +180,7 @@ export default function LocationCard({ location }: LocationCardProps) {
                 setIsReserveOpen(true);
                 toast({
                   title: 'Booking flow opened',
-                  description: `Pick a date for ${location.title} and continue when you're ready.`,
+                  description: `Pick a date for ${location.name} and continue when you're ready.`,
                   variant: 'info',
                 });
               }}
@@ -208,7 +203,7 @@ export default function LocationCard({ location }: LocationCardProps) {
           <div className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[32px] border border-black bg-white shadow-2xl">
             <div className="sticky top-0 z-10 flex items-center justify-between border-b border-black bg-white px-6 py-5">
               <div>
-                <h2 className="text-2xl font-bold text-black">Reserve {location.title}</h2>
+                <h2 className="text-2xl font-bold text-black">Reserve {location.name}</h2>
                 <p className="mt-1 text-sm text-black/60">
                   Select a date and time for this property, then continue to booking.
                 </p>
@@ -228,7 +223,7 @@ export default function LocationCard({ location }: LocationCardProps) {
                 bookings={location.bookings}
                 blockedDates={blockedDates}
                 minimumBookingHours={location.minimumBookingHours || 3}
-                hourlyRate={location.price}
+                hourlyRate={location.pricePerHour}
                 onSelectionChange={setSelection}
               />
 
@@ -245,13 +240,11 @@ export default function LocationCard({ location }: LocationCardProps) {
                   <div className="w-full sm:w-auto sm:min-w-[260px]">
                     <BookingModal
                       locationId={location.id}
-                      locationTitle={location.title}
-                      hourlyRate={location.price}
+                      locationTitle={location.name}
+                      hourlyRate={location.pricePerHour}
                       minimumBookingHours={location.minimumBookingHours || 3}
                       city={location.city}
                       state={location.state}
-                      neighborhood={location.neighborhood}
-                      privacyNotice={location.privacyNotice}
                       securityDeposit={location.securityDeposit}
                       securityDepositRequiredWhen={location.securityDepositRequiredWhen}
                       initialDate={selection.selectedDate}

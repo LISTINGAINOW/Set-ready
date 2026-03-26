@@ -132,7 +132,7 @@ export default function HostAvailabilityPage() {
               >
                 {listings.map((listing) => (
                   <option key={listing.id} value={listing.id} className="bg-slate-950">
-                    {listing.title}
+                    {listing.name}
                   </option>
                 ))}
               </select>
@@ -144,8 +144,8 @@ export default function HostAvailabilityPage() {
                 <div className="rounded-3xl border border-white/10 bg-black/30 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <p className="text-lg font-semibold text-white">{selectedListing.title}</p>
-                      <p className="mt-1 text-sm text-blue-100/70">{selectedListing.city}, {selectedListing.state} • ${selectedListing.price}/hr</p>
+                      <p className="text-lg font-semibold text-white">{selectedListing.name}</p>
+                      <p className="mt-1 text-sm text-blue-100/70">{selectedListing.city}, {selectedListing.state} • ${selectedListing.pricePerHour}/hr</p>
                     </div>
                     <div className="rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-200">
                       {blockedDates.length} blocked periods
@@ -156,7 +156,7 @@ export default function HostAvailabilityPage() {
                 <BookingCalendar
                   bookings={selectedListing.bookings}
                   blockedDates={blockedDates}
-                  hourlyRate={selectedListing.price}
+                  hourlyRate={selectedListing.pricePerHour}
                   minimumBookingHours={selectedListing.minimumBookingHours || 3}
                   mode="host"
                   onSelectionChange={setCalendarSelection}

@@ -79,10 +79,10 @@ export default async function SearchPage({
               <div className="p-6">
                 <div className="mb-3 flex items-start justify-between gap-3">
                   <h3 className="text-xl font-bold leading-tight text-black group-hover:text-blue-500">
-                    <HighlightText text={location.title} query={query} />
+                    <HighlightText text={location.name} query={query} />
                   </h3>
                   <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-black/80">
-                    {location.privacyTier}
+                    {location.style}
                   </span>
                 </div>
 
@@ -103,18 +103,20 @@ export default async function SearchPage({
                   ))}
                 </div>
 
-                <div className="mb-5 flex flex-wrap gap-2">
-                  {location.contentTypes.map((type) => (
-                    <span key={type} className="rounded-full border border-black px-3 py-1 text-xs uppercase tracking-wide text-blue-500">
-                      <HighlightText text={type} query={query} />
-                    </span>
-                  ))}
-                </div>
+                {(location.bestUses || []).length > 0 && (
+                  <div className="mb-5 flex flex-wrap gap-2">
+                    {(location.bestUses || []).map((use) => (
+                      <span key={use} className="rounded-full border border-black px-3 py-1 text-xs uppercase tracking-wide text-blue-500">
+                        <HighlightText text={use} query={query} />
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 <div className="flex items-center justify-between border-t border-black pt-4">
                   <div>
                     <p className="text-xs uppercase tracking-wide text-blue-600">From</p>
-                    <p className="text-2xl font-bold text-black">${location.price}<span className="text-sm text-black/60">/hr</span></p>
+                    <p className="text-2xl font-bold text-black">${location.pricePerHour}<span className="text-sm text-black/60">/hr</span></p>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-black/80">
                     <Shield className="h-4 w-4 text-blue-500" />

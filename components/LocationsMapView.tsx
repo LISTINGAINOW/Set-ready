@@ -79,7 +79,7 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
         fillOpacity: 1,
       }).addTo(map);
 
-      marker.bindTooltip(location.title, {
+      marker.bindTooltip(location.name, {
         direction: 'top',
         offset: [0, -12],
       });
@@ -153,15 +153,15 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
             <div className="overflow-hidden rounded-[24px] border border-black/10 bg-[#FAFAFA]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={selectedItem.location.photos?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'}
-                alt={selectedItem.location.title}
+                src={selectedItem.location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'}
+                alt={selectedItem.location.name}
                 className="h-48 w-full object-cover"
               />
             </div>
 
             <div>
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-xl font-semibold tracking-[-0.04em] text-black">{selectedItem.location.title}</h3>
+                <h3 className="text-xl font-semibold tracking-[-0.04em] text-black">{selectedItem.location.name}</h3>
                 <div className="inline-flex items-center gap-1 rounded-full border border-black/10 bg-[#FAFAFA] px-3 py-1 text-sm font-semibold text-black">
                   <Star className="h-4 w-4 fill-blue-500 text-blue-500" />
                   {(selectedItem.location.reviewRating || 4.8).toFixed(1)}
@@ -179,10 +179,10 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
                 {formatPropertyType(selectedItem.location.propertyType)}
               </span>
               <span className="rounded-full border border-black/10 bg-[#FAFAFA] px-3 py-1 text-sm text-black/70">
-                {selectedItem.location.privacyTier}
+                {selectedItem.location.style}
               </span>
               <span className="rounded-full border border-black/10 bg-[#FAFAFA] px-3 py-1 text-sm text-black/70">
-                ${selectedItem.location.price}/hour
+                ${selectedItem.location.pricePerHour}/hour
               </span>
             </div>
 
@@ -191,7 +191,7 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
             <div className="grid grid-cols-2 gap-3 text-sm text-black/70">
               <div className="rounded-2xl border border-black/10 bg-[#FAFAFA] px-4 py-3">
                 <p className="text-black/50">Capacity</p>
-                <p className="mt-1 font-semibold text-black">{selectedItem.location.maxAttendees || selectedItem.location.maxCapacity || 8} guests</p>
+                <p className="mt-1 font-semibold text-black">{selectedItem.location.maxGuests || selectedItem.location.maxCapacity || 8} guests</p>
               </div>
               <div className="rounded-2xl border border-black/10 bg-[#FAFAFA] px-4 py-3">
                 <p className="text-black/50">Minimum</p>
@@ -207,7 +207,7 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
                 View Details
               </a>
               <iframe
-                title={`${selectedItem.location.title} area map preview`}
+                title={`${selectedItem.location.name} area map preview`}
                 src={buildStaticMapUrl(selectedItem.coordinates.lat, selectedItem.coordinates.lng)}
                 className="h-28 w-full rounded-[20px] border border-black/10"
                 loading="lazy"
@@ -232,11 +232,11 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="font-semibold text-black">{location.title}</p>
+                          <p className="font-semibold text-black">{location.name}</p>
                           <p className="mt-1 text-sm text-black/60">{coordinates.areaLabel} · {location.city}</p>
                         </div>
                         <span className="rounded-full border border-black/10 bg-white px-2.5 py-1 text-xs font-semibold text-black/70">
-                          ${location.price}/hr
+                          ${location.pricePerHour}/hr
                         </span>
                       </div>
                     </button>

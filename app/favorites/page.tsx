@@ -20,7 +20,7 @@ const fallbackPhotos: Record<string, string> = {
 };
 
 function getPrimaryPhoto(location: Location) {
-  const firstPhoto = location.photos?.find((photo) => typeof photo === 'string' && photo.trim().length > 0);
+  const firstPhoto = location.images?.find((photo) => typeof photo === 'string' && photo.trim().length > 0);
   return firstPhoto || fallbackPhotos[location.propertyType] || fallbackPhotos.house;
 }
 
@@ -72,7 +72,7 @@ export default function FavoritesPage() {
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={getPrimaryPhoto(location)}
-                          alt={location.title}
+                          alt={location.name}
                           loading="lazy"
                           className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
                         />
@@ -80,7 +80,7 @@ export default function FavoritesPage() {
                         <div className="absolute bottom-4 left-4 rounded-2xl bg-white/94 px-4 py-2 backdrop-blur-md">
                           <p className="text-xs uppercase tracking-[0.2em] text-black/45">From</p>
                           <p className="text-2xl font-semibold tracking-[-0.04em] text-black">
-                            ${location.price}
+                            ${location.pricePerHour}
                             <span className="ml-1 text-sm font-medium text-black/60">/hour</span>
                           </p>
                         </div>
@@ -91,18 +91,18 @@ export default function FavoritesPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div>
                           <Link href={`/locations/${location.id}`} className="text-xl font-semibold tracking-[-0.03em] text-black transition hover:text-blue-600">
-                            {location.title}
+                            {location.name}
                           </Link>
                           <div className="mt-2 flex items-center gap-2 text-sm text-black/65">
                             <MapPin className="h-4 w-4 text-blue-500" />
-                            <span>{location.neighborhood || `${location.city}, ${location.state}`}</span>
+                            <span>{`${location.city}, ${location.state}`}</span>
                           </div>
                         </div>
                         <button
                           type="button"
                           onClick={() => setFavoriteIds(removeFavoriteLocation(location.id))}
                           className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-blue-200 bg-blue-50 text-blue-600 transition hover:border-blue-500 hover:bg-blue-500 hover:text-white"
-                          aria-label={`Remove ${location.title} from favorites`}
+                          aria-label={`Remove ${location.name} from favorites`}
                         >
                           <Trash2 className="h-5 w-5" />
                         </button>
@@ -112,7 +112,7 @@ export default function FavoritesPage() {
 
                       <div className="mt-5 flex flex-wrap gap-2">
                         <span className="rounded-full border border-blue-500 bg-white px-3 py-1 text-sm font-medium text-blue-600">
-                          {location.privacyTier}
+                          {location.style}
                         </span>
                         <span className="rounded-full border border-black/10 bg-[#FAFAFA] px-3 py-1 text-sm text-black/65">
                           {location.minimumBookingHours || 3} hour minimum

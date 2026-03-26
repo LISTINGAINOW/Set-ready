@@ -65,7 +65,7 @@ export default async function BookingConfirmationPage({
   const insuranceExpiry = typeof params.insuranceExpiry === 'string' ? params.insuranceExpiry : '';
 
   const location = locations.find((item) => item.id === locationId);
-  const propertyTitle = location?.title || 'Booked property';
+  const propertyTitle = location?.name || 'Booked property';
   const exactAddress = location?.address
     ? `${location.address}${location.city && location.state ? `, ${location.city}, ${location.state}` : ''}`
     : 'Exact address will be sent by the host shortly';

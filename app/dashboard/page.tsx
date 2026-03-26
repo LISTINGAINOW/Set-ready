@@ -12,10 +12,10 @@ import { getSavedSearchAlertLog, getSavedSearches, type SavedSearch } from '@/li
 
 interface Location {
   id: string;
-  title: string;
-  price: number;
-  privacyTier: string;
+  name: string;
+  pricePerHour: number;
   propertyType: string;
+  style: string;
 }
 
 interface Booking {
@@ -55,7 +55,7 @@ function getStats() {
         const start = parseInt(b.startTime.split(':')[0]);
         const end = parseInt(b.endTime.split(':')[0]);
         const hours = end - start;
-        estimatedRevenue += loc.price * (hours || 1);
+        estimatedRevenue += loc.pricePerHour * (hours || 1);
       }
     }
   });
@@ -67,7 +67,7 @@ function getStats() {
       const loc = locationMap.get(b.locationId);
       return {
         id: b.id,
-        locationName: loc?.title || 'Unknown',
+        locationName: loc?.name || 'Unknown',
         producer: b.name,
         date: b.date,
         status: b.status,

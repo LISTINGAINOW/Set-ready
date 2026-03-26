@@ -6,11 +6,10 @@ import { Bot, Loader2, MessageCircle, Send, Sparkles, User, X } from "lucide-rea
 
 type AssistantMatch = {
   id: string;
-  title: string;
+  name: string;
   description: string;
   city: string;
-  privacyTier: string;
-  price: number;
+  pricePerHour: number;
   link: string;
   score: number;
 };
@@ -178,9 +177,9 @@ export default function AIAssistant() {
                         <div key={match.id} className="rounded-2xl border border-white/10 bg-black/20 p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <h4 className="font-medium text-white">{match.title}</h4>
+                              <h4 className="font-medium text-white">{match.name}</h4>
                               <p className="mt-1 text-xs text-blue-500">
-                                {match.city} · {match.privacyTier} · ${match.price}/hr
+                                {match.city} · ${match.pricePerHour}/hr
                               </p>
                             </div>
                             <span className="rounded-full bg-blue-500/15 px-2 py-1 text-[10px] uppercase tracking-[0.16em] text-blue-500">

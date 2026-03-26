@@ -6,7 +6,7 @@ import { Bell, BookmarkPlus, GitCompareArrows, Shield } from 'lucide-react';
 import type { Location } from '@/types/location';
 import { clearComparedLocations, getComparedLocationIds, subscribeToComparedLocations } from '@/lib/compare';
 import { getSavedSearches, saveSearch } from '@/lib/saved-searches';
-import { getBookingMode, getComparisonAvailability, getPrivacyLabel } from '@/lib/location-utils';
+import { getBookingMode, getComparisonAvailability } from '@/lib/location-utils';
 
 export default function LocationsClientTools({ locations, searchParams }: { locations: Location[]; searchParams: Record<string, string | undefined> }) {
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -83,19 +83,19 @@ export default function LocationsClientTools({ locations, searchParams }: { loca
                   <th className="px-4 py-3 font-semibold">Size</th>
                   <th className="px-4 py-3 font-semibold">Amenities</th>
                   <th className="px-4 py-3 font-semibold">Availability</th>
-                  <th className="px-4 py-3 font-semibold">Privacy</th>
+                  <th className="px-4 py-3 font-semibold">Style</th>
                   <th className="px-4 py-3 font-semibold">Booking</th>
                 </tr>
               </thead>
               <tbody>
                 {compared.map((location) => (
                   <tr key={location.id} className="border-t border-black/10 text-sm text-black/75">
-                    <td className="px-4 py-4 font-semibold text-black">{location.title}</td>
-                    <td className="px-4 py-4">${location.price}/hr</td>
-                    <td className="px-4 py-4">{location.squareFootage ? `${location.squareFootage.toLocaleString()} sq ft` : 'Contact host'}</td>
+                    <td className="px-4 py-4 font-semibold text-black">{location.name}</td>
+                    <td className="px-4 py-4">${location.pricePerHour}/hr</td>
+                    <td className="px-4 py-4">{location.sqft ? `${location.sqft.toLocaleString()} sq ft` : 'Contact host'}</td>
                     <td className="px-4 py-4">{location.amenities.slice(0, 3).join(', ')}{location.amenities.length > 3 ? ` +${location.amenities.length - 3}` : ''}</td>
                     <td className="px-4 py-4">{getComparisonAvailability(location)}</td>
-                    <td className="px-4 py-4">{getPrivacyLabel(location.privacyTier)}</td>
+                    <td className="px-4 py-4">{location.style || location.propertyType}</td>
                     <td className="px-4 py-4 capitalize">{getBookingMode(location) === 'instant' ? 'Instant book' : 'Request to book'}</td>
                   </tr>
                 ))}

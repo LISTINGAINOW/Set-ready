@@ -6,21 +6,18 @@ import locationsData from '@/data/locations.json';
 
 interface Location {
   id: string;
-  title: string;
+  name: string;
   city: string;
   state: string;
-  price: number;
-  privacyTier: 'Private' | 'Public' | 'NDA Required';
+  pricePerHour: number;
+  style: string;
   propertyType: string;
-  contentTypes: string[];
   amenities: string[];
-  photos: string[];
+  images: string[];
 }
 
-const locations: Location[] = locationsData as Location[];
-
 export default function LocationsPage() {
-  const locations = locationsData as Location[];
+  const locations = locationsData as unknown as Location[];
 
   return (
     <div>
@@ -52,7 +49,7 @@ export default function LocationsPage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg. Price /hr</CardTitle>
             <div className="text-2xl font-bold">
-              ${Math.round(locations.reduce((sum, loc) => sum + loc.price, 0) / locations.length)}
+              ${Math.round(locations.reduce((sum, loc) => sum + loc.pricePerHour, 0) / locations.length)}
             </div>
           </CardHeader>
           <CardContent>
@@ -64,7 +61,7 @@ export default function LocationsPage() {
             <CardTitle className="text-sm font-medium">Most Common Tier</CardTitle>
             <div className="text-2xl font-bold">
               {(() => {
-                const tiers = locations.map(l => l.privacyTier);
+                const tiers = locations.map(l => l.style || 'Standard');
                 const counts: Record<string, number> = {};
                 tiers.forEach(t => counts[t] = (counts[t] || 0) + 1);
                 const max = Object.entries(counts).reduce((a, b) => a[1] > b[1] ? a : b, ['', 0]);
@@ -105,20 +102,16 @@ export default function LocationsPage() {
                       </div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-medium">{location.title}</div>
+                      <div className="font-medium">{location.name}</div>
                       <div className="text-sm text-blue-500">{location.city}, {location.state}</div>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="font-bold">${location.price}</div>
+                      <div className="font-bold">${location.pricePerHour}</div>
                       <div className="text-sm text-blue-500">per hour</div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        location.privacyTier === 'Public' ? 'bg-blue-100 text-blue-700' :
-                        location.privacyTier === 'NDA Required' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-slate-100 text-slate-700'
-                      }`}>
-                        {location.privacyTier}
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                        {location.style || 'Standard'}
                       </span>
                     </td>
                     <td className="py-3 px-4">

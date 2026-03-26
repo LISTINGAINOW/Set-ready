@@ -40,7 +40,7 @@ function hashString(input: string) {
 }
 
 export function getLocationCoordinates(location: Location): LocationCoordinates {
-  const searchText = [location.title, location.address, location.neighborhood, location.city, location.state]
+  const searchText = [location.name, location.address, location.city, location.state]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();
@@ -48,7 +48,7 @@ export function getLocationCoordinates(location: Location): LocationCoordinates 
   const override = keywordOverrides.find(({ keywords }) => keywords.some((keyword) => searchText.includes(keyword)));
   const base = override?.coords || cityCoordinateMap[`${location.city}, ${location.state}`] || { lat: 34.0522, lng: -118.2437, areaLabel: location.city };
 
-  const seed = hashString(`${location.id}-${location.title}-${location.address}`);
+  const seed = hashString(`${location.id}-${location.name}-${location.address}`);
   const latOffset = ((seed % 11) - 5) * 0.004;
   const lngOffset = (((Math.floor(seed / 11)) % 11) - 5) * 0.004;
 

@@ -9,21 +9,16 @@ export function normalizeSearchValue(value: string) {
 
 export function getLocationSearchText(location: Location) {
   return [
-    location.title,
+    location.name,
     location.city,
     location.state,
     location.address,
     location.description,
-    location.neighborhood,
-    location.privacyTier,
     location.propertyType,
+    location.style,
     location.amenities.join(' '),
-    location.contentTypes.join(' '),
-    (location.specialFeatures || []).join(' '),
-    (location.features || []).join(' '),
-    (location.tags || []).join(' '),
-    (location.styleTags || []).join(' '),
-    (location.accessOptions || []).join(' '),
+    (location.bestUses || []).join(' '),
+    location.vibe || '',
   ]
     .filter(Boolean)
     .join(' ')

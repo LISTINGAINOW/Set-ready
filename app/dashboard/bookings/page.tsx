@@ -93,7 +93,7 @@ export default function BookingsPage() {
 
   const getLocationTitle = (locationId: string) => {
     const loc = locations.find(l => l.id === locationId);
-    return loc?.title || 'Unknown Location';
+    return loc?.name || 'Unknown Location';
   };
 
   const formatDate = (dateString: string) => {

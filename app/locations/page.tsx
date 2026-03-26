@@ -2,16 +2,15 @@ import type { Metadata } from 'next';
 import LocationCard from '@/components/LocationCard';
 import LocationGrid from '@/components/LocationGrid';
 import LocationsMapView from '@/components/LocationsMapView';
-import { ContentType, Location } from '@/types/location';
+import { Location } from '@/types/location';
 import locationsData from '@/data/locations.json';
 import { getLocationSearchText } from '@/lib/search';
 import LocationsClientTools from '@/components/LocationsClientTools';
 
 type SearchParams = {
   propertyType?: string;
-  privacyTier?: string;
   amenities?: string;
-  contentTypes?: string;
+  bestUses?: string;
   search?: string;
   priceRange?: string;
   view?: string;
@@ -57,7 +56,6 @@ export const metadata: Metadata = {
 };
 
 const propertyTypeChips = ['House', 'Studio', 'Warehouse', 'Loft', 'Cabin', 'Penthouse', 'Apartment'];
-const privacyTierChips = ['Public', 'Private', 'NDA Required'];
 const priceRangeChips = ['Under $200', '$200-$400', '$400+'];
 
 function matchesPriceRange(price: number, priceRange?: string) {
@@ -74,11 +72,7 @@ function filterLocations(locations: Location[], filters: SearchParams) {
       return false;
     }
 
-    if (filters.privacyTier && location.privacyTier !== filters.privacyTier) {
-      return false;
-    }
-
-    if (!matchesPriceRange(location.price, filters.priceRange)) {
+    if (!matchesPriceRange(location.pricePerHour, filters.priceRange)) {
       return false;
     }
 
@@ -88,8 +82,8 @@ function filterLocations(locations: Location[], filters: SearchParams) {
       }
     }
 
-    if (filters.contentTypes && filters.contentTypes !== 'Content Types') {
-      if (!location.contentTypes.includes(filters.contentTypes as ContentType)) {
+    if (filters.bestUses && filters.bestUses !== 'Best Uses') {
+      if (!(location.bestUses || []).includes(filters.bestUses)) {
         return false;
       }
     }
@@ -145,7 +139,7 @@ export default async function LocationsPage({
   const currentView = params.view === 'map' ? 'map' : 'grid';
 
   const amenitiesList = ['Parking', 'WiFi', 'Lighting', 'Changing Room', 'Shower', 'Kitchen', 'Pool', 'Makeup Station', 'Loading Dock', 'Fireplace', 'Outdoor Shower'];
-  const contentTypesList = ['Photo shoot', 'Video production', 'Commercial', 'Lifestyle', 'Editorial'];
+  const bestUsesList = ['Film Production', 'Photo Shoot', 'Events', 'Luxury Retreat', 'Corporate Retreat'];
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-white px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
@@ -174,20 +168,6 @@ export default async function LocationsPage({
                       href={buildChipHref(params, 'propertyType', chip)}
                       label={chip}
                       active={params.propertyType === chip}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Privacy tier</p>
-                <div className="mt-3 flex flex-wrap gap-3">
-                  {privacyTierChips.map((chip) => (
-                    <FilterChip
-                      key={chip}
-                      href={buildChipHref(params, 'privacyTier', chip)}
-                      label={chip}
-                      active={params.privacyTier === chip}
                     />
                   ))}
                 </div>
@@ -236,7 +216,6 @@ export default async function LocationsPage({
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
                 <input type="hidden" name="propertyType" value={params.propertyType || ''} />
-                <input type="hidden" name="privacyTier" value={params.privacyTier || ''} />
                 <input type="hidden" name="priceRange" value={params.priceRange || ''} />
                 <input type="hidden" name="view" value={currentView === 'map' ? 'map' : ''} />
                 <select
@@ -250,13 +229,13 @@ export default async function LocationsPage({
                   ))}
                 </select>
                 <select
-                  name="contentTypes"
-                  defaultValue={params.contentTypes || 'Content Types'}
+                  name="bestUses"
+                  defaultValue={params.bestUses || 'Best Uses'}
                   className="min-h-[48px] rounded-2xl border border-black bg-white px-4 py-3 text-sm text-black outline-none focus:border-blue-500"
                 >
-                  <option> Content Types </option>
-                  {contentTypesList.map((type) => (
-                    <option key={type} value={type}>{type}</option>
+                  <option> Best Uses </option>
+                  {bestUsesList.map((use) => (
+                    <option key={use} value={use}>{use}</option>
                   ))}
                 </select>
                 <input

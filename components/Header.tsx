@@ -13,6 +13,7 @@ const navItems = [
   { href: '/blog', label: 'Blog' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/list-property', label: 'Host' },
+  { href: '/free-listing', label: 'Free listing' },
 ];
 
 export default function Header() {

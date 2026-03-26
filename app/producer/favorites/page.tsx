@@ -6,14 +6,13 @@ import Link from 'next/link';
 
 type Location = {
   id: string;
-  title: string;
+  name: string;
   city: string;
   state: string;
   description: string;
-  price: number;
-  privacyTier: 'Private' | 'Public' | 'NDA Required';
+  pricePerHour: number;
+  style: string;
   propertyType: string;
-  contentTypes: string[];
   amenities: string[];
 };
 
@@ -80,13 +79,6 @@ export default function ProducerFavoritesPage() {
       {favoriteLocations.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {favoriteLocations.map(location => {
-            const privacyColorMap = {
-              'Private': 'bg-green-900/30 text-green-400',
-              'Public': 'bg-yellow-900/30 text-yellow-400',
-              'NDA Required': 'bg-red-900/30 text-red-400',
-            } as const;
-            const privacyColor = privacyColorMap[location.privacyTier];
-
             return (
               <div key={location.id} className="rounded-xl overflow-hidden border border-blue-200 bg-black/80 hover:bg-black transition-colors">
                 {/* Image placeholder */}
@@ -96,9 +88,9 @@ export default function ProducerFavoritesPage() {
 
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="text-xl font-bold">{location.title}</h3>
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${privacyColor}`}>
-                      {location.privacyTier}
+                    <h3 className="text-xl font-bold">{location.name}</h3>
+                    <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">
+                      {location.style}
                     </span>
                   </div>
 
@@ -112,7 +104,7 @@ export default function ProducerFavoritesPage() {
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center">
                       <DollarSign className="w-5 h-5 text-green-400 mr-1" />
-                      <span className="text-2xl font-bold">${location.price}</span>
+                      <span className="text-2xl font-bold">${location.pricePerHour}</span>
                       <span className="text-blue-500 ml-1">/hour</span>
                     </div>
                   </div>
@@ -120,10 +112,10 @@ export default function ProducerFavoritesPage() {
                   <div className="mt-6 pt-6 border-t border-blue-200">
                     <div className="flex items-center mb-3">
                       <Shield className="w-4 h-4 mr-2 text-blue-500" />
-                      <span className="text-sm text-blue-500">Content types allowed:</span>
+                      <span className="text-sm text-blue-500">Amenities:</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {location.contentTypes.map(type => (
+                      {location.amenities.slice(0, 3).map(type => (
                         <span key={type} className="px-3 py-1 bg-black rounded-full text-sm">
                           {type}
                         </span>

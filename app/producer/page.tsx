@@ -17,10 +17,10 @@ type Booking = {
 
 type Location = {
   id: string;
-  title: string;
+  name: string;
   city: string;
   state: string;
-  price: number;
+  pricePerHour: number;
 };
 
 type Favorite = {
@@ -71,7 +71,7 @@ export default function ProducerOverview() {
         bookings.forEach((b) => {
           if (b.status === 'confirmed') {
             const loc = locations.find((l) => l.id === b.locationId);
-            if (loc) spent += loc.price * 4;
+            if (loc) spent += loc.pricePerHour * 4;
           }
         });
 

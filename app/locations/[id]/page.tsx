@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { CancellationPolicyTier, Location, VerificationBadge } from '@/types/location';
-import { MapPin, DollarSign, Shield, Home, Users, Mail, Receipt, Check, X as XIcon, Siren, Clock3, BadgeCheck, House } from 'lucide-react';
+import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, Siren, Clock3, BadgeCheck, House } from 'lucide-react';
 import BookingSection from '@/components/BookingSection';
 import BookingModal from '@/components/BookingModal';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -12,7 +12,7 @@ import locationsData from '@/data/locations.json';
 import reviewsData from '@/data/reviews.json';
 import { getLocationBlockedDates } from '@/lib/availability';
 import type { Review } from '@/types/review';
-import { getBookingMode, getDisplayAddress, getPrivacyDescription, getPrivacyLabel, getVerificationHighlights } from '@/lib/location-utils';
+import { getBookingMode, getDisplayAddress, getVerificationHighlights } from '@/lib/location-utils';
 import { calculateBookingPricing, MINIMUM_BOOKING_TOTAL, PRODUCER_FEE_RATE } from '@/lib/pricing';
 
 const AreaMap = dynamic(() => import('@/components/AreaMap'), {
@@ -38,7 +38,7 @@ async function getLocation(id: string): Promise<Location | null> {
 }
 
 function getPrimaryPhoto(location: Location) {
-  return location.photos?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80';
+  return location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80';
 }
 
 const cancellationPolicyContent: Record<CancellationPolicyTier, { summary: string; refundWindow: string; details: string }> = {
@@ -59,13 +59,13 @@ const cancellationPolicyContent: Record<CancellationPolicyTier, { summary: strin
   },
 };
 
-function getDefaultHouseRules(location: Location, maxCapacity?: number) {
+function getDefaultHouseRules(location: Location, maxGuests?: number) {
   return [
     'No smoking indoors unless explicitly approved by the host.',
     'No parties or unregistered guests without prior approval.',
     'Respect quiet hours and keep exterior noise controlled after 10 PM.',
     'Leave the space photo-ready and clean up gear, props, and trash before wrap.',
-    `Maximum occupancy: ${typeof maxCapacity === 'number' ? `${maxCapacity} people` : 'Follow host guidance'}${typeof maxCapacity === 'number' ? ' unless the host approves a larger crew.' : '.'}`,
+    `Maximum occupancy: ${typeof maxGuests === 'number' ? `${maxGuests} people` : 'Follow host guidance'}${typeof maxGuests === 'number' ? ' unless the host approves a larger crew.' : '.'}`,
     location.parkingDetails || 'Parking instructions are shared after booking confirmation.',
   ];
 }
@@ -78,29 +78,21 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
     notFound();
   }
 
-  const privacyColorMap = {
-    Private: 'bg-blue-600/10 text-blue-600 border border-blue-500',
-    Public: 'bg-blue-600/10 text-blue-600 border border-blue-500',
-    'NDA Required': 'bg-blue-600/10 text-blue-600 border border-blue-500',
-  } as const;
-  const privacyColor = privacyColorMap[location.privacyTier];
-  const privacyLabel = getPrivacyLabel(location.privacyTier);
-  const privacyDescription = getPrivacyDescription(location.privacyTier);
   const displayAddress = getDisplayAddress(location);
   const bookingMode = getBookingMode(location);
   const verificationBadges = [...getVerificationHighlights(location), ...(location.verificationBadges || [])];
   const minimumBookingHours = location.minimumBookingHours || 3;
   const blockedDates = getLocationBlockedDates(location.id);
-  const maxCapacity = location.maxCapacity ?? location.maxAttendees;
-  const sampleBaseRate = location.price * minimumBookingHours;
+  const maxGuestsValue = location.maxGuests ?? location.maxCapacity;
+  const sampleBaseRate = location.pricePerHour * minimumBookingHours;
   const samplePricing = calculateBookingPricing(sampleBaseRate);
   const sampleServiceFee = samplePricing.producerFee;
   const sampleTotal = samplePricing.total;
-  const gallery = location.photos?.length ? location.photos : [getPrimaryPhoto(location)];
+  const gallery = location.images?.length ? location.images : [getPrimaryPhoto(location)];
   const locationReviews = reviews.filter((review) => review.propertyId === location.id);
   const cancellationPolicyTier = location.cancellationPolicy || 'Moderate';
   const cancellationPolicy = cancellationPolicyContent[cancellationPolicyTier];
-  const houseRules = location.houseRules?.length ? location.houseRules : getDefaultHouseRules(location, maxCapacity);
+  const houseRules = location.houseRules?.length ? location.houseRules : getDefaultHouseRules(location, maxGuestsValue);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
@@ -112,11 +104,11 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
         <div className="lg:col-span-2">
           <div className="mb-8">
-            <PhotoGallery photos={gallery} title={location.title} />
+            <PhotoGallery photos={gallery} title={location.name} />
           </div>
 
           <div className="rounded-2xl border border-black bg-white/50 p-5 sm:p-8">
-            <h1 className="mb-4 text-3xl font-bold text-black sm:text-4xl">{location.title}</h1>
+            <h1 className="mb-4 text-3xl font-bold text-black sm:text-4xl">{location.name}</h1>
             <div className="mb-6 flex items-start text-black/60">
               <MapPin className="mr-2 mt-0.5 h-5 w-5 shrink-0" />
               <span className="text-sm sm:text-base">
@@ -140,7 +132,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
                   <span className="text-black/60">Price</span>
                 </div>
                 <div className="text-3xl font-bold text-black">
-                  ${location.price}
+                  ${location.pricePerHour}
                   <span className="text-lg text-black/60">/hour</span>
                 </div>
               </div>
@@ -153,21 +145,20 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               </div>
               <div className="rounded-xl bg-white/50 p-5">
                 <div className="mb-2 flex items-center">
-                  <Shield className="mr-2 h-5 w-5 text-blue-500" />
-                  <span className="text-black/60">Privacy Tier</span>
-                </div>
-                <div className={`inline-block rounded-full px-4 py-2 text-sm font-bold ${privacyColor}`}>
-                  {privacyLabel}
-                </div>
-                <p className="mt-3 text-sm text-black/70">{privacyDescription}</p>
-              </div>
-              <div className="rounded-xl bg-white/50 p-5">
-                <div className="mb-2 flex items-center">
                   <Users className="mr-2 h-5 w-5 text-blue-500" />
-                  <span className="text-black/60">Allowed Content</span>
+                  <span className="text-black/60">Style</span>
                 </div>
-                <div className="text-base font-semibold text-black sm:text-lg">{location.contentTypes.join(', ')}</div>
+                <div className="text-base font-semibold text-black sm:text-lg">{location.style}</div>
               </div>
+              {(location.bestUses || []).length > 0 && (
+                <div className="rounded-xl bg-white/50 p-5">
+                  <div className="mb-2 flex items-center">
+                    <Users className="mr-2 h-5 w-5 text-blue-500" />
+                    <span className="text-black/60">Best Uses</span>
+                  </div>
+                  <div className="text-base font-semibold text-black sm:text-lg">{(location.bestUses || []).join(', ')}</div>
+                </div>
+              )}
             </div>
 
             <div className="mb-10 rounded-2xl border border-blue-500/20 bg-blue-500/10 p-5 sm:p-6">
@@ -208,8 +199,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <div className="mb-10">
               <h2 className="mb-4 text-2xl font-bold text-black">About This Location</h2>
               <p className="text-black/80">
-                This location is well suited for {location.contentTypes.join(', ')} productions. The {location.propertyType} delivers a{' '}
-                {location.privacyTier.toLowerCase()} booking experience with amenities like {location.amenities.slice(0, 3).join(', ')}. Located in{' '}
+                This {location.style} {location.propertyType} is well suited for {(location.bestUses || []).join(', ')} with amenities like {location.amenities.slice(0, 3).join(', ')}. Located in{' '}
                 {location.city}, {location.state}, it offers a professional setup for crews that need clarity and privacy.
               </p>
             </div>
@@ -293,18 +283,16 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
             <div className="mb-10">
               <h2 className="mb-4 text-2xl font-bold text-black">Location</h2>
-              <AreaMap city={location.city} state={location.state} neighborhood={location.neighborhood} privacyNotice={location.privacyNotice} />
+              <AreaMap city={location.city} state={location.state} />
             </div>
 
             <BookingSection
               locationId={location.id}
-              locationTitle={location.title}
-              hourlyRate={location.price}
+              locationTitle={location.name}
+              hourlyRate={location.pricePerHour}
               minimumBookingHours={minimumBookingHours}
               city={location.city}
               state={location.state}
-              neighborhood={location.neighborhood}
-              privacyNotice={location.privacyNotice}
               securityDeposit={location.securityDeposit}
               securityDepositRequiredWhen={location.securityDepositRequiredWhen}
               bookings={location.bookings}
@@ -327,13 +315,11 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <p className="mb-6 text-sm text-black/60 sm:text-base">{bookingMode === 'instant' ? 'This host allows fast-track checkout on approved dates.' : 'Choose from the calendar below the map, or send a general booking request here.'}</p>
             <BookingModal
               locationId={location.id}
-              locationTitle={location.title}
-              hourlyRate={location.price}
+              locationTitle={location.name}
+              hourlyRate={location.pricePerHour}
               minimumBookingHours={minimumBookingHours}
               city={location.city}
               state={location.state}
-              neighborhood={location.neighborhood}
-              privacyNotice={location.privacyNotice}
               securityDeposit={location.securityDeposit}
               securityDepositRequiredWhen={location.securityDepositRequiredWhen}
             />
@@ -361,7 +347,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               </li>
               <li className="flex items-center justify-between gap-4">
                 <span className="text-black/60">Max capacity</span>
-                <span className="text-right font-semibold text-black">{typeof maxCapacity === 'number' ? `${maxCapacity} people` : 'Contact host'}</span>
+                <span className="text-right font-semibold text-black">{typeof maxGuestsValue === 'number' ? `${maxGuestsValue} people` : 'Contact host'}</span>
               </li>
               <li className="flex items-center justify-between gap-4">
                 <span className="text-black/60">Cancellation</span>

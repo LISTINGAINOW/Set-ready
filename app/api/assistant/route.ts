@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import locations from "@/data/locations.json";
 
+
+
 const GENERIC_TERMS = new Set([
   "location",
   "locations",
@@ -53,7 +55,8 @@ const keywordAliases: Record<string, string[]> = {
   rooftop: ["rooftop", "penthouse"],
 };
 
-type LocationRecord = (typeof locations)[number];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LocationRecord = any;
 
 type ParsedRequest = {
   normalized: string;
@@ -66,19 +69,18 @@ function normalize(input: string) {
 }
 
 function collectHaystack(location: LocationRecord) {
+  const loc = location as any;
   return normalize(
     [
-      location.title,
-      location.city,
-      location.state,
-      location.description,
-      location.propertyType,
-      location.privacyTier,
-      location.neighborhood,
-      ...(location.amenities || []),
-      ...(location.contentTypes || []),
-      ...(location.specialFeatures || []),
-      ...(location.tags || []),
+      loc.name,
+      loc.city,
+      loc.state,
+      loc.description,
+      loc.propertyType,
+      loc.style,
+      loc.vibe,
+      ...(loc.amenities || []),
+      ...(loc.bestUses || []),
     ].join(" ")
   );
 }
@@ -132,7 +134,7 @@ function scoreLocation(location: LocationRecord, parsed: ParsedRequest) {
   }
 
   if (parsed.normalized.includes("private") || parsed.normalized.includes("discreet") || parsed.normalized.includes("secluded")) {
-    if (location.privacyTier !== "Public") {
+    if (/private|secluded|gated|exclusive/.test(haystack)) {
       score += 4;
     }
   }
@@ -155,11 +157,10 @@ function scoreLocation(location: LocationRecord, parsed: ParsedRequest) {
 function summarize(location: LocationRecord) {
   return {
     id: location.id,
-    title: location.title,
+    name: location.name,
     description: location.description,
     city: location.city,
-    privacyTier: location.privacyTier,
-    price: location.price,
+    pricePerHour: location.pricePerHour,
     link: `/locations/${location.id}`,
   };
 }
@@ -185,7 +186,7 @@ export async function POST(request: NextRequest) {
 
     const ranked = locations
       .map((location) => ({ ...summarize(location), score: scoreLocation(location, parsed) }))
-      .sort((a, b) => b.score - a.score || a.price - b.price);
+      .sort((a, b) => b.score - a.score || a.pricePerHour - b.pricePerHour);
 
     const strongMatches = ranked.filter((location) => location.score > 0).slice(0, 3);
 

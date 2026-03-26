@@ -2,7 +2,7 @@ import bookingsData from '@/data/bookings.json';
 import locationsData from '@/data/locations.json';
 import type { Booking, Location } from '@/types';
 
-export type HostListing = Location & {
+export type HostListing = Omit<Location, 'views'> & {
   active: boolean;
   views: number;
   lastUpdated: string;
@@ -55,7 +55,7 @@ export function getHostBookings(): HostBooking[] {
       const hours = getBookingHours(booking.startTime, booking.endTime);
       return {
         ...booking,
-        payout: listing.price * hours * HOST_CUT,
+        payout: listing.pricePerHour * hours * HOST_CUT,
         guestCount: 2 + (index % 5),
         requestAge: `${1 + index}d ago`,
       };
