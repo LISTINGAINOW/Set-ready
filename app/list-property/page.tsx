@@ -401,7 +401,10 @@ export default function ListPropertyPage() {
                     <div>
                       <label className="mb-2 block text-sm font-medium">TOT License Number</label>
                       <input className={inputClassName} value={form.totLicenseNumber} onChange={(e) => updateField('totLicenseNumber', sanitizeInput(e.target.value))} placeholder="e.g. TOT-2024-001" />
-                      <p className="mt-2 text-sm text-black/60">Transient Occupancy Tax certificate number (required in LA, SF, etc.).</p>
+                      <p className="mt-2 text-sm text-black/60">
+                        Transient Occupancy Tax certificate — required in most CA cities for short-term rentals.{' '}
+                        <a href="/permits" className="font-medium text-blue-600 underline hover:text-blue-800">What is TOT &amp; how do I get one? →</a>
+                      </p>
                     </div>
                     <div>
                       <label className="mb-2 block text-sm font-medium">Business License Number</label>
