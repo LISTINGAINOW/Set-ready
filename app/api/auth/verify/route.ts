@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readUsers, sanitizeUser, writeUsers } from '@/lib/auth';
+import { findUserByEmail, sanitizeUser, verifyUserEmail } from '@/lib/auth';
 import { createSessionCookieValue, getClientIp, sanitizeEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
@@ -19,15 +19,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    const users = readUsers();
-    const index = users.findIndex((user) => user.email.toLowerCase() === email.toLowerCase());
+    const user = await findUserByEmail(email);
 
-    if (index === -1) {
+    if (!user) {
       writeAuditLog('auth.verify.failed', { ip, email, reason: 'user_not_found' });
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
-
-    const user = users[index];
 
     if (user.emailVerified) {
       const response = NextResponse.json({ message: 'Email already verified', user: sanitizeUser(user) });
@@ -50,15 +47,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid verification link' }, { status: 400 });
     }
 
-    const updatedUser = {
-      ...user,
-      emailVerified: true,
-      verificationToken: undefined,
-      verificationSentAt: undefined,
-    };
+    const updatedUser = await verifyUserEmail(email);
+    if (!updatedUser) {
+      return NextResponse.json({ error: 'Failed to verify email' }, { status: 500 });
+    }
 
-    users[index] = updatedUser;
-    writeUsers(users);
     writeAuditLog('auth.verify.success', { ip, email, userId: user.id });
 
     const response = NextResponse.json({

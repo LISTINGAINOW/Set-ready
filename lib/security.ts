@@ -115,8 +115,9 @@ export function validateCsrf(request: NextRequest) {
 export function recordAuthRateLimit(ip: string, route: string) {
   ensureAuditDir();
   const now = Date.now();
-  const windowMs = 15 * 60 * 1000;
-  const maxAttempts = route.includes('/login') ? 10 : 20;
+  const isLogin = route.includes('/login');
+  const windowMs = isLogin ? 15 * 60 * 1000 : 60 * 60 * 1000;
+  const maxAttempts = isLogin ? 5 : 3;
 
   let store: Record<string, number[]> = {};
   if (existsSync(RATE_LIMIT_FILE)) {

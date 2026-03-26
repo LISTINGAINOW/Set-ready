@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
-import { hashPassword, readUsers, sanitizeUser, UserRecord, writeUsers } from '@/lib/auth';
+import { createUser, findUserByEmail, hashPassword, sanitizeUser, UserRecord } from '@/lib/auth';
 import { PASSWORD_RULES_MESSAGE, createSessionCookieValue, getClientIp, isStrongPassword, isValidEmail, recordAuthRateLimit, sanitizeEmail, sanitizeInput, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
 import { sendVerificationEmail } from '@/lib/email';
 
@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: PASSWORD_RULES_MESSAGE }, { status: 400 });
     }
 
-    const users = readUsers();
-    if (users.find((u) => u.email.toLowerCase() === email.toLowerCase())) {
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
       writeAuditLog('auth.register.duplicate', { ip, email });
       return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
     }
@@ -63,8 +63,7 @@ export async function POST(request: NextRequest) {
       createdAt: new Date().toISOString(),
     };
 
-    users.push(newUser);
-    writeUsers(users);
+    await createUser(newUser);
     writeAuditLog('auth.register.success', { ip, email, userId: newUser.id });
 
     const verificationLink = `/verify-email?email=${encodeURIComponent(newUser.email)}&token=${verificationToken}`;

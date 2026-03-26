@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { hashPassword, readUsers, sanitizeUser } from '@/lib/auth';
+import { findUserByEmail, sanitizeUser, verifyPassword } from '@/lib/auth';
 import { createSessionCookieValue, getClientIp, isValidEmail, recordAuthRateLimit, sanitizeEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
@@ -31,16 +31,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 });
     }
 
-    const users = readUsers();
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    const user = await findUserByEmail(email);
 
     if (!user) {
       writeAuditLog('auth.login.failed', { ip, email, reason: 'unknown_user' });
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const passwordHash = hashPassword(password);
-    if (user.passwordHash !== passwordHash) {
+    if (!verifyPassword(password, user.passwordHash)) {
       writeAuditLog('auth.login.failed', { ip, email, userId: user.id, reason: 'bad_password' });
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }

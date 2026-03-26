@@ -1,10 +1,5 @@
-import { createHash } from 'crypto';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
-
-const DATA_DIR = '/tmp';
-const USERS_FILE = join(DATA_DIR, 'users.json');
-const STATIC_SALT = 'discreet-set-static-salt';
+import bcrypt from 'bcryptjs';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export interface UserRecord {
   id: string;
@@ -19,44 +14,66 @@ export interface UserRecord {
 }
 
 export function hashPassword(password: string): string {
-  const hash = createHash('sha256');
-  hash.update(password + STATIC_SALT);
-  return hash.digest('hex');
+  return bcrypt.hashSync(password, 10);
 }
 
-function normalizeUser(user: any): UserRecord {
-  return {
-    ...user,
-    emailVerified: Boolean(user.emailVerified),
-    verificationToken: user.verificationToken,
-    verificationSentAt: user.verificationSentAt,
-  };
-}
-
-export function readUsers(): UserRecord[] {
-  if (!existsSync(USERS_FILE)) {
-    const seedPath = join(process.cwd(), 'data', 'users.json');
-    if (existsSync(seedPath)) {
-      const seedData = readFileSync(seedPath, 'utf-8');
-      const users = JSON.parse(seedData).map(normalizeUser);
-      writeUsers(users);
-      return users;
-    }
-    return [];
-  }
-
-  const data = readFileSync(USERS_FILE, 'utf-8');
-  return JSON.parse(data).map(normalizeUser);
-}
-
-export function writeUsers(users: UserRecord[]) {
-  if (!existsSync(DATA_DIR)) {
-    mkdirSync(DATA_DIR, { recursive: true });
-  }
-  writeFileSync(USERS_FILE, JSON.stringify(users, null, 2), 'utf-8');
+export function verifyPassword(password: string, hash: string): boolean {
+  return bcrypt.compareSync(password, hash);
 }
 
 export function sanitizeUser(user: UserRecord) {
   const { passwordHash, verificationToken, ...safeUser } = user;
   return safeUser;
+}
+
+function dbRowToUserRecord(row: Record<string, unknown>): UserRecord {
+  return {
+    id: String(row.id),
+    firstName: String(row.first_name),
+    lastName: String(row.last_name),
+    email: String(row.email),
+    passwordHash: String(row.password_hash),
+    emailVerified: Boolean(row.email_verified),
+    verificationToken: row.verification_token ? String(row.verification_token) : undefined,
+    verificationSentAt: row.verification_sent_at ? String(row.verification_sent_at) : undefined,
+    createdAt: String(row.created_at),
+  };
+}
+
+export async function findUserByEmail(email: string): Promise<UserRecord | null> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('email', email.toLowerCase())
+    .maybeSingle();
+  if (error || !data) return null;
+  return dbRowToUserRecord(data);
+}
+
+export async function createUser(user: UserRecord): Promise<void> {
+  const supabase = createAdminClient();
+  const { error } = await supabase.from('users').insert({
+    id: user.id,
+    email: user.email.toLowerCase(),
+    first_name: user.firstName,
+    last_name: user.lastName,
+    password_hash: user.passwordHash,
+    email_verified: user.emailVerified,
+    verification_token: user.verificationToken ?? null,
+    verification_sent_at: user.verificationSentAt ?? null,
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function verifyUserEmail(email: string): Promise<UserRecord | null> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from('users')
+    .update({ email_verified: true, verification_token: null, verification_sent_at: null })
+    .eq('email', email.toLowerCase())
+    .select()
+    .maybeSingle();
+  if (error || !data) return null;
+  return dbRowToUserRecord(data);
 }
