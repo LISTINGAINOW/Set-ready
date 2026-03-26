@@ -3,13 +3,19 @@ import Stripe from 'stripe';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-02-25.clover',
+    })
+  : null;
 
 const BOOKINGS_PATH = path.join(process.cwd(), 'data', 'bookings.json');
 
 export async function POST(request: NextRequest) {
+  if (!stripe) {
+    return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
+  }
+
   const body = await request.text();
   const signature = request.headers.get('stripe-signature');
 

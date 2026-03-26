@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-02-25.clover',
-});
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-02-25.clover',
+    })
+  : null;
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,6 +16,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
+      );
+    }
+
+    if (!stripe) {
+      return NextResponse.json(
+        { error: 'Stripe not configured' },
+        { status: 503 }
       );
     }
 
