@@ -198,7 +198,7 @@ export default function CitiesPage() {
             {allCities.map((city) => (
               <Link
                 key={city.slug}
-                href={`/locations/city/${city.slug}`}
+                href={`/cities/${city.slug}`}
                 className="group flex flex-col rounded-[24px] border border-black bg-white p-6 shadow-[0_8px_24px_rgba(15,23,42,0.05)] transition hover:border-blue-500 hover:shadow-[0_16px_40px_rgba(59,130,246,0.12)]"
               >
                 <div className="flex items-start justify-between gap-2">
