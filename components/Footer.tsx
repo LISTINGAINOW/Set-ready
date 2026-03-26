@@ -26,9 +26,9 @@ const footerSections = [
   {
     title: 'Legal',
     links: [
-      { href: '/privacy', label: 'Privacy Policy' },
-      { href: '/terms', label: 'Terms of Service' },
-      { href: '/privacy#5-cookies-and-tracking', label: 'Cookie Policy' },
+      { href: '/legal/privacy', label: 'Privacy Policy' },
+      { href: '/legal/terms', label: 'Terms of Service' },
+      { href: '/legal/privacy', label: 'Cookie Policy' },
     ],
   },
 ];
