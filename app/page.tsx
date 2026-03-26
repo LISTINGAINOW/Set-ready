@@ -5,8 +5,8 @@ import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
 import EmailPopup from '@/components/EmailPopup';
 import HowItWorks from '@/components/HowItWorks';
-const heroImage = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80';
-const heroImageAlt = 'Modern design-forward home exterior';
+const heroImage = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=80';
+const heroImageAlt = 'Modern luxury home with infinity pool and panoramic views';
 
 const trustPoints = [
   {
@@ -75,8 +75,8 @@ export default async function Home() {
               fetchPriority="high"
               className="absolute inset-0 -z-30 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(0,0,0,0.58)_0%,rgba(0,0,0,0.68)_42%,rgba(0,0,0,0.78)_100%)]" />
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.16),transparent_34%)]" />
+            <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.45)_50%,rgba(0,0,0,0.55)_100%)]" />
+            <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.10),transparent_40%)]" />
 
             <div className="mx-auto flex max-w-4xl flex-col items-start justify-center text-left">
               <h1 className="max-w-3xl text-balance text-5xl font-semibold tracking-[-0.08em] text-white [text-shadow:0_4px_30px_rgba(0,0,0,0.7)] sm:text-6xl lg:text-7xl">
