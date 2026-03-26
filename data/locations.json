@@ -12,8 +12,8 @@
     "sqft": 11785,
     "propertyType": "SingleFamily",
     "style": "Contemporary",
-    "pricePerDay": 4000,
-    "pricePerHour": 500,
+    "pricePerDay": 0,
+    "pricePerHour": 1000,
     "description": "Presented fully furnished, this highly secluded Point Dume retreat offers a rare blend of sophistication, privacy, and elevated coastal living. Meticulously renovated inside and out, the residence showcases exceptional craftsmanship, refined finishes, soaring ceilings, and sweeping ocean and mountain views throughout. Features include a grand two-story foyer, fireplace-adorned living room, formal dining room, family room with built-in bar, dual-sided aquarium, library/office, and a chef's kitchen with top-tier appliances. The upper level features five bedrooms highlighted by a spacious primary suite with ocean views, fireplace, private terrace, and spa-inspired bath. The lower level offers a private movie theater, gym, and secure safe room. Outdoor amenities include pool, spa, sun deck, built-in BBQ, fire pit lounge, and putting green.",
     "amenities": [
       "Pool",
@@ -113,7 +113,8 @@
     "status": "active",
     "approved": true,
     "confidence": "high",
-    "yearBuilt": 1992
+    "yearBuilt": 1992,
+    "minimumStay": "4 hours minimum"
   },
   {
     "id": "2029-del-mar-heights-rd",
