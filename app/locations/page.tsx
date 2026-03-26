@@ -3,7 +3,7 @@ import LocationCard from '@/components/LocationCard';
 import LocationGrid from '@/components/LocationGrid';
 import LocationsMapView from '@/components/LocationsMapView';
 import { Location } from '@/types/location';
-import locationsData from '@/data/locations.json';
+import { getAllProperties } from '@/lib/properties';
 import { getLocationSearchText } from '@/lib/search';
 import LocationsClientTools from '@/components/LocationsClientTools';
 
@@ -16,7 +16,6 @@ type SearchParams = {
   view?: string;
 };
 
-const locations: Location[] = locationsData as Location[];
 const locationsPageTitle = 'Browse Production Locations';
 const locationsPageDescription = 'Browse production-ready homes, lofts, studios, and production spaces with clear privacy tiers, transparent rates, and fast booking on SetVenue.';
 
@@ -57,6 +56,15 @@ export const metadata: Metadata = {
 
 const propertyTypeChips = ['House', 'Studio', 'Warehouse', 'Loft', 'Cabin', 'Penthouse', 'Apartment'];
 const priceRangeChips = ['Under $200', '$200-$400', '$400+'];
+
+const cityHubs = [
+  { label: 'Los Angeles', slug: 'los-angeles' },
+  { label: 'Atlanta', slug: 'atlanta' },
+  { label: 'New York City', slug: 'new-york' },
+  { label: 'Austin', slug: 'austin' },
+  { label: 'Miami', slug: 'miami' },
+  { label: 'Nashville', slug: 'nashville' },
+];
 
 function matchesPriceRange(price: number, priceRange?: string) {
   if (!priceRange) return true;
@@ -135,6 +143,7 @@ export default async function LocationsPage({
   searchParams?: Promise<SearchParams>;
 }) {
   const params = (await searchParams) || {};
+  const locations = await getAllProperties();
   const filteredLocations = filterLocations(locations, params);
   const currentView = params.view === 'map' ? 'map' : 'grid';
 
@@ -286,6 +295,22 @@ export default async function LocationsPage({
               </a>
             </div>
           )}
+        </section>
+
+        <section className="mt-12 rounded-[28px] border border-black/8 bg-slate-50 px-6 py-10 sm:px-10 sm:py-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">Production hubs</p>
+          <h2 className="mt-3 text-xl font-semibold tracking-[-0.04em] text-black sm:text-2xl">Browse by city</h2>
+          <div className="mt-5 flex flex-wrap gap-3">
+            {cityHubs.map((hub) => (
+              <a
+                key={hub.slug}
+                href={`/locations/city/${hub.slug}`}
+                className="inline-flex min-h-[44px] items-center rounded-full border border-black bg-white px-5 py-2 text-sm font-medium text-black transition hover:border-blue-500 hover:text-blue-600"
+              >
+                {hub.label}
+              </a>
+            ))}
+          </div>
         </section>
       </div>
     </main>

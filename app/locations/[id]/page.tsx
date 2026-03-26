@@ -8,7 +8,7 @@ import PhotoGallery from '@/components/PhotoGallery';
 import ReviewsList from '@/components/ReviewsList';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
-import locationsData from '@/data/locations.json';
+import { getPropertyBySlug } from '@/lib/properties';
 import reviewsData from '@/data/reviews.json';
 import { getLocationBlockedDates } from '@/lib/availability';
 import type { Review } from '@/types/review';
@@ -30,11 +30,10 @@ type VerifiedLocation = Location & {
   responseTime?: string;
 };
 
-const locations: VerifiedLocation[] = locationsData as VerifiedLocation[];
 const reviews: Review[] = reviewsData as Review[];
 
 async function getLocation(id: string): Promise<Location | null> {
-  return locations.find((loc) => loc.id === id) || null;
+  return getPropertyBySlug(id);
 }
 
 function getPrimaryPhoto(location: Location) {

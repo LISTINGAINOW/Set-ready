@@ -1,7 +1,6 @@
 // Force redeploy: 2026-03-22T18:22 PDT — hero fix push
 import Link from 'next/link';
-import locationsData from '@/data/locations.json';
-import { Location } from '@/types/location';
+import { getFeaturedProperties } from '@/lib/properties';
 import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
 import EmailPopup from '@/components/EmailPopup';
@@ -11,9 +10,6 @@ import ReviewList from '@/app/components/ReviewList';
 import reviewsData from '@/data/reviews.json';
 import type { Review } from '@/types/review';
 import StatsBanner from '@/components/StatsBanner';
-
-const locations = locationsData as Location[];
-const featuredLocations = locations.slice(0, 6);
 const heroImage = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80';
 const heroImageAlt = 'Modern design-forward home exterior';
 
@@ -105,7 +101,9 @@ function MarketplaceSearch() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const featuredLocations = await getFeaturedProperties();
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-[linear-gradient(180deg,#ffffff_0%,#fbfbfc_100%)] text-slate-950">
       <EmailPopup />
@@ -248,7 +246,7 @@ export default function Home() {
         </div>
       </section>
 
-      <StatsBanner propertyCount={locations.length} />
+      <StatsBanner propertyCount={featuredLocations.length} />
 
       <HowItWorks />
 
