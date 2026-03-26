@@ -200,8 +200,8 @@ export default function LocationCard({ location }: LocationCardProps) {
 
       {isReserveOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-          <div className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[32px] border border-black bg-white shadow-2xl">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-black bg-white px-6 py-5">
+          <div className="max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[32px] border border-slate-200 bg-white shadow-2xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-5">
               <div>
                 <h2 className="text-2xl font-bold text-black">Reserve {location.name}</h2>
                 <p className="mt-1 text-sm text-black/60">
@@ -227,7 +227,7 @@ export default function LocationCard({ location }: LocationCardProps) {
                 onSelectionChange={setSelection}
               />
 
-              <div className="rounded-2xl border border-black bg-white/60 p-6">
+              <div className="rounded-2xl border border-slate-200 bg-white/60 p-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h3 className="text-xl font-bold text-black">Continue to booking</h3>

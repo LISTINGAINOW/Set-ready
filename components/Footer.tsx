@@ -34,8 +34,8 @@ const footerSections = [
 ];
 
 const socialLinks = [
-  { href: 'https://instagram.com', label: 'Instagram', icon: Instagram },
-  { href: 'https://twitter.com', label: 'Twitter', icon: Twitter },
+  { href: 'https://instagram.com/setvenue', label: 'Instagram', icon: Instagram },
+  { href: 'https://x.com/SetVenueHQ', label: 'Twitter', icon: Twitter },
   { href: 'https://linkedin.com', label: 'LinkedIn', icon: Linkedin },
 ];
 
@@ -100,7 +100,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t border-black bg-white">
+    <footer className="border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           <div className="space-y-8">
@@ -113,7 +113,7 @@ export default function Footer() {
               <p className="mt-4 text-sm text-black/60">Business support: support@setvenue.com</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="max-w-xl rounded-[32px] border border-black bg-[#FAFAFA] p-6">
+            <form onSubmit={handleSubmit} className="max-w-xl rounded-[32px] border border-slate-200 bg-[#FAFAFA] p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Newsletter</p>
@@ -137,7 +137,7 @@ export default function Footer() {
                     }
                   }}
                   placeholder="Enter your email"
-                  className="min-w-0 flex-1 rounded-full border border-black bg-white px-4 py-3 text-sm text-black outline-none transition placeholder:text-black/40 focus:border-blue-500"
+                  className="min-w-0 flex-1 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm text-black outline-none transition placeholder:text-black/40 focus:border-blue-500"
                 />
                 <button
                   type="submit"
@@ -220,7 +220,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-black pt-6 text-sm text-black/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-3 border-t border-slate-200 pt-6 text-sm text-black/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} SetVenue. All rights reserved.</p>
           <p>Professional use only. Bookings subject to host approval and platform terms.</p>
         </div>

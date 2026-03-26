@@ -4,16 +4,9 @@ import { getFeaturedProperties } from '@/lib/properties';
 import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
 import EmailPopup from '@/components/EmailPopup';
-import TestimonialCarousel from '@/components/TestimonialCarousel';
 import HowItWorks from '@/components/HowItWorks';
-import ReviewList from '@/app/components/ReviewList';
-import reviewsData from '@/data/reviews.json';
-import type { Review } from '@/types/review';
-import StatsBanner from '@/components/StatsBanner';
 const heroImage = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80';
 const heroImageAlt = 'Modern design-forward home exterior';
-
-const featuredReviews = (reviewsData as Review[]).filter((review) => review.featured).slice(0, 2);
 
 const trustPoints = [
   {
@@ -30,43 +23,6 @@ const trustPoints = [
   },
 ];
 
-const homepageTestimonials = [
-  {
-    quote: 'We found a polished location in one afternoon, locked the date, and got the privacy terms we needed without a dozen emails.',
-    name: 'Ava Chen',
-    role: 'Producer',
-    location: 'Los Angeles, CA',
-  },
-  {
-    quote: 'The listings feel curated instead of chaotic. My team could actually compare spaces quickly and book with confidence.',
-    name: 'Jordan Blake',
-    role: 'Creative Director',
-    location: 'Miami, FL',
-  },
-  {
-    quote: 'The host communication was fast, clear, and professional. It felt built for real production schedules, not casual rentals.',
-    name: 'Nina Torres',
-    role: 'Content Lead',
-    location: 'Las Vegas, NV',
-  },
-];
-
-const featuredIn = ['Forbes', 'Architectural Digest', 'Hypebeast', 'Dwell', 'Wallpaper*'];
-
-const pressQuotes = [
-  {
-    source: 'Editorial placeholder',
-    quote: 'A cleaner way to discover design-forward locations for professional productions.',
-  },
-  {
-    source: 'Press placeholder',
-    quote: 'Feels more like a private concierge than a crowded rental marketplace.',
-  },
-  {
-    source: 'Creator note',
-    quote: 'Built to reduce friction, protect privacy, and help teams move fast when dates matter.',
-  },
-];
 
 function MarketplaceSearch() {
   return (
@@ -186,44 +142,6 @@ export default async function Home() {
       </section>
 
       <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="mx-auto max-w-7xl rounded-[32px] border border-black/8 bg-white p-8 shadow-[0_24px_70px_rgba(15,23,42,0.05)] sm:p-10 lg:p-12">
-          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-            <div className="max-w-xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-600">Featured in</p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.06em] text-slate-950 sm:text-5xl">
-                Trust signals that feel editorial, not noisy.
-              </h2>
-              <p className="mt-5 text-lg leading-8 text-slate-600">
-                Placeholder press placement gives the homepage a stronger credibility layer without breaking the minimal look.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
-                {featuredIn.map((publication) => (
-                  <div
-                    key={publication}
-                    className="flex min-h-[72px] items-center justify-center rounded-[22px] border border-black/8 bg-slate-50 px-4 py-3 text-center text-sm font-semibold tracking-[0.18em] text-slate-500"
-                  >
-                    {publication}
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                {pressQuotes.map((item) => (
-                  <div key={item.quote} className="rounded-[24px] border border-black/8 bg-slate-50 p-5">
-                    <p className="text-base leading-7 text-slate-700">“{item.quote}”</p>
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-[0.24em] text-blue-600">{item.source}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
@@ -246,31 +164,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <StatsBanner propertyCount={featuredLocations.length} />
-
       <HowItWorks />
-
-      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10 max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-600">Social proof</p>
-            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.06em] text-slate-950 sm:text-5xl">
-              Early featured reviews for the first property.
-            </h2>
-            <p className="mt-5 text-lg leading-8 text-slate-600">
-              These launch reviews are clearly marked as featured placeholders, not verified bookings. That keeps the page honest while still showing the kind of feedback future guests care about.
-            </p>
-          </div>
-          <ReviewList
-            initialReviews={featuredReviews}
-            showForm={false}
-            title="Featured reviews"
-            description="Featured reviews are launch placeholders for social proof. Verified badges appear only for booking-backed reviews."
-          />
-        </div>
-      </section>
-
-      <TestimonialCarousel testimonials={homepageTestimonials} />
 
       <section className="px-4 pb-24 pt-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-[32px] border border-black/10 bg-white p-8 text-center shadow-[0_24px_70px_rgba(15,23,42,0.06)] sm:p-12 lg:p-14">
