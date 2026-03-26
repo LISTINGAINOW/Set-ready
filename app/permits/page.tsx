@@ -4,7 +4,7 @@ import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Film Permit Guides by City',
-  description: 'City-specific filming permit guides for Los Angeles, Atlanta, New York, Austin, Miami, and Nashville. Know the rules before you book.',
+  description: 'City-specific filming permit guides for Los Angeles, Atlanta, New York, Austin, Miami, Nashville, New Orleans, and more. Know the rules before you book.',
 };
 
 const cities = [
@@ -97,6 +97,22 @@ const cities = [
       'Music industry ties make Nashville uniquely well-equipped for music video shoots',
     ],
     tip: 'Nashville is an underrated filming market. Less competition for permits, strong local crew base.',
+    color: 'slate',
+  },
+  {
+    name: 'New Orleans',
+    state: 'LA',
+    emoji: '🎷',
+    authority: 'Louisiana Entertainment Office',
+    authorityUrl: null,
+    highlights: [
+      'Louisiana Entertainment Office administers permits and incentives statewide',
+      'Louisiana Entertainment tax credit: 25–40% on qualifying production spend',
+      'One of the most generous film incentive programs in the United States',
+      'Permits for filming on public property managed through the City of New Orleans',
+      'Historic districts (French Quarter, Garden District) may have additional requirements',
+    ],
+    tip: "Louisiana's 25–40% tax credit is among the best in the country. Apply through the Louisiana Entertainment office well in advance — productions book fast.",
     color: 'slate',
   },
 ];

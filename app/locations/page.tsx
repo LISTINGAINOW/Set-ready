@@ -64,6 +64,22 @@ const cityHubs = [
   { label: 'Austin', slug: 'austin' },
   { label: 'Miami', slug: 'miami' },
   { label: 'Nashville', slug: 'nashville' },
+  { label: 'New Orleans', slug: 'new-orleans' },
+  { label: 'Albuquerque', slug: 'albuquerque' },
+  { label: 'Santa Fe', slug: 'santa-fe' },
+  { label: 'Pittsburgh', slug: 'pittsburgh' },
+  { label: 'Detroit', slug: 'detroit' },
+  { label: 'Savannah', slug: 'savannah' },
+  { label: 'Honolulu', slug: 'honolulu' },
+  { label: 'Salt Lake City', slug: 'salt-lake-city' },
+  { label: 'Portland', slug: 'portland' },
+  { label: 'Seattle', slug: 'seattle' },
+  { label: 'San Francisco', slug: 'san-francisco' },
+  { label: 'Chicago', slug: 'chicago' },
+  { label: 'Wilmington', slug: 'wilmington' },
+  { label: 'Oklahoma City', slug: 'oklahoma-city' },
+  { label: 'Philadelphia', slug: 'philadelphia' },
+  { label: 'Denver', slug: 'denver' },
 ];
 
 function matchesPriceRange(price: number, priceRange?: string) {
@@ -298,9 +314,16 @@ export default async function LocationsPage({
         </section>
 
         <section className="mt-12 rounded-[28px] border border-black/8 bg-slate-50 px-6 py-10 sm:px-10 sm:py-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">Production hubs</p>
-          <h2 className="mt-3 text-xl font-semibold tracking-[-0.04em] text-black sm:text-2xl">Browse by city</h2>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">Production hubs</p>
+              <h2 className="mt-3 text-xl font-semibold tracking-[-0.04em] text-black sm:text-2xl">Browse by city</h2>
+            </div>
+            <span className="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700">
+              Available Nationwide — List your property anywhere in the USA
+            </span>
+          </div>
+          <div className="flex flex-wrap gap-3">
             {cityHubs.map((hub) => (
               <a
                 key={hub.slug}
@@ -310,6 +333,11 @@ export default async function LocationsPage({
                 {hub.label}
               </a>
             ))}
+          </div>
+          <div className="mt-6">
+            <a href="/cities" className="text-sm font-medium text-blue-600 hover:underline">
+              View all 22 cities →
+            </a>
           </div>
         </section>
       </div>
