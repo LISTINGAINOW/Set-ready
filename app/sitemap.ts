@@ -18,7 +18,7 @@ const staticRoutes = [
   '/terms',
 ] as const;
 
-const locations = locationsData as Location[];
+const locations = locationsData as unknown as Location[];
 
 type SitemapEntry = MetadataRoute.Sitemap[number];
 

@@ -31,7 +31,7 @@ interface Booking {
 const HOST_FEE_RATE = 0;
 
 function getStats() {
-  const locations: Location[] = locationsData as Location[];
+  const locations: Location[] = locationsData as unknown as Location[];
   const bookings: Booking[] = (bookingsData.bookings || []) as Booking[];
 
   const totalLocations = locations.length;

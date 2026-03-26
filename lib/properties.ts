@@ -24,6 +24,11 @@ type DbProperty = {
   featured: boolean;
   approved: boolean;
   status: string;
+  tot_license_number?: string | null;
+  business_license_number?: string | null;
+  business_license_type?: string | null;
+  has_liability_insurance?: boolean | null;
+  has_production_insurance?: boolean | null;
 };
 
 function toLocation(p: DbProperty): Location {
@@ -50,10 +55,15 @@ function toLocation(p: DbProperty): Location {
     featured: p.featured,
     approved: p.approved,
     status: p.status,
+    totLicenseNumber: p.tot_license_number ?? undefined,
+    businessLicenseNumber: p.business_license_number ?? undefined,
+    businessLicenseType: p.business_license_type ?? undefined,
+    hasLiabilityInsurance: p.has_liability_insurance ?? false,
+    hasProductionInsurance: p.has_production_insurance ?? false,
   };
 }
 
-const fallback = locationsData as Location[];
+const fallback = locationsData as unknown as Location[];
 
 export async function getAllProperties(): Promise<Location[]> {
   try {

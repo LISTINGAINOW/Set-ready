@@ -167,7 +167,7 @@ export function getLocationBlockedDates(locationId: string) {
 }
 
 export function getLocationAvailability(locationId: string) {
-  const location = (locationsData as Location[]).find((item) => item.id === locationId);
+  const location = (locationsData as unknown as Location[]).find((item) => item.id === locationId);
   return {
     bookings: location?.bookings || [],
     blockedDates: getLocationBlockedDates(locationId),

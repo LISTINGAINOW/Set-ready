@@ -3,7 +3,7 @@ import { CheckCircle2, CalendarDays, Clock3, MapPin, Receipt, Phone, Mail, Print
 import locationsData from '@/data/locations.json';
 import type { Location } from '@/types/location';
 
-const locations: Location[] = locationsData as Location[];
+const locations: Location[] = locationsData as unknown as Location[];
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('en-US', {

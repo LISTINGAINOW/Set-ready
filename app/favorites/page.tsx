@@ -7,7 +7,7 @@ import locationsData from '@/data/locations.json';
 import { Location } from '@/types/location';
 import { getFavoriteLocationIds, removeFavoriteLocation, subscribeToFavorites } from '@/lib/favorites';
 
-const locations = locationsData as Location[];
+const locations = locationsData as unknown as Location[];
 
 const fallbackPhotos: Record<string, string> = {
   house: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',

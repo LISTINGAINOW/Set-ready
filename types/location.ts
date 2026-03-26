@@ -83,4 +83,10 @@ export interface Location {
   reviewQuote?: string;
   bookings?: LocationBooking[];
   blockedDates?: LocationAvailabilityBlock[];
+  // Compliance / regulatory fields
+  totLicenseNumber?: string;
+  businessLicenseNumber?: string;
+  businessLicenseType?: string;
+  hasLiabilityInsurance?: boolean;
+  hasProductionInsurance?: boolean;
 }

@@ -10,7 +10,7 @@ import type { MessageConversation } from '@/types/message';
 
 const conversations = messagesData.conversations as MessageConversation[];
 const bookings = bookingsData.bookings as Booking[];
-const locations = locationsData as Location[];
+const locations = locationsData as unknown as Location[];
 
 function formatBookingDate(date: string) {
   return new Date(date).toLocaleDateString('en-US', {

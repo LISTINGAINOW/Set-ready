@@ -1,7 +1,7 @@
 import locationsData from '@/data/locations.json';
 import type { Location } from '@/types/location';
 
-export const locations: Location[] = locationsData as Location[];
+export const locations: Location[] = locationsData as unknown as Location[];
 
 export function normalizeSearchValue(value: string) {
   return value.toLowerCase().trim();

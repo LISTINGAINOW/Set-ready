@@ -27,6 +27,17 @@ const steps = [
   { id: 6, label: 'Review & Submit', description: 'Final check before submission' },
 ] as const;
 
+const businessLicenseTypes = ['STR', 'Event Venue', 'Commercial'] as const;
+
+const complianceChecklistItems = [
+  'STR permit on file',
+  'TOT registration current',
+  'Liability insurance verified',
+  'Fire safety inspection passed',
+  'Parking and signage compliant with local code',
+  'No outstanding code violations',
+] as const;
+
 type FormState = {
   title: string;
   propertyType: string;
@@ -46,6 +57,13 @@ type FormState = {
   availabilityNotes: string;
   availableDays: string[];
   photos: { name: string; size: number; type: string }[];
+  // Compliance fields
+  totLicenseNumber: string;
+  businessLicenseNumber: string;
+  businessLicenseType: string;
+  hasLiabilityInsurance: boolean;
+  hasProductionInsurance: boolean;
+  complianceChecklist: string[];
 };
 
 const initialForm: FormState = {
@@ -67,6 +85,12 @@ const initialForm: FormState = {
   availabilityNotes: '',
   availableDays: [],
   photos: [],
+  totLicenseNumber: '',
+  businessLicenseNumber: '',
+  businessLicenseType: '',
+  hasLiabilityInsurance: false,
+  hasProductionInsurance: false,
+  complianceChecklist: [],
 };
 
 const dayOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -112,7 +136,11 @@ export default function ListPropertyPage() {
     });
   };
 
-  const toggleArrayItem = (field: 'amenities' | 'availableDays', item: string) => {
+  const toggleBooleanField = (field: 'hasLiabilityInsurance' | 'hasProductionInsurance') => {
+    setForm((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const toggleArrayItem = (field: 'amenities' | 'availableDays' | 'complianceChecklist', item: string) => {
     setForm((prev) => ({
       ...prev,
       [field]: prev[field].includes(item) ? prev[field].filter((entry) => entry !== item) : [...prev[field], item],
@@ -362,6 +390,51 @@ export default function ListPropertyPage() {
                         <span>{amenity}</span>
                       </label>
                     ))}
+                  </div>
+                </div>
+
+                {/* Compliance & Licensing */}
+                <div className="mt-10 border-t border-black/10 pt-8">
+                  <h3 className="mb-1 text-lg font-bold">Compliance &amp; Licensing</h3>
+                  <p className="mb-6 text-sm text-black/60">Optional for MVP — fill in what you have. This info is shown on your listing to build guest trust.</p>
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">TOT License Number</label>
+                      <input className={inputClassName} value={form.totLicenseNumber} onChange={(e) => updateField('totLicenseNumber', sanitizeInput(e.target.value))} placeholder="e.g. TOT-2024-001" />
+                      <p className="mt-2 text-sm text-black/60">Transient Occupancy Tax certificate number (required in LA, SF, etc.).</p>
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Business License Number</label>
+                      <input className={inputClassName} value={form.businessLicenseNumber} onChange={(e) => updateField('businessLicenseNumber', sanitizeInput(e.target.value))} placeholder="e.g. BL-2024-12345" />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Business License Type</label>
+                      <select className={inputClassName} value={form.businessLicenseType} onChange={(e) => updateField('businessLicenseType', e.target.value)}>
+                        <option value="">Select type (optional)</option>
+                        {businessLicenseTypes.map((t) => <option key={t} value={t}>{t}</option>)}
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-4 justify-center">
+                      <label className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                        <input type="checkbox" checked={form.hasLiabilityInsurance} onChange={() => toggleBooleanField('hasLiabilityInsurance')} className="mr-3 accent-blue-500" />
+                        <span className="font-medium">General Liability Insurance</span>
+                      </label>
+                      <label className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                        <input type="checkbox" checked={form.hasProductionInsurance} onChange={() => toggleBooleanField('hasProductionInsurance')} className="mr-3 accent-blue-500" />
+                        <span className="font-medium">Production Insurance</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="mt-6">
+                    <label className="mb-3 block text-sm font-medium">Compliance Checklist (optional)</label>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      {complianceChecklistItems.map((item) => (
+                        <label key={item} className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                          <input type="checkbox" checked={form.complianceChecklist.includes(item)} onChange={() => toggleArrayItem('complianceChecklist', item)} className="mr-3 accent-blue-500" />
+                          <span className="text-sm">{item}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </section>

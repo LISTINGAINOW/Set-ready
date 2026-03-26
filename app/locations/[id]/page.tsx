@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { CancellationPolicyTier, Location, VerificationBadge } from '@/types/location';
-import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, Siren, Clock3, BadgeCheck, House } from 'lucide-react';
+import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, Siren, Clock3, BadgeCheck, House, ShieldCheck, FileText } from 'lucide-react';
 import BookingSection from '@/components/BookingSection';
 import BookingModal from '@/components/BookingModal';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -93,6 +93,21 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const cancellationPolicy = cancellationPolicyContent[cancellationPolicyTier];
   const houseRules = location.houseRules?.length ? location.houseRules : getDefaultHouseRules(location, maxGuestsValue);
 
+  // Compliance banner logic
+  const cityLower = location.city.toLowerCase();
+  let regulationsBanner: string | null = null;
+  if (cityLower.includes('los angeles') || cityLower.includes('malibu') || cityLower.includes('la')) {
+    regulationsBanner = location.totLicenseNumber
+      ? `TOT Certificate #: ${location.totLicenseNumber}`
+      : 'TOT Certificate required for short-term rentals in LA County';
+  } else if (cityLower.includes('new york') || cityLower.includes('nyc')) {
+    regulationsBanner = 'Class B Multiple Dwelling registered';
+  } else if (cityLower.includes('atlanta') || cityLower.includes('atl')) {
+    regulationsBanner = 'STR Registration Required';
+  } else if (cityLower.includes('miami')) {
+    regulationsBanner = 'Transient Rental License Required';
+  }
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
       <div className="mb-6 sm:mb-8">
@@ -100,6 +115,32 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           ← Back to Browse
         </a>
       </div>
+
+      {/* Compliance / regulatory banner */}
+      {regulationsBanner && (
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <FileText className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <span><span className="font-semibold">Local regulations:</span> {regulationsBanner}</span>
+        </div>
+      )}
+
+      {/* Insurance badges */}
+      {(location.hasLiabilityInsurance || location.hasProductionInsurance) && (
+        <div className="mb-6 flex flex-wrap gap-3">
+          {location.hasLiabilityInsurance && (
+            <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-sm font-semibold text-green-800">
+              <ShieldCheck className="h-4 w-4" />
+              Liability Insurance
+            </span>
+          )}
+          {location.hasProductionInsurance && (
+            <span className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-4 py-1.5 text-sm font-semibold text-blue-800">
+              <ShieldCheck className="h-4 w-4" />
+              Production Insurance
+            </span>
+          )}
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
         <div className="lg:col-span-2">
           <div className="mb-8">

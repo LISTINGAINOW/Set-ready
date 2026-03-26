@@ -35,7 +35,7 @@ function getBookingHours(startTime: string, endTime: string) {
 }
 
 export function getHostListings(): HostListing[] {
-  const source = (locationsData as Location[]).slice(0, 7);
+  const source = (locationsData as unknown as Location[]).slice(0, 7);
 
   return source.map((location, index) => ({
     ...location,

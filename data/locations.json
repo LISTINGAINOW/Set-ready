@@ -114,7 +114,11 @@
     "approved": true,
     "confidence": "high",
     "yearBuilt": 1992,
-    "minimumStay": "4 hours minimum"
+    "minimumStay": "4 hours minimum",
+    "totLicenseNumber": "TOT-2024-001",
+    "businessLicenseType": "STR",
+    "hasLiabilityInsurance": true,
+    "hasProductionInsurance": true
   },
   {
     "id": "2029-del-mar-heights-rd",
@@ -193,7 +197,11 @@
     "approved": true,
     "confidence": "high",
     "yearBuilt": 1980,
-    "lotSize": "7,000 sq ft"
+    "lotSize": "7,000 sq ft",
+    "totLicenseNumber": "TOT-2024-002",
+    "businessLicenseType": "STR",
+    "hasLiabilityInsurance": true,
+    "hasProductionInsurance": true
   },
   {
     "id": "6114-merritt-dr-malibu",
@@ -261,7 +269,11 @@
     "approved": true,
     "confidence": "high",
     "yearBuilt": 1973,
-    "lotSize": "3.25 Acres"
+    "lotSize": "3.25 Acres",
+    "totLicenseNumber": "TOT-2024-003",
+    "businessLicenseType": "STR",
+    "hasLiabilityInsurance": true,
+    "hasProductionInsurance": true
   },
   {
     "id": "600-lone-oak-dr-thousand-oaks",
@@ -340,6 +352,10 @@
     "approved": true,
     "confidence": "high",
     "yearBuilt": 1985,
-    "lotSize": "12.52 Acres"
+    "lotSize": "12.52 Acres",
+    "totLicenseNumber": "TOT-2024-004",
+    "businessLicenseType": "STR",
+    "hasLiabilityInsurance": true,
+    "hasProductionInsurance": true
   }
 ]
