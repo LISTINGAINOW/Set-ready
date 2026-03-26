@@ -1,7 +1,6 @@
-const CACHE_NAME = 'discreet-set-v1';
+const CACHE_NAME = 'setvenue-v2';
 const OFFLINE_URL = '/offline.html';
 const STATIC_ASSETS = [
-  '/',
   '/manifest.json',
   OFFLINE_URL,
   '/icons/icon-192.png',
@@ -54,22 +53,14 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
+    fetch(event.request)
+      .then((response) => {
+        if (response && response.status === 200 && response.type === 'basic') {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
-          return response;
-        })
-        .catch(() => caches.match(OFFLINE_URL));
-    })
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request).then((cached) => cached || caches.match(OFFLINE_URL)))
   );
 });
