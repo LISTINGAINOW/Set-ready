@@ -10,6 +10,7 @@ import PWAInstall from '@/components/PWAInstall';
 
 const navItems = [
   { href: '/locations', label: 'Browse' },
+  { href: '/services', label: 'Services' },
   { href: '/blog', label: 'Blog' },
   { href: '/how-it-works', label: 'How it works' },
   { href: '/list-property', label: 'Host' },
@@ -68,6 +69,12 @@ export default function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/find-location"
+              className="inline-flex min-h-[36px] items-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
+            >
+              Find a Location
+            </Link>
           </nav>
 
           <div className="hidden min-w-0 items-center gap-3 lg:flex">
@@ -158,6 +165,12 @@ export default function Header() {
               >
                 <span>Favorites</span>
                 {favoriteCount > 0 ? <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">{favoriteCount}</span> : null}
+              </Link>
+              <Link
+                href="/find-location"
+                className="flex min-h-[48px] items-center justify-center rounded-2xl bg-blue-600 px-3 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+              >
+                Find a Location
               </Link>
             </nav>
 
