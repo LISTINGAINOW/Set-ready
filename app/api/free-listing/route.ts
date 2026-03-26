@@ -1,54 +1,95 @@
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { randomUUID } from 'crypto';
+import { join } from 'path';
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { getClientIp, isValidEmail, sanitizeEmail, sanitizeInput, writeAuditLog } from '@/lib/security';
 
-const DATA_FILE = path.join(process.cwd(), 'data', 'free-listing-signups.json');
+const DATA_FILE = join(process.cwd(), 'data', 'free-listing-signups.json');
+const TOTAL_SPOTS = 500;
 
-async function readSignups(): Promise<unknown[]> {
+interface FreeListingSignup {
+  id: string;
+  name: string;
+  email: string;
+  address: string;
+  propertyType: string;
+  photoCount: number;
+  submittedAt: string;
+}
+
+function readSignups(): FreeListingSignup[] {
+  if (!existsSync(DATA_FILE)) return [];
   try {
-    const raw = await fs.readFile(DATA_FILE, 'utf-8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(readFileSync(DATA_FILE, 'utf8'));
+    return Array.isArray(parsed) ? (parsed as FreeListingSignup[]) : [];
   } catch {
     return [];
   }
 }
 
-async function writeSignups(signups: unknown[]): Promise<void> {
-  await fs.writeFile(DATA_FILE, JSON.stringify(signups, null, 2), 'utf-8');
+function writeSignups(signups: FreeListingSignup[]) {
+  writeFileSync(DATA_FILE, JSON.stringify(signups, null, 2) + '\n', 'utf8');
 }
 
-export async function POST(req: NextRequest) {
+export async function GET() {
+  const signups = readSignups();
+  const spotsRemaining = Math.max(0, TOTAL_SPOTS - signups.length);
+  return NextResponse.json({ spotsRemaining, totalSpots: TOTAL_SPOTS });
+}
+
+export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+
   try {
-    const body = await req.json();
-    const { name, email, address, propertyType, photoCount } = body;
+    const body = (await request.json()) as Record<string, unknown>;
 
-    if (!name || !email || !address || !propertyType || !photoCount) {
-      return NextResponse.json({ error: 'All fields are required.' }, { status: 400 });
+    const name = sanitizeInput(String(body.name || '')).slice(0, 120);
+    const email = sanitizeEmail(String(body.email || ''));
+    const address = sanitizeInput(String(body.address || '')).slice(0, 200);
+    const propertyType = sanitizeInput(String(body.propertyType || '')).slice(0, 80);
+    const photoCount = Math.max(0, Math.min(9999, parseInt(String(body.photoCount || '0'), 10) || 0));
+
+    if (!name || !email || !address || !propertyType) {
+      return NextResponse.json(
+        { error: 'Name, email, property address, and property type are required.' },
+        { status: 400 }
+      );
     }
 
-    const signups = await readSignups();
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ error: 'Please provide a valid email address.' }, { status: 400 });
+    }
 
-    const duplicate = signups.some((s: any) => s.email?.toLowerCase() === email.toLowerCase());
+    const signups = readSignups();
+
+    if (signups.length >= TOTAL_SPOTS) {
+      return NextResponse.json({ error: 'All free spots have been claimed.' }, { status: 409 });
+    }
+
+    const duplicate = signups.find((s) => s.email === email);
     if (duplicate) {
-      return NextResponse.json({ error: 'This email is already registered.' }, { status: 409 });
+      return NextResponse.json({ error: 'This email has already claimed a spot.' }, { status: 409 });
     }
 
-    const entry = {
-      id: crypto.randomUUID(),
+    const signup: FreeListingSignup = {
+      id: `fl_${randomUUID().slice(0, 8)}`,
       name,
       email,
       address,
       propertyType,
-      photoCount: Number(photoCount),
+      photoCount,
       submittedAt: new Date().toISOString(),
     };
 
-    signups.push(entry);
-    await writeSignups(signups);
+    signups.push(signup);
+    writeSignups(signups);
 
-    return NextResponse.json({ success: true, id: entry.id }, { status: 201 });
-  } catch (err) {
-    console.error('free-listing signup error:', err);
+    writeAuditLog('free-listing.signup', { id: signup.id, name, propertyType });
+
+    const spotsRemaining = Math.max(0, TOTAL_SPOTS - signups.length);
+    return NextResponse.json({ success: true, id: signup.id, spotsRemaining }, { status: 201 });
+  } catch (error) {
+    writeAuditLog('free-listing.error', { ip, error: error instanceof Error ? error.message : 'unknown_error' });
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
