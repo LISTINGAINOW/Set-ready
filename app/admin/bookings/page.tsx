@@ -33,6 +33,7 @@ interface BookingRequest {
   tos_accepted: boolean;
   tos_accepted_at: string | null;
   content_permission_accepted: boolean;
+  content_permission_accepted_at: string | null;
   permit_confirmed: boolean;
   status: 'pending' | 'approved' | 'rejected' | 'completed' | 'cancelled';
   admin_notes: string | null;
