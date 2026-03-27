@@ -151,7 +151,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
                 </div>
                 <div>
                   <p className="text-black/50">Status</p>
-                  <span className="mt-1 inline-flex rounded-full bg-black px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+                  <span className="mt-1 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-700">
                     {booking.status}
                   </span>
                 </div>

@@ -217,7 +217,7 @@ export default function InsuranceManager({ mode = 'dashboard', onContinue }: Ins
             )}
 
             <div className="flex flex-wrap gap-3">
-              <button type="button" onClick={handleUpload} className="inline-flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600">
+              <button type="button" onClick={handleUpload} className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600">
                 Upload insurance PDF
                 <ArrowRight className="h-4 w-4" />
               </button>

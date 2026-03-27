@@ -114,11 +114,11 @@ export default function ProducerOverview() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-xl border border-blue-200 bg-black/85 p-6">
+          <div key={stat.label} className="rounded-xl border border-slate-200 bg-white p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-blue-500">{stat.label}</p>
-                <p className="mt-2 text-2xl font-bold">{stat.value}</p>
+                <p className="mt-2 text-2xl font-bold text-slate-900">{stat.value}</p>
               </div>
               <div className={`${stat.color} flex h-12 w-12 items-center justify-center rounded-full`}>
                 <stat.icon className="h-6 w-6 text-white" />
@@ -128,44 +128,44 @@ export default function ProducerOverview() {
         ))}
       </div>
 
-      <div className="rounded-xl border border-blue-200 bg-black/85 p-6">
-        <h2 className="mb-4 text-xl font-bold">Quick Actions</h2>
+      <div className="rounded-xl border border-slate-200 bg-white p-6">
+        <h2 className="mb-4 text-xl font-bold text-slate-900">Quick Actions</h2>
         <div className="flex flex-wrap gap-4">
-          <Link href="/producer/search" className="flex items-center space-x-3 rounded-lg bg-blue-600 px-6 py-3 transition-colors hover:bg-blue-700">
+          <Link href="/producer/search" className="flex items-center space-x-3 rounded-lg bg-blue-600 px-6 py-3 transition-colors hover:bg-blue-700 text-white">
             <MapPin className="h-5 w-5" />
             <span>Search Locations</span>
           </Link>
-          <Link href="/producer/bookings" className="flex items-center space-x-3 rounded-lg border border-blue-200 px-6 py-3 transition-colors hover:bg-black">
+          <Link href="/producer/bookings" className="flex items-center space-x-3 rounded-lg border border-slate-200 bg-white text-slate-900 px-6 py-3 transition-colors hover:bg-blue-600 hover:text-white hover:border-blue-600">
             <Calendar className="h-5 w-5" />
             <span>View My Bookings</span>
           </Link>
-          <Link href="/producer/insurance" className="flex items-center space-x-3 rounded-lg border border-blue-200 px-6 py-3 transition-colors hover:bg-black">
+          <Link href="/producer/insurance" className="flex items-center space-x-3 rounded-lg border border-slate-200 bg-white text-slate-900 px-6 py-3 transition-colors hover:bg-blue-600 hover:text-white hover:border-blue-600">
             <Shield className="h-5 w-5" />
             <span>Manage Insurance</span>
           </Link>
         </div>
       </div>
 
-      <div className="rounded-xl border border-blue-200 bg-black/85 p-6">
+      <div className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold">Insurance</h2>
-            <p className="mt-1 text-sm text-blue-500">Upload certificates, track expiration dates, and keep booking approvals moving.</p>
+            <h2 className="text-xl font-bold text-slate-900">Insurance</h2>
+            <p className="mt-1 text-sm text-slate-500">Upload certificates, track expiration dates, and keep booking approvals moving.</p>
           </div>
           <Link href="/producer/insurance" className="flex items-center space-x-2 text-blue-600 hover:text-blue-500">
             <span>Open</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="rounded-lg border border-blue-200 p-4">
-          <p className="font-semibold">Minimum $1M general liability required</p>
-          <p className="mt-2 text-sm text-blue-500">No backend verification yet — current dashboard supports simple PDF upload, expiration tracking, and reminders.</p>
+        <div className="rounded-lg border border-slate-200 p-4">
+          <p className="font-semibold text-slate-900">Minimum $1M general liability required</p>
+          <p className="mt-2 text-sm text-slate-500">No backend verification yet — current dashboard supports simple PDF upload, expiration tracking, and reminders.</p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-blue-200 bg-black/85 p-6">
+      <div className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-bold">Upcoming Bookings</h2>
+          <h2 className="text-xl font-bold text-slate-900">Upcoming Bookings</h2>
           <Link href="/producer/bookings" className="flex items-center space-x-2 text-blue-600 hover:text-blue-500">
             <span>View All</span>
             <ArrowRight className="h-4 w-4" />
@@ -175,11 +175,11 @@ export default function ProducerOverview() {
         {upcomingBookings.length > 0 ? (
           <div className="space-y-4">
             {upcomingBookings.map((booking) => (
-              <div key={booking.id} className="flex items-center justify-between rounded-lg border border-blue-200 p-4">
+              <div key={booking.id} className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
                 <div>
-                  <p className="font-semibold">{booking.name}</p>
-                  <p className="text-sm text-blue-500">{booking.date} • {booking.startTime}–{booking.endTime}</p>
-                  <p className="text-sm">{booking.productionType}</p>
+                  <p className="font-semibold text-slate-900">{booking.name}</p>
+                  <p className="text-sm text-slate-500">{booking.date} • {booking.startTime}–{booking.endTime}</p>
+                  <p className="text-sm text-slate-700">{booking.productionType}</p>
                 </div>
                 <div className="flex items-center space-x-4">
                   <span
@@ -188,7 +188,7 @@ export default function ProducerOverview() {
                         ? 'bg-green-900/30 text-green-400'
                         : booking.status === 'pending'
                           ? 'bg-yellow-900/30 text-yellow-400'
-                          : 'bg-black text-blue-500'
+                          : 'bg-slate-100 text-slate-700'
                     }`}
                   >
                     {booking.status}

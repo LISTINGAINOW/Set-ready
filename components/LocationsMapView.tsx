@@ -202,7 +202,7 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
             <div className="grid gap-3 sm:grid-cols-2">
               <a
                 href={`/locations/${selectedItem.location.id}`}
-                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
               >
                 View Details
               </a>

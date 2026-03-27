@@ -115,7 +115,7 @@ export default function ReviewList({
                     <span>Posted {formatDate(review.date || review.createdAt || '1970-01-01')}</span>
                   </div>
                 </div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-black px-3 py-1 text-xs font-semibold text-white">
+                <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                   <MessageSquare className="h-3.5 w-3.5" />
                   {review.rating}/5 rating
                 </div>

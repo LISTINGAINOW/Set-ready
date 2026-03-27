@@ -143,13 +143,13 @@ export default function ProducerSearchPage() {
       </div>
 
       {/* Filters */}
-      <div className="p-6 rounded-xl bg-black/80 border border-blue-200">
-        <h2 className="text-xl font-semibold mb-4">Filters</h2>
+      <div className="p-6 rounded-xl bg-white border border-slate-200">
+        <h2 className="text-xl font-semibold mb-4 text-slate-900">Filters</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           <select
             value={filters.propertyType}
             onChange={(e) => handleFilterChange('propertyType', e.target.value)}
-            className="bg-black border border-blue-200 rounded-lg px-4 py-2"
+            className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900"
           >
             <option value="">Property Type</option>
             {propertyTypes.map(type => (
@@ -159,7 +159,7 @@ export default function ProducerSearchPage() {
           <select
             value={filters.privacyTier}
             onChange={(e) => handleFilterChange('privacyTier', e.target.value)}
-            className="bg-black border border-blue-200 rounded-lg px-4 py-2"
+            className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900"
           >
             <option value="">Privacy Tier</option>
             {privacyTiers.map(tier => (
@@ -169,7 +169,7 @@ export default function ProducerSearchPage() {
           <select
             value={filters.amenities}
             onChange={(e) => handleFilterChange('amenities', e.target.value)}
-            className="bg-black border border-blue-200 rounded-lg px-4 py-2"
+            className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900"
           >
             <option value="">Amenities</option>
             {amenitiesList.map(amenity => (
@@ -179,7 +179,7 @@ export default function ProducerSearchPage() {
           <select
             value={filters.contentTypes}
             onChange={(e) => handleFilterChange('contentTypes', e.target.value)}
-            className="bg-black border border-blue-200 rounded-lg px-4 py-2"
+            className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-slate-900"
           >
             <option value="">Content Types</option>
             {contentTypesList.map(type => (
@@ -191,17 +191,17 @@ export default function ProducerSearchPage() {
             placeholder="City, State, Address, Title"
             value={filters.search}
             onChange={(e) => handleFilterChange('search', e.target.value)}
-            className="bg-black border border-blue-200 rounded-lg px-4 py-2 col-span-2"
+            className="bg-white border border-slate-200 rounded-lg px-4 py-2 col-span-2 text-slate-900"
           />
         </div>
         <div className="flex justify-between items-center mt-6">
-          <div className="text-blue-500">
+          <div className="text-slate-500">
             Showing {filteredLocations.length} of {locations.length} locations
           </div>
           <div className="flex gap-3">
             <button
               onClick={clearFilters}
-              className="px-5 py-2 border border-blue-300 hover:bg-black rounded-lg font-semibold"
+              className="px-5 py-2 border border-slate-200 bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:border-blue-600 rounded-lg font-semibold transition-colors"
             >
               Clear Filters
             </button>
@@ -222,7 +222,7 @@ export default function ProducerSearchPage() {
             const privacyColor = location.privacyTier ? privacyColorMap[location.privacyTier] : '';
 
             return (
-              <div key={location.id} className="rounded-xl overflow-hidden border border-blue-200 bg-black/80 hover:bg-black transition-colors">
+              <div key={location.id} className="rounded-xl overflow-hidden border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
                 {/* Image placeholder */}
                 <div className="h-48 bg-gradient-to-r from-blue-900/20 to-white flex items-center justify-center">
                   <div className="text-blue-500 text-6xl">📸</div>
@@ -241,7 +241,7 @@ export default function ProducerSearchPage() {
                     <span>{location.city}, {location.state}</span>
                   </div>
 
-                  <p className="text-white mb-6 line-clamp-2">{location.description}</p>
+                  <p className="text-slate-700 mb-6 line-clamp-2">{location.description}</p>
 
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center">
@@ -251,14 +251,14 @@ export default function ProducerSearchPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-blue-200">
+                  <div className="mt-6 pt-6 border-t border-slate-200">
                     <div className="flex items-center mb-3">
-                      <Shield className="w-4 h-4 mr-2 text-blue-500" />
-                      <span className="text-sm text-blue-500">Content types allowed:</span>
+                      <Shield className="w-4 h-4 mr-2 text-slate-500" />
+                      <span className="text-sm text-slate-500">Content types allowed:</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {(location.contentTypes || []).map((type) => (
-                        <span key={type} className="px-3 py-1 bg-black rounded-full text-sm">
+                        <span key={type} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm">
                           {type}
                         </span>
                       ))}
@@ -267,12 +267,12 @@ export default function ProducerSearchPage() {
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     {location.amenities.slice(0, 3).map((amenity) => (
-                      <span key={amenity} className="px-3 py-1 bg-black/85 rounded-full text-sm text-blue-500">
+                      <span key={amenity} className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-700">
                         {amenity}
                       </span>
                     ))}
                     {location.amenities.length > 3 && (
-                      <span className="px-3 py-1 bg-black/85 rounded-full text-sm text-blue-500">
+                      <span className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-700">
                         +{location.amenities.length - 3}
                       </span>
                     )}
@@ -283,8 +283,8 @@ export default function ProducerSearchPage() {
                       onClick={() => toggleFavorite(location.id)}
                       className={`flex-1 py-2 rounded-lg flex items-center justify-center space-x-2 ${
                         isFavorited
-                          ? 'bg-pink-600 hover:bg-pink-700'
-                          : 'border border-blue-200 hover:bg-black'
+                          ? 'bg-pink-600 hover:bg-pink-700 text-white'
+                          : 'border border-slate-200 bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:border-blue-600'
                       }`}
                     >
                       <Heart className={`w-4 h-4 ${isFavorited ? 'fill-white' : ''}`} />

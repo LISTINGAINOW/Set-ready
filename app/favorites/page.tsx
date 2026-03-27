@@ -122,7 +122,7 @@ export default function FavoritesPage() {
                       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <Link
                           href={`/locations/${location.id}`}
-                          className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600"
+                          className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
                         >
                           View details
                         </Link>

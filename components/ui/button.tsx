@@ -20,7 +20,7 @@ export function Button({
     default: 'bg-blue-500 text-white hover:bg-blue-600',
     outline: 'border border-black bg-white text-black hover:border-blue-500 hover:text-blue-600',
     ghost: 'bg-white text-black hover:text-blue-600',
-    destructive: 'border border-black bg-black text-white hover:bg-blue-500 hover:border-blue-500',
+    destructive: 'border border-red-600 bg-red-600 text-white hover:bg-red-700 hover:border-red-700',
   };
 
   const sizeClasses = {

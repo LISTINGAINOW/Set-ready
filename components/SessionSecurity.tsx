@@ -63,9 +63,9 @@ export default function SessionSecurity() {
   if (!showWarning || !isProtectedArea) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-[100] max-w-sm rounded-2xl border border-amber-300 bg-black p-4 text-white shadow-2xl">
-      <p className="text-sm font-semibold text-amber-300">Session timeout warning</p>
-      <p className="mt-2 text-sm text-white/85">
+    <div className="fixed bottom-4 right-4 z-[100] max-w-sm rounded-2xl border border-amber-300 bg-amber-50 p-4 text-slate-900 shadow-2xl">
+      <p className="text-sm font-semibold text-amber-700">Session timeout warning</p>
+      <p className="mt-2 text-sm text-slate-700">
         You&apos;ve been inactive. For security, you&apos;ll be signed out in about {countdown} seconds.
       </p>
       <button
