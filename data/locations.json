@@ -119,7 +119,29 @@
     "totLicenseNumber": "TOT-2024-001",
     "businessLicenseType": "STR",
     "hasLiabilityInsurance": true,
-    "hasProductionInsurance": true
+    "hasProductionInsurance": true,
+    "pricing": {
+      "adult": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "events": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "mainstream": {
+        "dailyRate": 0,
+        "hourlyRate": 0,
+        "minHours": 8,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "",
+    "hostEmail": "",
+    "hostPhone": ""
   },
   {
     "id": "2029-del-mar-heights-rd",
@@ -202,7 +224,29 @@
     "totLicenseNumber": "TOT-2024-002",
     "businessLicenseType": "STR",
     "hasLiabilityInsurance": true,
-    "hasProductionInsurance": true
+    "hasProductionInsurance": true,
+    "pricing": {
+      "adult": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "events": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "mainstream": {
+        "dailyRate": 0,
+        "hourlyRate": 0,
+        "minHours": 8,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "",
+    "hostEmail": "",
+    "hostPhone": ""
   },
   {
     "id": "6114-merritt-dr-malibu",
@@ -274,7 +318,29 @@
     "totLicenseNumber": "TOT-2024-003",
     "businessLicenseType": "STR",
     "hasLiabilityInsurance": true,
-    "hasProductionInsurance": true
+    "hasProductionInsurance": true,
+    "pricing": {
+      "adult": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "events": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "mainstream": {
+        "dailyRate": 0,
+        "hourlyRate": 0,
+        "minHours": 8,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "",
+    "hostEmail": "",
+    "hostPhone": ""
   },
   {
     "id": "600-lone-oak-dr-thousand-oaks",
@@ -357,7 +423,29 @@
     "totLicenseNumber": "TOT-2024-004",
     "businessLicenseType": "STR",
     "hasLiabilityInsurance": true,
-    "hasProductionInsurance": true
+    "hasProductionInsurance": true,
+    "pricing": {
+      "adult": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "events": {
+        "hourlyRate": 0,
+        "minHours": 4,
+        "enabled": false
+      },
+      "mainstream": {
+        "dailyRate": 0,
+        "hourlyRate": 0,
+        "minHours": 8,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "",
+    "hostEmail": "",
+    "hostPhone": ""
   },
   {
     "id": "16231-dorilee-ln-encino",
@@ -513,6 +601,28 @@
     "maxGuests": 50,
     "contactName": "SetVenue",
     "contactEmail": "noreply@setvenue.com",
-    "propertyType": "SingleFamily"
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 150,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 250,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 5000,
+        "hourlyRate": 500,
+        "minHours": 8,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "",
+    "hostEmail": "",
+    "hostPhone": ""
   }
 ]

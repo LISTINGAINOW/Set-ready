@@ -388,6 +388,15 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               securityDeposit={location.securityDeposit}
               securityDepositRequiredWhen={location.securityDepositRequiredWhen}
             />
+            <div className="mt-4 border-t border-gray-200 pt-4">
+              <a
+                href={`/bid/${location.id}`}
+                className="flex w-full items-center justify-center gap-2 rounded-full border-2 border-green-600 px-6 py-3 text-center font-semibold text-green-600 transition hover:bg-green-600 hover:text-white"
+              >
+                🎯 Name Your Price
+              </a>
+              <p className="mt-2 text-center text-xs text-gray-500">Have a different budget? Make an offer and negotiate directly.</p>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-black bg-white/50 p-5 sm:p-8">
