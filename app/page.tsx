@@ -5,8 +5,8 @@ import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
 import EmailPopup from '@/components/EmailPopup';
 import HowItWorks from '@/components/HowItWorks';
-const heroImage = 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=80';
-const heroImageAlt = 'Modern luxury home with infinity pool and panoramic views';
+const heroImage = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1800&q=80';
+const heroImageAlt = 'Modern glass villa with pool at golden hour';
 
 const trustPoints = [
   {
