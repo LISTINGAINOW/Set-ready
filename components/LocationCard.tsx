@@ -191,7 +191,7 @@ export default function LocationCard({ location }: LocationCardProps) {
             </button>
             <Link
               href={`/locations/${location.id}`}
-              className="btn-press min-w-[160px] flex-1 rounded-full bg-slate-950 px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-blue-600"
+              className="btn-press min-w-[160px] flex-1 rounded-full border border-slate-200 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
             >
               View details
             </Link>
