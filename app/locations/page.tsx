@@ -14,6 +14,14 @@ type SearchParams = {
   search?: string;
   priceRange?: string;
   view?: string;
+  architecturalStyle?: string | string[];
+  locationSetting?: string | string[];
+  outdoorFeatures?: string | string[];
+  interiorFeatures?: string | string[];
+  productionFeatures?: string | string[];
+  contentPermissions?: string | string[];
+  accessibility?: string | string[];
+  availability?: string;
 };
 
 const locationsPageTitle = 'Browse Production Locations';
@@ -55,7 +63,16 @@ export const metadata: Metadata = {
 };
 
 const propertyTypeChips = ['House', 'Studio', 'Warehouse', 'Loft', 'Cabin', 'Penthouse', 'Apartment'];
-const priceRangeChips = ['Under $200', '$200-$400', '$400+'];
+const priceRangeChips = ['Under $500/day', '$500–$1K/day', '$1K–$3K/day', '$3K–$5K/day', '$5K+/day'];
+
+const architecturalStyles = ['Modern', 'Contemporary', 'Mid-Century Modern', 'Traditional', 'Victorian', 'Craftsman', 'Mediterranean', 'Spanish Colonial', 'Art Deco', 'Industrial', 'Minimalist', 'Rustic', 'Farmhouse', 'Colonial', 'Cape Cod', 'Tudor', 'Bohemian', 'Tropical', 'Japanese', 'Scandinavian'];
+const locationSettingOptions = ['Beachfront', 'Ocean View', 'Mountain View', 'City View', 'Hillside', 'Desert', 'Forest', 'Lakefront', 'Riverfront', 'Downtown', 'Suburban', 'Rural', 'Gated Community', 'Private Road'];
+const outdoorFeaturesList = ['Pool', 'Hot Tub/Jacuzzi', 'Tennis Court', 'Basketball Court', 'Rooftop Deck', 'Patio/Terrace', 'Balcony', 'Garden/Yard', 'Fire Pit', 'Outdoor Kitchen/BBQ', 'Gazebo', 'Fountain', 'Vineyard', 'Orchard', 'Horse Stables', 'Dock/Marina'];
+const interiorFeaturesList = ['Chef Kitchen', 'Home Theater', 'Wine Cellar', 'Library', 'Home Gym', 'Sauna/Steam Room', 'Game Room', 'Recording Studio', 'Art Studio', 'Loft Space', 'Spiral Staircase', 'Fireplace', 'Grand Piano', 'Bar', 'Walk-in Closet'];
+const productionFeaturesList = ['High Ceilings (12ft+)', 'Large Windows/Natural Light', 'Open Floor Plan', 'White Walls (CYC-friendly)', 'Loading Dock', 'Freight Elevator', 'Power (200A+)', 'Green Room/Holding Area', 'Makeup Room', 'Wardrobe Room', 'Production Office Space', 'Drive-On Access', 'Blackout Capable'];
+const contentPermissionsList = ['Mainstream Film/TV', 'Music Videos', 'Photo Shoots', 'Commercial/Advertising', 'Events/Parties', 'Adult Content', 'Student Film', 'Social Media/Influencer'];
+const accessibilityList = ['Wheelchair Accessible', 'Elevator', 'Ground Floor', 'ADA Compliant Bathroom'];
+const availabilityOptions = ['Available Now', 'Available This Week', 'Available This Month'];
 
 const cityHubs = [
   { label: 'Los Angeles', slug: 'los-angeles' },
@@ -82,11 +99,19 @@ const cityHubs = [
   { label: 'Denver', slug: 'denver' },
 ];
 
-function matchesPriceRange(price: number, priceRange?: string) {
+function toArray(val: string | string[] | undefined): string[] {
+  if (!val) return [];
+  return Array.isArray(val) ? val : [val];
+}
+
+function matchesPriceRange(pricePerHour: number, priceRange?: string) {
   if (!priceRange) return true;
-  if (priceRange === 'Under $200') return price < 200;
-  if (priceRange === '$200-$400') return price >= 200 && price <= 400;
-  if (priceRange === '$400+') return price > 400;
+  const daily = pricePerHour * 8;
+  if (priceRange === 'Under $500/day') return daily < 500;
+  if (priceRange === '$500–$1K/day') return daily >= 500 && daily <= 1000;
+  if (priceRange === '$1K–$3K/day') return daily >= 1000 && daily <= 3000;
+  if (priceRange === '$3K–$5K/day') return daily >= 3000 && daily <= 5000;
+  if (priceRange === '$5K+/day') return daily > 5000;
   return true;
 }
 
@@ -116,6 +141,50 @@ function filterLocations(locations: Location[], filters: SearchParams) {
       return false;
     }
 
+    const loc = location as any;
+
+    const archStyles = toArray(filters.architecturalStyle);
+    if (archStyles.length > 0) {
+      const style = (loc.architecturalStyle || loc.style || '').toLowerCase();
+      if (!archStyles.some((s) => style.includes(s.toLowerCase()))) return false;
+    }
+
+    const locationSettings = toArray(filters.locationSetting);
+    if (locationSettings.length > 0) {
+      const settings = ((loc.locationSetting || loc.setting || []) as string[]).map((x: string) => x.toLowerCase());
+      if (!locationSettings.some((s) => settings.includes(s.toLowerCase()))) return false;
+    }
+
+    const outdoorFilters = toArray(filters.outdoorFeatures);
+    if (outdoorFilters.length > 0) {
+      const features = ((loc.outdoorFeatures || location.amenities || []) as string[]).map((x: string) => x.toLowerCase());
+      if (!outdoorFilters.some((f) => features.includes(f.toLowerCase()))) return false;
+    }
+
+    const interiorFilters = toArray(filters.interiorFeatures);
+    if (interiorFilters.length > 0) {
+      const features = ((loc.interiorFeatures || location.amenities || []) as string[]).map((x: string) => x.toLowerCase());
+      if (!interiorFilters.some((f) => features.includes(f.toLowerCase()))) return false;
+    }
+
+    const productionFilters = toArray(filters.productionFeatures);
+    if (productionFilters.length > 0) {
+      const features = ((loc.productionFeatures || location.amenities || []) as string[]).map((x: string) => x.toLowerCase());
+      if (!productionFilters.some((f) => features.includes(f.toLowerCase()))) return false;
+    }
+
+    const permissionFilters = toArray(filters.contentPermissions);
+    if (permissionFilters.length > 0) {
+      const perms = ((loc.contentPermissions || loc.contentTypes || []) as string[]).map((x: string) => x.toLowerCase());
+      if (!permissionFilters.some((p) => perms.includes(p.toLowerCase()))) return false;
+    }
+
+    const accessFilters = toArray(filters.accessibility);
+    if (accessFilters.length > 0) {
+      const access = ((loc.accessibility || []) as string[]).map((x: string) => x.toLowerCase());
+      if (!accessFilters.some((a) => access.includes(a.toLowerCase()))) return false;
+    }
+
     return true;
   });
 }
@@ -126,7 +195,11 @@ function buildHref(params: SearchParams, updates: Partial<SearchParams> = {}) {
 
   Object.entries(merged).forEach(([paramKey, paramValue]) => {
     if (!paramValue) return;
-    next.set(paramKey, paramValue);
+    if (Array.isArray(paramValue)) {
+      paramValue.forEach((v) => next.append(paramKey, v));
+    } else {
+      next.set(paramKey, paramValue);
+    }
   });
 
   const query = next.toString();
@@ -136,6 +209,49 @@ function buildHref(params: SearchParams, updates: Partial<SearchParams> = {}) {
 function buildChipHref(params: SearchParams, key: keyof SearchParams, value: string) {
   const nextValue = params[key] === value ? undefined : value;
   return buildHref(params, { [key]: nextValue } as Partial<SearchParams>);
+}
+
+function FilterSection({
+  title,
+  name,
+  options,
+  selected,
+}: {
+  title: string;
+  name: string;
+  options: string[];
+  selected: string[];
+}) {
+  const activeCount = selected.length;
+  return (
+    <details className="group overflow-hidden rounded-xl border border-slate-200 bg-white">
+      <summary className="flex cursor-pointer select-none list-none items-center justify-between px-4 py-3 [&::-webkit-details-marker]:hidden">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold text-black">{title}</span>
+          {activeCount > 0 && (
+            <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-bold text-white">{activeCount}</span>
+          )}
+        </div>
+        <svg className="h-4 w-4 text-black/40 transition-transform duration-200 group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+      </summary>
+      <div className="border-t border-slate-100 px-4 pb-4 pt-3">
+        <div className="grid grid-cols-2 gap-1">
+          {options.map((option) => (
+            <label key={option} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-50">
+              <input
+                type="checkbox"
+                name={name}
+                value={option}
+                defaultChecked={selected.includes(option)}
+                className="h-4 w-4 shrink-0 accent-blue-500"
+              />
+              <span className="leading-tight text-black/80">{option}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    </details>
+  );
 }
 
 function FilterChip({ href, label, active }: { href: string; label: string; active: boolean }) {
@@ -270,14 +386,81 @@ export default async function LocationsPage({
                   defaultValue={params.search || ''}
                   className="min-h-[48px] rounded-2xl border border-black bg-white px-4 py-3 text-sm text-black outline-none placeholder:text-black/40 focus:border-blue-500 md:col-span-2 xl:col-span-2"
                 />
-                <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-                  <button type="submit" className="min-h-[48px] flex-1 rounded-2xl bg-blue-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 xl:flex-none">
-                    Apply Filters
-                  </button>
-                  <a href="/locations" className="flex min-h-[48px] flex-1 items-center justify-center rounded-2xl border border-black px-5 py-3 text-center text-sm font-semibold text-black transition hover:border-blue-500 hover:text-blue-600 xl:flex-none">
-                    Clear
-                  </a>
+              </div>
+
+              {/* Advanced Filters */}
+              <div className="mt-5 border-t border-black/10 pt-5">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Advanced Filters</p>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <FilterSection
+                    title="Architectural Style"
+                    name="architecturalStyle"
+                    options={architecturalStyles}
+                    selected={toArray(params.architecturalStyle)}
+                  />
+                  <FilterSection
+                    title="Location & Setting"
+                    name="locationSetting"
+                    options={locationSettingOptions}
+                    selected={toArray(params.locationSetting)}
+                  />
+                  <FilterSection
+                    title="Outdoor Features"
+                    name="outdoorFeatures"
+                    options={outdoorFeaturesList}
+                    selected={toArray(params.outdoorFeatures)}
+                  />
+                  <FilterSection
+                    title="Interior Features"
+                    name="interiorFeatures"
+                    options={interiorFeaturesList}
+                    selected={toArray(params.interiorFeatures)}
+                  />
+                  <FilterSection
+                    title="Production Features"
+                    name="productionFeatures"
+                    options={productionFeaturesList}
+                    selected={toArray(params.productionFeatures)}
+                  />
+                  <FilterSection
+                    title="Content Permissions"
+                    name="contentPermissions"
+                    options={contentPermissionsList}
+                    selected={toArray(params.contentPermissions)}
+                  />
+                  <FilterSection
+                    title="Accessibility"
+                    name="accessibility"
+                    options={accessibilityList}
+                    selected={toArray(params.accessibility)}
+                  />
                 </div>
+
+                {/* Availability */}
+                <div className="mt-4 border-t border-black/10 pt-4">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Availability</p>
+                  <div className="flex flex-wrap gap-2">
+                    <label className={`inline-flex cursor-pointer items-center rounded-full border px-4 py-2 text-sm font-medium transition ${!params.availability ? 'border-blue-500 bg-blue-500 text-white' : 'border-black/20 bg-white text-black/80 hover:border-blue-400'}`}>
+                      <input type="radio" name="availability" value="" defaultChecked={!params.availability} className="sr-only" />
+                      Any Time
+                    </label>
+                    {availabilityOptions.map((opt) => (
+                      <label key={opt} className={`inline-flex cursor-pointer items-center rounded-full border px-4 py-2 text-sm font-medium transition ${params.availability === opt ? 'border-blue-500 bg-blue-500 text-white' : 'border-black/20 bg-white text-black/80 hover:border-blue-400'}`}>
+                        <input type="radio" name="availability" value={opt} defaultChecked={params.availability === opt} className="sr-only" />
+                        {opt}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <button type="submit" className="min-h-[48px] flex-1 rounded-2xl bg-blue-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 sm:flex-none sm:px-8">
+                  Apply Filters
+                </button>
+                <a href="/locations" className="flex min-h-[48px] flex-1 items-center justify-center rounded-2xl border border-black px-5 py-3 text-center text-sm font-semibold text-black transition hover:border-blue-500 hover:text-blue-600 sm:flex-none">
+                  Clear All
+                </a>
               </div>
 
               <div className="mt-4 flex flex-col gap-2 border-t border-black/10 pt-4 text-sm text-black/60 sm:flex-row sm:items-center sm:justify-between">
@@ -289,7 +472,7 @@ export default async function LocationsPage({
         </section>
 
         <section className="mt-8">
-          <LocationsClientTools locations={filteredLocations} searchParams={params} />
+          <LocationsClientTools locations={filteredLocations} searchParams={params as Record<string, string | undefined>} />
         </section>
 
         <section className="mt-8">

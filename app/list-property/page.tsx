@@ -90,6 +90,7 @@ type FormState = {
   accessInstructions: string;
   propertyManagerName: string;
   propertyManagerPhone: string;
+  contentPermissions: string[];
 };
 
 const initialForm: FormState = {
@@ -137,6 +138,17 @@ const initialForm: FormState = {
   accessInstructions: '',
   propertyManagerName: '',
   propertyManagerPhone: '',
+  contentPermissions: [
+    'Mainstream Film & Television',
+    'Commercial & Advertising',
+    'Music Videos',
+    'Photo Shoots',
+    'Events & Private Parties',
+    'Student & Independent Film',
+    'Social Media & Influencer Content',
+    'Corporate Events & Meetings',
+    'Wedding & Special Occasions',
+  ],
 };
 
 const dayOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -203,7 +215,7 @@ export default function ListPropertyPage() {
     setErrors((prev) => { const n = { ...prev }; delete n[field]; return n; });
   };
 
-  const toggleArrayItem = (field: 'amenities' | 'availableDays' | 'complianceChecklist', item: string) => {
+  const toggleArrayItem = (field: 'amenities' | 'availableDays' | 'complianceChecklist' | 'contentPermissions', item: string) => {
     setForm((prev) => ({
       ...prev,
       [field]: prev[field].includes(item) ? prev[field].filter((entry) => entry !== item) : [...prev[field], item],
@@ -352,6 +364,7 @@ export default function ListPropertyPage() {
       formData.append('emergencyContactPhone', form.emergencyContactPhone);
       formData.append('cancellationPolicy', form.cancellationPolicy);
       formData.append('cancellationAccepted', String(form.cancellationAccepted));
+      formData.append('contentPermissions', JSON.stringify(form.contentPermissions));
       formData.append('parkingSpots', form.parkingSpots);
       formData.append('loadInAccess', form.loadInAccess);
       formData.append('accessInstructions', form.accessInstructions);
@@ -880,6 +893,42 @@ export default function ListPropertyPage() {
                         )}
                       </label>
                     </div>
+                  </div>
+                </div>
+
+                {/* Content & Usage Permissions */}
+                <div className="mb-8 border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Content &amp; Usage Permissions</h3>
+                  <p className="mb-5 text-sm text-black/60">Select which types of productions you are comfortable hosting. You can change these at any time.</p>
+                  <div className="space-y-2">
+                    {([
+                      { id: 'Mainstream Film & Television', label: 'Mainstream Film & Television' },
+                      { id: 'Commercial & Advertising', label: 'Commercial & Advertising' },
+                      { id: 'Music Videos', label: 'Music Videos' },
+                      { id: 'Photo Shoots', label: 'Photo Shoots' },
+                      { id: 'Events & Private Parties', label: 'Events & Private Parties' },
+                      { id: 'Student & Independent Film', label: 'Student & Independent Film' },
+                      { id: 'Social Media & Influencer Content', label: 'Social Media & Influencer Content' },
+                      { id: 'Adult Content (18+)', label: 'Adult Content (18+)' },
+                      { id: 'Corporate Events & Meetings', label: 'Corporate Events & Meetings' },
+                      { id: 'Wedding & Special Occasions', label: 'Wedding & Special Occasions' },
+                    ] as { id: string; label: string }[]).map(({ id, label }) => {
+                      const isOn = form.contentPermissions.includes(id);
+                      return (
+                        <div key={id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-blue-200">
+                          <span className="text-sm font-medium text-black">{label}</span>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={isOn}
+                            onClick={() => toggleArrayItem('contentPermissions', id)}
+                            className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isOn ? 'bg-blue-600' : 'bg-slate-300'}`}
+                          >
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${isOn ? 'translate-x-6' : 'translate-x-1'}`} />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
