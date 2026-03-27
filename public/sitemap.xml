@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Main Pages -->
+  <url>
+    <loc>https://setvenue.com</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <url>
+    <loc>https://setvenue.com/locations</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/services</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/for-owners</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/for-production-companies</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Legal Pages -->
+  <url>
+    <loc>https://setvenue.com/terms</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/privacy</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/owner-agreement</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/cancellation-policy</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/dispute-resolution</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- City Hub Pages (22 locations) -->
+  <url>
+    <loc>https://setvenue.com/locations/los-angeles</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/malibu</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/santa-monica</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/beverly-hills</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/hollywood</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/silverlake</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/santa-barbara</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/ventura</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/san-diego</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/san-francisco</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/oakland</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/new-york</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/brooklyn</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/los-angeles-valley</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/pasadena</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/long-beach</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/orange-county</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/miami</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/austin</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/denver</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Individual Properties (4 live) -->
+  <url>
+    <loc>https://setvenue.com/locations/7052-dume-dr-malibu</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://setvenue.com/images/properties/7052-dume-dr-malibu/01.webp</image:loc>
+      <image:title>Point Dume Coastal Estate</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/del-mar-contemporary</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://setvenue.com/images/properties/del-mar-contemporary/01.webp</image:loc>
+      <image:title>Del Mar Coastal Contemporary</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/merritt-drive-malibu</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://setvenue.com/images/properties/merritt-drive-malibu/01.webp</image:loc>
+      <image:title>Merritt Drive Malibu Estate</image:title>
+    </image:image>
+  </url>
+
+  <url>
+    <loc>https://setvenue.com/locations/lone-oak-ranch</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://setvenue.com/images/properties/lone-oak-ranch/01.webp</image:loc>
+      <image:title>Lone Oak Ranch Estate</image:title>
+    </image:image>
+  </url>
+</urlset>

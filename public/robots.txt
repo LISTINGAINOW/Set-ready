@@ -1,4 +1,15 @@
 User-agent: *
 Allow: /
 
+# Disallow crawling of admin and booking pages
+Disallow: /admin/
+Disallow: /admin-login
+Disallow: /dashboard/
+Disallow: /book/
+Disallow: /auth/
+
+# Crawl delay for responsible crawling
+Crawl-delay: 1
+
+# Sitemap location
 Sitemap: https://setvenue.com/sitemap.xml
