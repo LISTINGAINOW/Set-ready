@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createAdminClient } from "@/utils/supabase/admin";
 
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
@@ -645,6 +646,7 @@ export function buildBookingConfirmationHtml(
   );
 }
 
+/** @deprecated Use sendPaymentSuccessful(booking) for post-payment confirmation */
 export async function sendBookingConfirmation(
   to: string,
   firstName: string,
@@ -712,4 +714,383 @@ export async function sendNewsletter(
     html: buildNewsletterHtml(firstName, subject, content),
     text: `Hi ${firstName},\n\n${subject}\n\nVisit SetVenue: https://setvenue.com\n\n© ${new Date().getFullYear()} SetVenue`,
   });
+}
+
+// ── Booking Email Automation ───────────────────────────────────────────────────
+// Functions that accept a BookingRecord object and handle all send/log/retry logic.
+// These should be called fire-and-forget from API routes — they never throw.
+
+export interface BookingRecord {
+  id: string;
+  property_id: string;
+  contact_name: string;
+  contact_email: string;
+  company_name: string;
+  production_type: string;
+  booking_start?: string | null;
+  booking_end?: string | null;
+  damage_deposit_amount?: number;
+  status?: string;
+  property_name?: string; // optionally pre-fetched from properties table
+}
+
+function formatBookingDates(start?: string | null, end?: string | null): string {
+  const fmt = (d: string) =>
+    new Date(d).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  if (start && end) return `${fmt(start)} – ${fmt(end)}`;
+  if (start) return fmt(start);
+  return "Dates TBD";
+}
+
+async function logEmailAttempt(
+  bookingId: string,
+  emailType: string,
+  recipient: string,
+  status: "sent" | "failed",
+  errorMessage?: string,
+  resendId?: string
+): Promise<void> {
+  try {
+    const supabase = createAdminClient();
+    await supabase.from("email_logs").insert({
+      booking_id: bookingId,
+      email_type: emailType,
+      recipient,
+      status,
+      error_message: errorMessage ?? null,
+      resend_id: resendId ?? null,
+    });
+  } catch (err) {
+    console.error("[email] Failed to write email_log:", err);
+  }
+}
+
+type ResendPayload = {
+  from: string;
+  to: string | string[];
+  bcc?: string | string[];
+  subject: string;
+  html: string;
+  text: string;
+};
+
+async function sendEmailWithRetry(
+  payload: ResendPayload,
+  bookingId: string,
+  emailType: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY not set — skipping send");
+    return { success: false, error: "RESEND_API_KEY not configured" };
+  }
+
+  const recipient = Array.isArray(payload.to) ? payload.to[0] : payload.to;
+
+  try {
+    const { data, error } = await resend.emails.send(payload);
+    if (error) throw new Error(error.message);
+    await logEmailAttempt(bookingId, emailType, recipient, "sent", undefined, data?.id);
+    return { success: true };
+  } catch (firstErr: unknown) {
+    const msg = firstErr instanceof Error ? firstErr.message : String(firstErr);
+    console.warn(`[email] ${emailType} failed (will retry): ${msg}`);
+
+    // Retry once after 30s — fire-and-forget so main flow is not blocked
+    void (async () => {
+      await new Promise((resolve) => setTimeout(resolve, 30_000));
+      try {
+        const { data, error } = await resend!.emails.send(payload);
+        if (error) throw new Error(error.message);
+        await logEmailAttempt(bookingId, emailType, recipient, "sent", undefined, data?.id);
+        console.log(`[email] ${emailType} retry succeeded`);
+      } catch (retryErr: unknown) {
+        const retryMsg = retryErr instanceof Error ? retryErr.message : String(retryErr);
+        console.error(`[email] ${emailType} retry failed: ${retryMsg}`);
+        await logEmailAttempt(bookingId, emailType, recipient, "failed", retryMsg);
+      }
+    })();
+
+    return { success: false, error: msg };
+  }
+}
+
+// ── B1. Booking Request Submitted (to renter) ─────────────────────────────────
+
+function buildBookingRequestReceivedHtml(
+  firstName: string,
+  propertyName: string,
+  dates: string,
+  bookingId: string
+): string {
+  const name = esc(firstName);
+  const venue = esc(propertyName);
+  const datesText = esc(dates);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <div style="display:inline-block;padding:6px 14px;background-color:#dbeafe;border-radius:20px;margin-bottom:20px;">
+        <span style="font-size:13px;font-weight:600;color:#1d4ed8;">&#128338; &nbsp;Under review</span>
+      </div>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">We received your booking request!</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">
+        Your booking request for <strong>${venue}</strong> has been submitted and is now under review. Our team will reach out within 1–2 business days.
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+        <tr>
+          <td style="padding:16px 20px;background-color:#f9fafb;border-bottom:1px solid #e5e7eb;">
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Request summary</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 20px 16px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              ${infoRow("Venue", venue)}
+              ${infoRow("Dates", datesText)}
+              ${infoRow("Reference", `<span style="font-family:monospace;font-size:12px;">${esc(bookingId)}</span>`)}
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p style="margin:0 0 4px;font-size:14px;color:#6b7280;line-height:1.7;">
+        Questions? Reply to this email or contact us at <a href="mailto:support@setvenue.com" style="color:#2563eb;text-decoration:none;">support@setvenue.com</a>.
+      </p>
+      ${cta("https://setvenue.com/dashboard/bookings", "View booking status")}
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because you submitted a booking request on SetVenue."
+  );
+}
+
+export async function sendBookingRequestConfirmation(
+  booking: BookingRecord
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+  const dates = formatBookingDates(booking.booking_start, booking.booking_end);
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Booking request received: ${propertyName}`,
+    html: buildBookingRequestReceivedHtml(firstName, propertyName, dates, booking.id),
+    text: `Hi ${firstName},\n\nWe received your booking request for ${propertyName}.\n\nDates: ${dates}\nReference: ${booking.id}\n\nOur team will review and contact you within 1–2 business days.\n\nQuestions? Email support@setvenue.com\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "booking_request_received");
+}
+
+// ── B2. Booking Approved (to renter) ──────────────────────────────────────────
+
+function buildBookingApprovedHtml(
+  firstName: string,
+  propertyName: string,
+  dates: string,
+  bookingUrl: string
+): string {
+  const name = esc(firstName);
+  const venue = esc(propertyName);
+  const datesText = esc(dates);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <div style="display:inline-block;padding:6px 14px;background-color:#dcfce7;border-radius:20px;margin-bottom:20px;">
+        <span style="font-size:13px;font-weight:600;color:#16a34a;">&#10003; &nbsp;Approved</span>
+      </div>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Your booking has been approved!</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">
+        Great news — your booking request for <strong>${venue}</strong> has been approved. Please complete your payment to secure the booking.
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+        <tr>
+          <td style="padding:16px 20px;background-color:#f9fafb;border-bottom:1px solid #e5e7eb;">
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Booking details</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 20px 16px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              ${infoRow("Venue", venue)}
+              ${infoRow("Dates", datesText)}
+              ${infoRow("Next step", "Complete payment to confirm")}
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p style="margin:0 0 4px;font-size:14px;color:#6b7280;line-height:1.7;">
+        Your booking will be held for 48 hours. If payment is not received, the booking may be released. Questions? Contact <a href="mailto:support@setvenue.com" style="color:#2563eb;text-decoration:none;">support@setvenue.com</a>.
+      </p>
+      ${cta(bookingUrl, "Complete payment")}
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because your booking request was reviewed by the SetVenue team."
+  );
+}
+
+export async function sendBookingApproved(
+  booking: BookingRecord,
+  bookingUrl: string
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+  const dates = formatBookingDates(booking.booking_start, booking.booking_end);
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Your booking is approved: ${propertyName}`,
+    html: buildBookingApprovedHtml(firstName, propertyName, dates, bookingUrl),
+    text: `Hi ${firstName},\n\nYour booking for ${propertyName} has been approved!\n\nDates: ${dates}\nNext step: Complete payment at ${bookingUrl}\n\nYour booking will be held for 48 hours. Questions? Email support@setvenue.com\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "booking_approved");
+}
+
+// ── B3. Booking Rejected (to renter) ──────────────────────────────────────────
+
+function buildBookingRejectedHtml(
+  firstName: string,
+  propertyName: string,
+  reason: string
+): string {
+  const name = esc(firstName);
+  const venue = esc(propertyName);
+  const reasonText = esc(reason);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dc2626;">Booking update</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Booking request not approved</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        After reviewing your request for <strong>${venue}</strong>, we're unable to approve it at this time.
+      </p>
+      <div style="padding:20px 24px;background-color:#fef2f2;border-radius:10px;border:1px solid #fecaca;margin:24px 0;">
+        <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#b91c1c;">Reason</p>
+        <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap;">${reasonText}</p>
+      </div>
+      <p style="margin:0 0 16px;font-size:14px;color:#6b7280;line-height:1.7;">
+        You're welcome to browse our other available venues or contact our team if you have questions about this decision.
+      </p>
+      ${cta("https://setvenue.com/locations", "Browse other venues")}
+      <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;">
+        Questions? <a href="mailto:support@setvenue.com" style="color:#6b7280;">support@setvenue.com</a>
+      </p>
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because your booking request was reviewed by the SetVenue team."
+  );
+}
+
+export async function sendBookingRejected(
+  booking: BookingRecord,
+  reason: string
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Update on your booking request: ${propertyName}`,
+    html: buildBookingRejectedHtml(firstName, propertyName, reason),
+    text: `Hi ${firstName},\n\nWe were unable to approve your booking request for ${propertyName}.\n\nReason: ${reason}\n\nBrowse other venues: https://setvenue.com/locations\nQuestions? Email support@setvenue.com\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "booking_rejected");
+}
+
+// ── B4. Payment Successful (to renter) ────────────────────────────────────────
+
+export async function sendPaymentSuccessful(
+  booking: BookingRecord
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+  const dates = formatBookingDates(booking.booking_start, booking.booking_end);
+  const amount = booking.damage_deposit_amount
+    ? `$${booking.damage_deposit_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+    : "See booking details";
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Payment confirmed — ${propertyName}`,
+    html: buildBookingConfirmationHtml(firstName, propertyName, dates, amount),
+    text: `Hi ${firstName},\n\nPayment received! Your booking for ${propertyName} is confirmed.\n\nDates: ${dates}\nAmount: ${amount}\n\nAccess instructions will be sent closer to your booking date.\nView details: https://setvenue.com/dashboard/bookings\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "payment_successful");
+}
+
+// ── B5. Payment Failed (to renter) ────────────────────────────────────────────
+
+function buildPaymentFailedHtml(
+  firstName: string,
+  propertyName: string,
+  reason: string
+): string {
+  const name = esc(firstName);
+  const venue = esc(propertyName);
+  const reasonText = esc(reason);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#dc2626;">Payment failed</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">We couldn't process your payment</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        Unfortunately, we were unable to process your payment for <strong>${venue}</strong>.
+      </p>
+      <div style="padding:20px 24px;background-color:#fef2f2;border-radius:10px;border:1px solid #fecaca;margin:24px 0;">
+        <p style="margin:0 0 8px;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#b91c1c;">Reason</p>
+        <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;">${reasonText}</p>
+      </div>
+      <p style="margin:0 0 16px;font-size:14px;color:#374151;line-height:1.7;">
+        Please try again with a different payment method, or contact your bank if the issue persists.
+      </p>
+      ${cta("https://setvenue.com/dashboard/bookings", "Retry payment")}
+      <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;">
+        Need help? <a href="mailto:support@setvenue.com" style="color:#6b7280;">support@setvenue.com</a>
+      </p>
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because a payment for your SetVenue booking was attempted."
+  );
+}
+
+export async function sendPaymentFailed(
+  booking: BookingRecord,
+  reason: string
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Payment failed — ${propertyName}`,
+    html: buildPaymentFailedHtml(firstName, propertyName, reason),
+    text: `Hi ${firstName},\n\nWe couldn't process your payment for ${propertyName}.\n\nReason: ${reason}\n\nPlease retry: https://setvenue.com/dashboard/bookings\nNeed help? Email support@setvenue.com\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "payment_failed");
 }

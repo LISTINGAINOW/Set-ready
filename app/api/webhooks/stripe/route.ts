@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { sendPaymentSuccessful, sendPaymentFailed, type BookingRecord } from '@/lib/email';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -38,24 +39,35 @@ export async function POST(request: Request) {
 
         // Update booking status in database
         if (paymentIntent.metadata?.booking_id) {
-          const { error } = await supabase
+          const { data: bookingData, error } = await supabase
             .from('booking_requests')
             .update({
               status: 'approved',
               stripe_payment_intent_id: paymentIntent.id,
               reviewed_at: new Date().toISOString(),
             })
-            .eq('id', paymentIntent.metadata.booking_id);
+            .eq('id', paymentIntent.metadata.booking_id)
+            .select()
+            .single();
 
           if (error) {
             console.error('Failed to update booking:', error);
+          } else if (bookingData) {
+            // Look up property name then send confirmation email — fire-and-forget
+            void (async () => {
+              let propertyName: string | undefined;
+              try {
+                const { data: prop } = await supabase
+                  .from('properties')
+                  .select('property_name')
+                  .eq('id', bookingData.property_id)
+                  .single();
+                propertyName = prop?.property_name ?? undefined;
+              } catch { /* non-blocking */ }
+              const booking: BookingRecord = { ...bookingData, property_name: propertyName };
+              await sendPaymentSuccessful(booking);
+            })();
           }
-        }
-
-        // Send confirmation email to renter
-        if (paymentIntent.receipt_email) {
-          // TODO: Send email via Resend
-          console.log(`Send confirmation email to ${paymentIntent.receipt_email}`);
         }
         break;
       }
@@ -66,16 +78,34 @@ export async function POST(request: Request) {
 
         // Update booking status
         if (paymentIntent.metadata?.booking_id) {
-          const { error } = await supabase
+          const failReason = paymentIntent.last_payment_error?.message ?? 'Payment could not be processed.';
+          const { data: bookingData, error } = await supabase
             .from('booking_requests')
             .update({
               status: 'rejected',
-              admin_notes: `Payment failed: ${paymentIntent.last_payment_error?.message}`,
+              admin_notes: `Payment failed: ${failReason}`,
             })
-            .eq('id', paymentIntent.metadata.booking_id);
+            .eq('id', paymentIntent.metadata.booking_id)
+            .select()
+            .single();
 
           if (error) {
             console.error('Failed to update booking:', error);
+          } else if (bookingData) {
+            // Look up property name then send failure email — fire-and-forget
+            void (async () => {
+              let propertyName: string | undefined;
+              try {
+                const { data: prop } = await supabase
+                  .from('properties')
+                  .select('property_name')
+                  .eq('id', bookingData.property_id)
+                  .single();
+                propertyName = prop?.property_name ?? undefined;
+              } catch { /* non-blocking */ }
+              const booking: BookingRecord = { ...bookingData, property_name: propertyName };
+              await sendPaymentFailed(booking, failReason);
+            })();
           }
         }
         break;

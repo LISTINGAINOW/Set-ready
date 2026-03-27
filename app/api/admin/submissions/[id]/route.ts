@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { sendSubmissionApproved, sendSubmissionRejected, sendChangesRequested } from '@/lib/email';
 
 function checkAuth(request: NextRequest): boolean {
   const auth = request.headers.get('authorization');
@@ -63,6 +64,31 @@ export async function PATCH(
   if (error) {
     console.error('Admin submission update error:', error.message);
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  // Look up owner email/name and send notification — fire-and-forget
+  if (data.user_id) {
+    void (async () => {
+      try {
+        const { data: user } = await supabase
+          .from('users')
+          .select('email, first_name')
+          .eq('id', data.user_id)
+          .single();
+        if (!user) return;
+
+        const propertyTitle = data.title ?? 'your property';
+        if (status === 'approved') {
+          await sendSubmissionApproved(user.email, user.first_name, propertyTitle);
+        } else if (status === 'rejected') {
+          await sendSubmissionRejected(user.email, user.first_name, propertyTitle, reviewer_notes ?? 'Please contact support for details.');
+        } else if (status === 'changes_requested') {
+          await sendChangesRequested(user.email, user.first_name, propertyTitle, reviewer_notes ?? 'Please review and update your submission.');
+        }
+      } catch (emailErr) {
+        console.error('Failed to send submission status email:', emailErr);
+      }
+    })();
   }
 
   return NextResponse.json({ submission: data });
