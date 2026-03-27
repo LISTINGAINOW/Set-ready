@@ -3,8 +3,15 @@ import Link from 'next/link';
 import { ArrowRight, MapPin, Home, FileText } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Services',
+  title: 'Production Services | SetVenue',
   description: 'More than a marketplace. SetVenue helps productions find the perfect space with our Location Concierge, Crew Housing bundles, and Permit Guidance.',
+  alternates: { canonical: '/services' },
+  openGraph: {
+    title: 'Production Services | SetVenue',
+    description: 'Location Concierge, Crew Housing bundles, and Permit Guidance — all in one place.',
+    url: 'https://setvenue.com/services',
+    type: 'website',
+  },
 };
 
 const services = [

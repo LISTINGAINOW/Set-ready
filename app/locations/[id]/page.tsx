@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { CancellationPolicyTier, Location, VerificationBadge } from '@/types/location';
@@ -67,6 +68,37 @@ function getDefaultHouseRules(location: Location, maxGuests?: number) {
     `Maximum occupancy: ${typeof maxGuests === 'number' ? `${maxGuests} people` : 'Follow host guidance'}${typeof maxGuests === 'number' ? ' unless the host approves a larger crew.' : '.'}`,
     location.parkingDetails || 'Parking instructions are shared after booking confirmation.',
   ];
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const location = await getPropertyBySlug(id);
+  if (!location) return {};
+
+  const title = `${location.name} | Film Location Rental | SetVenue`;
+  const description = `Book ${location.name} for your next production. ${location.beds} bed, ${location.baths} bath in ${location.city}, ${location.state}. Starting at $${location.pricePerHour}/hr.`;
+  const primaryPhoto = location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80';
+  const url = `https://setvenue.com/locations/${id}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/locations/${id}` },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: 'SetVenue',
+      type: 'website',
+      images: [{ url: primaryPhoto, width: 1200, height: 800, alt: location.name }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [primaryPhoto],
+    },
+  };
 }
 
 export default async function LocationDetailPage({ params }: { params: Promise<{ id: string }> }) {

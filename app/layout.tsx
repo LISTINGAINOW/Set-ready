@@ -60,6 +60,16 @@ export const metadata: Metadata = {
     description: defaultDescription,
     images: [defaultOgImage],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -90,6 +100,25 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              name: 'SetVenue',
+              url: siteUrl,
+              logo: `${siteUrl}/icons/icon-512.png`,
+              description: defaultDescription,
+              sameAs: [],
+              contactPoint: {
+                '@type': 'ContactPoint',
+                email: 'support@setvenue.com',
+                contactType: 'customer support',
+              },
+            }),
+          }}
+        />
         <script dangerouslySetInnerHTML={{ __html: `
           (function() {
             if (!('caches' in window) && !('serviceWorker' in navigator)) return;
