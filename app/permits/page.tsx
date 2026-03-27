@@ -3,8 +3,15 @@ import Link from 'next/link';
 import { ArrowRight, ExternalLink, MapPin } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Film Permit Guides by City',
+  title: 'Film Permit Guides | SetVenue',
   description: 'City-specific filming permit guides for Los Angeles, Atlanta, New York, Austin, Miami, Nashville, New Orleans, and more. Know the rules before you book.',
+  alternates: { canonical: '/permits' },
+  openGraph: {
+    title: 'Film Permit Guides | SetVenue',
+    description: 'City-specific filming permit guides for LA, Atlanta, NYC, Austin, Miami, Nashville, New Orleans, and more.',
+    url: 'https://setvenue.com/permits',
+    type: 'website',
+  },
 };
 
 const cities = [

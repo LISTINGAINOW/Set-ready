@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { MapPin, Search, Shield } from 'lucide-react';
 import HighlightText from '@/components/HighlightText';
 import { searchLocations } from '@/lib/search';
+
+export const metadata: Metadata = {
+  title: 'Browse Production Locations | SetVenue',
+  description: 'Search film locations, photo shoot venues, production spaces, and crew housing across the US. Filter by city, style, amenities, and more.',
+  alternates: { canonical: '/search' },
+};
 
 export default async function SearchPage({
   searchParams,

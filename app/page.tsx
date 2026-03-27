@@ -1,10 +1,23 @@
 // Force redeploy: 2026-03-22T18:22 PDT — hero fix push
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getFeaturedProperties } from '@/lib/properties';
 import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
 import EmailPopup from '@/components/EmailPopup';
 import HowItWorks from '@/components/HowItWorks';
+export const metadata: Metadata = {
+  title: 'SetVenue — Premium Film & Production Location Rentals',
+  description: 'Find and book film locations, photo shoot venues, production spaces, and crew housing. Lower fees than Giggster or Peerspace. One platform for every production need.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'SetVenue — Premium Film & Production Location Rentals',
+    description: 'Find and book film locations, photo shoot venues, production spaces, and crew housing. Lower fees than Giggster or Peerspace.',
+    url: 'https://setvenue.com',
+    type: 'website',
+  },
+};
+
 const heroImage = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=80';
 const heroImageAlt = 'Modern white home exterior with blue sky';
 

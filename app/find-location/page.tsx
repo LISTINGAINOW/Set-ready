@@ -3,7 +3,6 @@
 import { FormEvent, useState } from 'react';
 import { CheckCircle, MapPin } from 'lucide-react';
 import { getCsrfToken, isValidEmail, sanitizeEmail, sanitizeInput } from '@/lib/client-security';
-import type { Metadata } from 'next';
 
 const PRODUCTION_TYPES = ['Film', 'Photo Shoot', 'Music Video', 'Commercial', 'Corporate Event', 'Wedding/Party', 'Podcast/Interview', 'Other'];
 
