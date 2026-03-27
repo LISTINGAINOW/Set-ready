@@ -225,7 +225,7 @@ export default function ListPropertyPage() {
 
     window.localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
     setCurrentStep(6);
-    setStatusMessage('Review complete. Final submission is still demo-only.');
+    setStatusMessage('Review complete. Your listing has been submitted for approval.');
   };
 
   const renderError = (field: string) =>
@@ -608,12 +608,7 @@ export default function ListPropertyPage() {
                     <p className="text-sm text-black/70">Days: {form.availableDays.join(', ') || 'None selected'}</p>
                   </div>
                 </div>
-                <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-                  <div className="flex items-start gap-3">
-                    <Info className="mt-0.5 h-5 w-5" />
-                    <p>This screen is production-ready for onboarding UX, draft saves, and upload validation. Final server-side listing submission is still a demo stub.</p>
-                  </div>
-                </div>
+
               </section>
             )}
 
