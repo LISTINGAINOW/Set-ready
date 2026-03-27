@@ -39,7 +39,7 @@ const BENEFITS = [
 ];
 
 const COMPARISON = [
-  { platform: 'SetVenue', listingFee: 'Free', hostFee: '0% (first 500)', guestFee: '10%', highlight: true },
+  { platform: 'SetVenue', listingFee: 'Free', hostFee: '0% forever', guestFee: '10%', highlight: true },
   { platform: 'Giggster', listingFee: '$49+/mo', hostFee: '0%', guestFee: '20–25%', highlight: false },
   { platform: 'Peerspace', listingFee: 'Free', hostFee: '15%', guestFee: '0%', highlight: false },
 ];
