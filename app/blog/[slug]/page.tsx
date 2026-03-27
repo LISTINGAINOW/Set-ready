@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getAllBlogPosts, getBlogCanonicalUrl, getBlogPostBySlug, getOgImage, getRelatedBlogPosts, isValidSlug, renderContentBlocks, formatBlogDate } from '@/lib/blog';
 
@@ -126,8 +127,9 @@ export default function BlogPostPage({ params }: PageProps) {
           <h1 className="mt-4 text-4xl font-semibold tracking-[-0.06em] text-slate-950 sm:text-6xl">{post.title}</h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{post.excerpt}</p>
 
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={post.image} alt={post.title} className="mt-8 h-[420px] w-full rounded-[28px] object-cover" />
+          <div className="relative mt-8 h-[420px] w-full">
+            <Image src={post.image} alt={post.title} fill priority sizes="(max-width: 1024px) 100vw, 960px" className="rounded-[28px] object-cover" />
+          </div>
 
           <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-12">
             <div className="space-y-6 text-base leading-8 text-slate-700">
@@ -164,8 +166,7 @@ export default function BlogPostPage({ params }: PageProps) {
               <div className="rounded-[28px] border border-black/8 bg-slate-50 p-6">
                 <p className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">Author</p>
                 <div className="mt-4 flex items-center gap-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={post.author.image} alt={post.author.name} className="h-14 w-14 rounded-full border border-black/8 bg-white object-cover" />
+                  <Image src={post.author.image} alt={post.author.name} width={56} height={56} className="h-14 w-14 rounded-full border border-black/8 bg-white object-cover" />
                   <div>
                     <h2 className="text-lg font-semibold text-slate-950">{post.author.name}</h2>
                     <p className="text-sm text-slate-500">{post.author.role}</p>
@@ -197,8 +198,9 @@ export default function BlogPostPage({ params }: PageProps) {
           <div className="mt-6 grid gap-6 md:grid-cols-2">
             {relatedPosts.map((relatedPost) => (
               <article key={relatedPost.slug} className="overflow-hidden rounded-[28px] border border-black/8 bg-slate-50">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={relatedPost.image} alt={relatedPost.title} className="h-52 w-full object-cover" />
+                <div className="relative h-52 w-full">
+                  <Image src={relatedPost.image} alt={relatedPost.title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+                </div>
                 <div className="p-6">
                   <p className="text-sm text-slate-500">{formatBlogDate(relatedPost.date)}</p>
                   <h3 className="mt-3 text-xl font-semibold tracking-[-0.04em] text-slate-950">

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, MapPin, Trash2 } from 'lucide-react';
 import locationsData from '@/data/locations.json';
 import { Location } from '@/types/location';
@@ -69,12 +70,12 @@ export default function FavoritesPage() {
                   >
                     <Link href={`/locations/${location.id}`} className="block">
                       <div className="relative aspect-[4/3] overflow-hidden bg-[#FAFAFA]">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={getPrimaryPhoto(location)}
                           alt={location.name}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.03]"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 hover:scale-[1.03]"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent opacity-70" />
                         <div className="absolute bottom-4 left-4 rounded-2xl bg-white/94 px-4 py-2 backdrop-blur-md">

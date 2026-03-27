@@ -1,5 +1,6 @@
 // Force redeploy: 2026-03-22T18:22 PDT — hero fix push
 import Link from 'next/link';
+import Image from 'next/image';
 import { getFeaturedProperties } from '@/lib/properties';
 import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
@@ -67,13 +68,13 @@ export default async function Home() {
       <section className="px-4 pb-10 pt-6 sm:px-6 lg:px-8 lg:pb-14 lg:pt-10">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-[36px] border border-black/10 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.08)] sm:rounded-[44px]">
           <div className="relative isolate min-h-[640px] overflow-hidden px-6 py-16 sm:px-10 sm:py-20 lg:px-16 lg:py-24">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={heroImage}
               alt={heroImageAlt}
-              loading="eager"
-              fetchPriority="high"
-              className="absolute inset-0 -z-30 h-full w-full object-cover"
+              fill
+              priority
+              sizes="100vw"
+              className="-z-30 object-cover"
             />
             <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.45)_50%,rgba(0,0,0,0.55)_100%)]" />
             <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.10),transparent_40%)]" />
