@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import MobileBottomNav from '@/components/MobileBottomNav';
 import AIAssistant from '@/components/AIAssistant';
 import PWARegister from '@/components/PWARegister';
 import SessionSecurity from '@/components/SessionSecurity';
@@ -113,7 +114,7 @@ export default function RootLayout({
           })();
         ` }} />
       </head>
-      <body className="antialiased">
+      <body className="antialiased pb-16 lg:pb-0">
         <Script
           defer
           data-domain="setvenue.com"
@@ -127,6 +128,7 @@ export default function RootLayout({
           {children}
           <Footer />
           <AIAssistant />
+          <MobileBottomNav />
         </ToastProvider>
       </body>
     </html>
