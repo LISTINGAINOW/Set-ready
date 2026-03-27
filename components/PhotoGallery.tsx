@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
 
 interface PhotoGalleryProps {
@@ -109,16 +110,16 @@ export default function PhotoGallery({ photos, title }: PhotoGalleryProps) {
         <button
           type="button"
           onClick={() => openLightbox(activeIndex)}
-          className="group relative block w-full overflow-hidden rounded-2xl border border-black bg-white text-left shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition hover:shadow-[0_28px_80px_rgba(15,23,42,0.14)] focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+          className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-black bg-white text-left shadow-[0_20px_50px_rgba(15,23,42,0.08)] transition hover:shadow-[0_28px_80px_rgba(15,23,42,0.14)] focus:outline-none focus:ring-2 focus:ring-blue-500/40 sm:aspect-video"
           aria-label={`Open ${title} photo ${activeIndex + 1} in fullscreen`}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={currentPhoto}
             alt={`${title} photo ${activeIndex + 1}`}
-            loading="eager"
-            fetchPriority="high"
-            className="aspect-[4/3] w-full object-cover transition duration-500 group-hover:scale-[1.015] sm:aspect-video"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 80vw"
+            className="object-cover transition duration-500 group-hover:scale-[1.015]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent" />
           <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/50 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md sm:text-sm">
@@ -168,7 +169,7 @@ export default function PhotoGallery({ photos, title }: PhotoGalleryProps) {
                     key={`${photo}-${index}`}
                     type="button"
                     onClick={() => setActiveIndex(index)}
-                    className={`relative shrink-0 overflow-hidden rounded-2xl border transition ${
+                    className={`relative h-20 w-24 shrink-0 overflow-hidden rounded-2xl border transition sm:h-24 sm:w-32 ${
                       isActive
                         ? 'border-blue-500 shadow-[0_10px_30px_rgba(59,130,246,0.2)]'
                         : 'border-black/10 bg-white/70 hover:border-black/30'
@@ -176,12 +177,12 @@ export default function PhotoGallery({ photos, title }: PhotoGalleryProps) {
                     aria-label={`View photo ${index + 1}`}
                     aria-pressed={isActive}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={photo}
                       alt={`${title} thumbnail ${index + 1}`}
-                      loading="lazy"
-                      className={`h-20 w-24 object-cover transition sm:h-24 sm:w-32 ${isActive ? 'scale-[1.03]' : 'opacity-80 hover:opacity-100'}`}
+                      fill
+                      sizes="128px"
+                      className={`object-cover transition ${isActive ? 'scale-[1.03]' : 'opacity-80 hover:opacity-100'}`}
                     />
                     <div className={`absolute inset-0 transition ${isActive ? 'ring-2 ring-inset ring-blue-500' : 'bg-black/0 hover:bg-black/5'}`} />
                   </button>
@@ -244,12 +245,12 @@ export default function PhotoGallery({ photos, title }: PhotoGalleryProps) {
                 onTouchMove={(event) => handleTouchMove(event.touches[0].clientX)}
                 onTouchEnd={handleTouchEnd}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={lightboxPhoto}
                   alt={`${title} fullscreen photo ${lightboxIndex + 1}`}
-                  loading="lazy"
-                  className="max-h-full w-full rounded-2xl object-contain shadow-[0_30px_100px_rgba(0,0,0,0.45)] transition duration-300"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                  className="rounded-2xl object-contain shadow-[0_30px_100px_rgba(0,0,0,0.45)] transition duration-300"
                 />
               </div>
             </div>
@@ -264,7 +265,7 @@ export default function PhotoGallery({ photos, title }: PhotoGalleryProps) {
                         key={`lightbox-${photo}-${index}`}
                         type="button"
                         onClick={() => goToIndex(index)}
-                        className={`overflow-hidden rounded-2xl border transition ${
+                        className={`relative h-16 w-20 overflow-hidden rounded-2xl border transition sm:h-20 sm:w-28 ${
                           isSelected
                             ? 'border-white shadow-[0_12px_30px_rgba(255,255,255,0.18)]'
                             : 'border-white/15 opacity-70 hover:opacity-100'
@@ -272,12 +273,12 @@ export default function PhotoGallery({ photos, title }: PhotoGalleryProps) {
                         aria-label={`Open photo ${index + 1}`}
                         aria-pressed={isSelected}
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={photo}
                           alt={`${title} lightbox thumbnail ${index + 1}`}
-                          loading="lazy"
-                          className="h-16 w-20 object-cover sm:h-20 sm:w-28"
+                          fill
+                          sizes="112px"
+                          className="object-cover"
                         />
                       </button>
                     );

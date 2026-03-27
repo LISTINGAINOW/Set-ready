@@ -5,6 +5,7 @@ import { useToast } from '@/components/ui/toast';
 import { Location, VerificationBadge } from '@/types/location';
 import { Heart, MapPin, Star, Clock, Users, X } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { isLocationFavorited, subscribeToFavorites, toggleFavoriteLocation } from '@/lib/favorites';
 import BookingCalendar from '@/components/BookingCalendar';
 import BookingModal from '@/components/BookingModal';
@@ -95,12 +96,12 @@ export default function LocationCard({ location }: LocationCardProps) {
 
           <Link href={`/locations/${location.id}`} className="block">
             <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={heroPhoto}
                 alt={location.name}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/32 via-black/0 to-transparent" />
               <div className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/92 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-700 backdrop-blur-md">

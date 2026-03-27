@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { formatBlogDate, getAllBlogPosts, getBlogCanonicalUrl } from '@/lib/blog';
 
@@ -54,12 +55,17 @@ export default function BlogPage() {
               key={post.slug}
               className={`overflow-hidden rounded-[32px] border border-black/8 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.06)] ${index === 0 ? 'lg:col-span-3 lg:grid lg:grid-cols-[1.1fr_0.9fr]' : ''}`}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={post.image}
-                alt={post.title}
-                className={`h-full min-h-[260px] w-full object-cover ${index === 0 ? 'lg:min-h-[420px]' : ''}`}
-              />
+              <div className={`relative min-h-[260px] w-full ${index === 0 ? 'lg:min-h-[420px]' : ''}`}>
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  sizes={index === 0 ? '(max-width: 1024px) 100vw, 55vw' : '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'}
+                  className="object-cover"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  priority={index === 0}
+                />
+              </div>
               <div className="flex flex-col justify-between p-8">
                 <div>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin, Star } from 'lucide-react';
@@ -150,12 +151,13 @@ export default function LocationsMapView({ locations }: LocationsMapViewProps) {
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-black/45">Selected property</p>
         {selectedItem ? (
           <div className="mt-4 space-y-4">
-            <div className="overflow-hidden rounded-[24px] border border-black/10 bg-[#FAFAFA]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+            <div className="relative h-48 overflow-hidden rounded-[24px] border border-black/10 bg-[#FAFAFA]">
+              <Image
                 src={selectedItem.location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'}
                 alt={selectedItem.location.name}
-                className="h-48 w-full object-cover"
+                fill
+                sizes="360px"
+                className="object-cover"
               />
             </div>
 
