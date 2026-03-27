@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { randomBytes } from 'crypto';
 import { createUser, findUserByEmail, hashPassword, sanitizeUser, UserRecord } from '@/lib/auth';
 import { PASSWORD_RULES_MESSAGE, createSessionCookieValue, getClientIp, isStrongPassword, isValidEmail, recordAuthRateLimit, sanitizeEmail, sanitizeInput, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
-import { sendVerificationEmail } from '@/lib/email';
+import { sendVerificationEmail, sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
@@ -72,6 +72,12 @@ export async function POST(request: NextRequest) {
       await sendVerificationEmail(newUser.email, newUser.firstName, verificationLink);
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError);
+    }
+
+    try {
+      await sendWelcomeEmail(newUser.email, newUser.firstName);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
     }
 
     const response = NextResponse.json(
