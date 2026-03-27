@@ -16,6 +16,8 @@ import { getLocationBlockedDates } from '@/lib/availability';
 import type { Review } from '@/types/review';
 import { getBookingMode, getDisplayAddress, getVerificationHighlights } from '@/lib/location-utils';
 import { calculateBookingPricing, MINIMUM_BOOKING_TOTAL, PRODUCER_FEE_RATE } from '@/lib/pricing';
+import SimilarProperties from '@/components/SimilarProperties';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 const AreaMap = dynamic(() => import('@/components/AreaMap'), {
   ssr: false,
@@ -131,11 +133,14 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-      <div className="mb-6 sm:mb-8">
-        <a href="/locations" className="inline-flex min-h-[44px] items-center text-sm text-black/60 hover:text-black sm:text-base">
-          ← Back to Browse
-        </a>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Locations', href: '/locations' },
+          { label: `${location.city}, ${location.state}`, href: `/locations/city/${location.city.toLowerCase().replace(/\s+/g, '-')}` },
+          { label: location.name },
+        ]}
+      />
 
       {/* Compliance / regulatory banner */}
       {regulationsBanner && (
@@ -451,8 +456,14 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           </div>
         </div>
       </div>
+
+      {/* Similar Properties */}
+      <SimilarProperties
+        currentId={location.id}
+        city={location.city}
+        style={location.style}
+        maxResults={3}
+      />
     </div>
   );
 }
-
-
