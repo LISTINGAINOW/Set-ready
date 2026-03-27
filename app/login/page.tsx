@@ -92,43 +92,43 @@ function LoginContent() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-4 py-10 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-white px-4 py-10 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-6 sm:space-y-8">
         <div>
-          <h2 className="mt-2 text-center text-3xl font-bold text-white sm:mt-6">Sign in to your account</h2>
-          <p className="mt-2 text-center text-sm leading-6 text-blue-500">
-            Or <Link href="/register" className="font-medium text-blue-400 hover:text-blue-300">create a new account</Link>
+          <h2 className="mt-2 text-center text-3xl font-bold text-slate-950 sm:mt-6">Sign in to your account</h2>
+          <p className="mt-2 text-center text-sm leading-6 text-slate-500">
+            Or <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">create a new account</Link>
           </p>
         </div>
-        <div className="rounded-xl border border-blue-200 bg-black/80 p-5 sm:p-8">
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-[0_24px_70px_rgba(15,23,42,0.06)] sm:p-8">
           {timeoutReason && (
-            <div className="mb-4 rounded-lg border border-amber-600 bg-amber-950/40 px-4 py-3 text-sm text-amber-200">
+            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
               You were signed out after inactivity. Sign in again to continue.
             </div>
           )}
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="rounded-lg border border-red-700 bg-red-900/30 px-4 py-3 text-sm text-red-300">
+              <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 <p>{error}</p>
                 {verificationLink && (
-                  <Link href={verificationLink} className="mt-3 inline-block font-semibold text-blue-400 hover:text-blue-300">
+                  <Link href={verificationLink} className="mt-3 inline-block font-semibold text-blue-600 hover:text-blue-500">
                     Open verification page
                   </Link>
                 )}
               </div>
             )}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white">Email address</label>
-              <input id="email" name="email" type="email" autoComplete="email" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="you@example.com" value={formData.email} onChange={handleChange} disabled={loading} />
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
+              <input id="email" name="email" type="email" autoComplete="email" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="you@example.com" value={formData.email} onChange={handleChange} disabled={loading} />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white">Password</label>
-              <input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.password} onChange={handleChange} disabled={loading} />
-              <div className="mt-3 rounded-lg border border-blue-900/60 bg-blue-950/20 p-3 text-xs text-blue-200">
-                <p className="font-semibold text-blue-300">Password requirements</p>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
+              <input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.password} onChange={handleChange} disabled={loading} />
+              <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                <p className="font-semibold text-slate-700">Password requirements</p>
                 <ul className="mt-2 space-y-1">
                   {passwordChecklist.map((item) => (
-                    <li key={item.label} className={item.valid ? 'text-emerald-300' : 'text-blue-200/80'}>
+                    <li key={item.label} className={item.valid ? 'text-emerald-600' : 'text-slate-500'}>
                       {item.valid ? '✓' : '•'} {item.label}
                     </li>
                   ))}
@@ -138,16 +138,16 @@ function LoginContent() {
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex min-h-[44px] items-center">
-                <input id="remember-me" name="rememberMe" type="checkbox" className="h-4 w-4 rounded border-blue-200 bg-black text-blue-600 focus:ring-blue-500" checked={formData.rememberMe} onChange={handleChange} disabled={loading} />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-blue-500">Remember me</label>
+                <input id="remember-me" name="rememberMe" type="checkbox" className="h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500" checked={formData.rememberMe} onChange={handleChange} disabled={loading} />
+                <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600">Remember me</label>
               </div>
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-400 hover:text-blue-300">Forgot your password?</a>
+                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
               </div>
             </div>
 
             <div>
-              <button type="submit" disabled={loading} className="group relative flex min-h-[48px] w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+              <button type="submit" disabled={loading} className="group relative flex min-h-[48px] w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
                 {loading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
@@ -160,7 +160,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-black text-white">Loading login…</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white text-slate-950">Loading login…</div>}>
       <LoginContent />
     </Suspense>
   );

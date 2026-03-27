@@ -108,17 +108,17 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black px-4 py-10 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-white px-4 py-10 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-6 sm:space-y-8">
         <div>
-          <h2 className="mt-2 text-center text-3xl font-bold text-white sm:mt-6">Create your account</h2>
+          <h2 className="mt-2 text-center text-3xl font-bold text-slate-950 sm:mt-6">Create your account</h2>
           <p className="mt-2 text-center text-sm leading-6 text-blue-500">
-            Already have an account? <Link href="/login" className="font-medium text-blue-400 hover:text-blue-300">Sign in</Link>
+            Already have an account? <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">Sign in</Link>
           </p>
         </div>
-        <div className="rounded-xl border border-blue-200 bg-black/80 p-5 sm:p-8">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.06)] p-5 sm:p-8">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {error && <div className="rounded-lg border border-red-700 bg-red-900/30 px-4 py-3 text-sm text-red-300">{error}</div>}
+            {error && <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
             {success && (
               <div className="rounded-lg border border-green-700 bg-green-900/30 px-4 py-3 text-sm text-green-200">
                 <p>{success}</p>
@@ -127,32 +127,32 @@ export default function RegisterPage() {
             )}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-white">First name</label>
-                <input id="firstName" name="firstName" type="text" autoComplete="given-name" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="John" value={formData.firstName} onChange={handleChange} disabled={loading} />
+                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700">First name</label>
+                <input id="firstName" name="firstName" type="text" autoComplete="given-name" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="John" value={formData.firstName} onChange={handleChange} disabled={loading} />
               </div>
               <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-white">Last name</label>
-                <input id="lastName" name="lastName" type="text" autoComplete="family-name" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="Doe" value={formData.lastName} onChange={handleChange} disabled={loading} />
+                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700">Last name</label>
+                <input id="lastName" name="lastName" type="text" autoComplete="family-name" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="Doe" value={formData.lastName} onChange={handleChange} disabled={loading} />
               </div>
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-white">Email address</label>
-              <input id="email" name="email" type="email" autoComplete="email" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="you@example.com" value={formData.email} onChange={handleChange} disabled={loading} />
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
+              <input id="email" name="email" type="email" autoComplete="email" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="you@example.com" value={formData.email} onChange={handleChange} disabled={loading} />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-white">Password</label>
-              <input id="password" name="password" type="password" autoComplete="new-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.password} onChange={handleChange} disabled={loading} />
-              <div className="mt-3 rounded-lg border border-blue-900/60 bg-blue-950/20 p-3 text-xs text-blue-200">
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
+              <input id="password" name="password" type="password" autoComplete="new-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.password} onChange={handleChange} disabled={loading} />
+              <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="font-semibold text-blue-300">Password strength</p>
-                  <span className="font-semibold text-white">{passwordStrength.label}</span>
+                  <p className="font-semibold text-slate-700">Password strength</p>
+                  <span className="font-semibold text-slate-950">{passwordStrength.label}</span>
                 </div>
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
                   <div className={`h-full ${passwordStrength.color}`} style={{ width: `${Math.max(10, (passwordStrength.score / 5) * 100)}%` }} />
                 </div>
                 <ul className="mt-3 space-y-1">
                   {passwordChecklist.map((item) => (
-                    <li key={item.label} className={item.valid ? 'text-emerald-300' : 'text-blue-200/80'}>
+                    <li key={item.label} className={item.valid ? 'text-emerald-600' : 'text-slate-500'}>
                       {item.valid ? '✓' : '•'} {item.label}
                     </li>
                   ))}
@@ -160,17 +160,17 @@ export default function RegisterPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-white">Confirm Password</label>
-              <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-blue-200 bg-black px-3 py-3 text-white placeholder-blue-300 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} disabled={loading} />
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700">Confirm Password</label>
+              <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} disabled={loading} />
             </div>
             <div className="flex items-start">
-              <input id="terms" name="terms" type="checkbox" className="mt-1 h-4 w-4 rounded border-blue-200 bg-black text-blue-600 focus:ring-blue-500" required checked={formData.terms} onChange={handleChange} disabled={loading} />
+              <input id="terms" name="terms" type="checkbox" className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500" required checked={formData.terms} onChange={handleChange} disabled={loading} />
               <label htmlFor="terms" className="ml-2 block text-sm leading-6 text-blue-500">
-                I agree to the <a href="#" className="text-blue-400 hover:text-blue-300">Terms of Service</a> and <a href="#" className="text-blue-400 hover:text-blue-300">Privacy Policy</a>
+                I agree to the <a href="#" className="text-blue-600 hover:text-blue-500">Terms of Service</a> and <a href="#" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
               </label>
             </div>
             <div>
-              <button type="submit" disabled={loading} className="group relative flex min-h-[48px] w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+              <button type="submit" disabled={loading} className="group relative flex min-h-[48px] w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
                 {loading ? 'Creating Account...' : 'Create Account'}
               </button>
             </div>
