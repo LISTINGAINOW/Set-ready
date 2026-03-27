@@ -164,16 +164,16 @@ export default function FreeListingPage() {
           </div>
           <div className="overflow-hidden rounded-[28px] border border-black/6 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.05)]">
             {/* Header row */}
-            <div className="grid grid-cols-4 border-b border-black/5 bg-slate-50 px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            <div className="grid grid-cols-4 border-b border-black/5 bg-slate-50 px-3 py-4 text-[10px] font-semibold uppercase tracking-[0.15em] text-slate-400 sm:px-6 sm:text-xs sm:tracking-[0.2em]">
               <span>Platform</span>
-              <span className="text-center">Listing Fee</span>
-              <span className="text-center">Host Fee</span>
-              <span className="text-center">Guest Fee</span>
+              <span className="text-center">Listing</span>
+              <span className="text-center">Host</span>
+              <span className="text-center">Guest</span>
             </div>
             {COMPARISON.map((row, i) => (
               <div
                 key={row.platform}
-                className={`grid grid-cols-4 items-center px-6 py-5 ${
+                className={`grid grid-cols-4 items-center px-3 py-5 sm:px-6 ${
                   i < COMPARISON.length - 1 ? 'border-b border-black/5' : ''
                 } ${row.highlight ? 'bg-blue-50/50' : ''}`}
               >
