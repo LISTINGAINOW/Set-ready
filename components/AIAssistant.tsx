@@ -124,15 +124,15 @@ export default function AIAssistant() {
       <button
         type="button"
         onClick={() => setIsOpen((open) => !open)}
-        className="fixed bottom-6 right-6 z-[70] flex h-14 w-14 items-center justify-center rounded-full border border-blue-400/30 bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-[0_12px_40px_rgba(59,130,246,0.35)] transition hover:scale-105"
-        aria-label="Location Scout"
-        title="Location Scout"
+        className="fixed bottom-24 right-4 z-[70] flex items-center gap-2 rounded-full border border-blue-400/30 bg-gradient-to-br from-blue-500 to-blue-600 py-3 pl-4 pr-5 text-white shadow-[0_12px_40px_rgba(59,130,246,0.35)] transition hover:scale-105 sm:bottom-6 sm:right-6 sm:h-14 sm:w-14 sm:justify-center sm:px-0 sm:py-0"
+        aria-label="AI Scout"
+        title="AI Scout"
       >
-        {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {isOpen ? <X className="h-5 w-5" /> : <><Sparkles className="h-5 w-5" /><span className="text-sm font-medium sm:hidden">AI Scout</span></>}
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-[70] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0b0f16]/95 shadow-2xl backdrop-blur-xl">
+        <div className="fixed bottom-40 right-4 z-[70] w-[calc(100vw-2rem)] max-w-md overflow-hidden rounded-3xl border border-white/10 bg-[#0b0f16]/95 shadow-2xl backdrop-blur-xl sm:bottom-24 sm:right-6">
           <div className="border-b border-white/10 bg-gradient-to-r from-blue-500/20 via-transparent to-blue-400/10 p-4">
             <div className="flex items-start justify-between gap-4">
               <div>
