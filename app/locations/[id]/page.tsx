@@ -77,7 +77,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!location) return {};
 
   const title = `${location.name} | Film Location Rental | SetVenue`;
-  const description = `Book ${location.name} for your next production. ${location.beds} bed, ${location.baths} bath in ${location.city}, ${location.state}. Starting at $${location.pricePerHour}/hr.`;
+  const description = `Book ${location.name} for your next production. ${location.beds} bed, ${location.baths} bath in ${location.city}, ${location.state}. Starting at $${location.pricePerHour}/hr. 0% host fee.`;
   const primaryPhoto = location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80';
   const url = `https://setvenue.com/locations/${id}`;
 
