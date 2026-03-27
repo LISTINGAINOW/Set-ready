@@ -583,7 +583,7 @@ export default function ListPropertyPage() {
                   <Check className="mr-3 h-6 w-6 text-blue-500" />
                   <div>
                     <h2 className="text-2xl font-bold">Review & Submit</h2>
-                    <p className="text-sm text-black/65">Quick final pass before this turns into a real submission flow.</p>
+                    <p className="text-sm text-black/65">Review your listing details before submitting.</p>
                   </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
@@ -609,6 +609,11 @@ export default function ListPropertyPage() {
                   </div>
                 </div>
 
+                <div className="mt-8 flex justify-end">
+                  <button type="submit" className="inline-flex min-h-[52px] items-center justify-center rounded-lg bg-[#3B82F6] px-8 py-3 text-lg font-semibold text-white transition hover:bg-blue-600">
+                    Submit Listing
+                  </button>
+                </div>
               </section>
             )}
 
