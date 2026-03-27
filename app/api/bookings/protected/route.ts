@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { getClientIp, isValidEmail, sanitizeObject, writeAuditLog } from '@/lib/security';
+import { sendBookingRequestConfirmation, sendBookingApproved, sendBookingRejected, type BookingRecord } from '@/lib/email';
 
 interface ProtectedBookingRequest {
   propertyId: string;
@@ -100,6 +101,27 @@ export async function POST(request: NextRequest) {
       email: body.contactEmail,
     });
 
+    // Look up property name for email (best-effort — never block the response)
+    let propertyName: string | undefined;
+    try {
+      const { data: prop } = await supabase
+        .from('properties')
+        .select('property_name')
+        .eq('id', body.propertyId)
+        .single();
+      propertyName = prop?.property_name ?? undefined;
+    } catch {
+      // non-blocking — email will fall back to property_id
+    }
+
+    const bookingRecord: BookingRecord = {
+      ...data,
+      property_name: propertyName,
+    };
+
+    // Fire-and-forget — never block the response
+    void sendBookingRequestConfirmation(bookingRecord);
+
     return NextResponse.json({ booking: data, message: 'Booking request submitted successfully.' }, { status: 201 });
   } catch (err) {
     console.error('Protected booking error:', err);
@@ -178,6 +200,32 @@ export async function PATCH(request: NextRequest) {
     if (error) throw error;
 
     writeAuditLog('booking.protected.status_updated', { ip, bookingId: id, status });
+
+    // Send email notification based on new status — fire-and-forget
+    if (status === 'approved' || status === 'rejected') {
+      let propertyName: string | undefined;
+      try {
+        const { data: prop } = await supabase
+          .from('properties')
+          .select('property_name')
+          .eq('id', data.property_id)
+          .single();
+        propertyName = prop?.property_name ?? undefined;
+      } catch {
+        // non-blocking
+      }
+
+      const bookingRecord: BookingRecord = { ...data, property_name: propertyName };
+
+      if (status === 'approved') {
+        const bookingUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/dashboard/bookings/${id}`;
+        void sendBookingApproved(bookingRecord, bookingUrl);
+      } else {
+        const reason = adminNotes ?? 'Your booking request did not meet our current requirements.';
+        void sendBookingRejected(bookingRecord, reason);
+      }
+    }
+
     return NextResponse.json({ booking: data });
   } catch (err) {
     console.error('Protected booking PATCH error:', err);
