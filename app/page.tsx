@@ -5,8 +5,8 @@ import LocationCard from '@/components/LocationCard';
 import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
 import EmailPopup from '@/components/EmailPopup';
 import HowItWorks from '@/components/HowItWorks';
-const heroImage = 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1800&q=80';
-const heroImageAlt = 'Modern glass villa with pool at golden hour';
+const heroImage = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=80';
+const heroImageAlt = 'Modern white home exterior with blue sky';
 
 const trustPoints = [
   {
@@ -49,7 +49,7 @@ function MarketplaceSearch() {
       </div>
       <button
         type="submit"
-        className="inline-flex min-h-[52px] w-full shrink-0 items-center justify-center gap-2 rounded-full bg-slate-950 px-7 py-3 text-sm font-semibold text-white transition hover:bg-blue-600 sm:w-auto"
+        className="inline-flex min-h-[52px] w-full shrink-0 items-center justify-center gap-2 rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 transition hover:bg-blue-50 sm:w-auto"
       >
         Search
       </button>
