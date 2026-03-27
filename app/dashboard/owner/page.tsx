@@ -12,7 +12,9 @@ import {
   HelpCircle,
   ArrowRight,
   Image as ImageIcon,
+  DollarSign,
 } from "lucide-react";
+import W9Modal from "@/components/W9Modal";
 
 interface StoredUser {
   id: string;
@@ -90,6 +92,7 @@ export default function OwnerDashboardPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showW9Modal, setShowW9Modal] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
@@ -101,6 +104,17 @@ export default function OwnerDashboardPage() {
       return;
     }
     setUser(parsed);
+
+    // Check if owner has submitted a W-9; show modal if not (unless skipped this session)
+    const skipped = sessionStorage.getItem("w9_skipped");
+    if (!skipped) {
+      fetch(`/api/w9/status?user_id=${encodeURIComponent(parsed.id)}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (!data.w9) setShowW9Modal(true);
+        })
+        .catch(() => {/* non-blocking */});
+    }
 
     const userId = parsed.id;
 
@@ -120,8 +134,22 @@ export default function OwnerDashboardPage() {
   const pendingListings = listings.filter((l) => l.status === "pending_review").length;
   const totalInquiries = inquiries.length;
 
+  function handleW9Skip() {
+    sessionStorage.setItem("w9_skipped", "1");
+    setShowW9Modal(false);
+  }
+
   return (
     <div>
+      {/* W-9 Modal */}
+      {showW9Modal && user && (
+        <W9Modal
+          userId={user.id}
+          onSubmitted={() => setShowW9Modal(false)}
+          onSkip={handleW9Skip}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">
@@ -177,6 +205,13 @@ export default function OwnerDashboardPage() {
           >
             <User className="h-4 w-4" />
             View My Profile
+          </Link>
+          <Link
+            href="/dashboard/owner/earnings"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+          >
+            <DollarSign className="h-4 w-4" />
+            View Earnings
           </Link>
           <Link
             href="/faq"

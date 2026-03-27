@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Home, MapPin, Calendar, User, Settings, LogOut, Menu, X, Building2, Wallet, CalendarRange, CircleDollarSign } from "lucide-react";
+import { Home, MapPin, Calendar, User, Settings, LogOut, Menu, X, Building2, Wallet, CalendarRange, CircleDollarSign, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
@@ -77,6 +77,10 @@ export default function DashboardLayout({
             <Link href="/dashboard/host/offers" className="flex items-center space-x-3 px-4 py-3 rounded-lg text-black transition-colors hover:bg-blue-50 hover:text-blue-700" onClick={() => setSidebarOpen(false)}>
               <CircleDollarSign className="w-5 h-5" />
               <span>Offers</span>
+            </Link>
+            <Link href="/dashboard/owner/earnings" className="flex items-center space-x-3 px-4 py-3 rounded-lg text-black transition-colors hover:bg-blue-50 hover:text-blue-700" onClick={() => setSidebarOpen(false)}>
+              <TrendingUp className="w-5 h-5" />
+              <span>My Earnings</span>
             </Link>
             <Link href="/dashboard/bookings" className="flex items-center space-x-3 px-4 py-3 rounded-lg text-black transition-colors hover:bg-blue-50 hover:text-blue-700" onClick={() => setSidebarOpen(false)}>
               <Wallet className="w-5 h-5" />
