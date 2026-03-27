@@ -1,0 +1,15 @@
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS age_verified BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS property_condition_disclosed BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS zoning_compliant BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS right_to_list BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS content_usage_rights BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS neighbor_acknowledged BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS emergency_contact_name TEXT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS emergency_contact_phone TEXT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS cancellation_policy TEXT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS cancellation_accepted BOOLEAN DEFAULT false;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS parking_spots INT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS load_in_access TEXT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS access_instructions TEXT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS property_manager_name TEXT;
+ALTER TABLE public.listing_submissions ADD COLUMN IF NOT EXISTS property_manager_phone TEXT;

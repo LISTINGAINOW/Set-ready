@@ -74,6 +74,22 @@ type FormState = {
   insuranceConfirmed: boolean;
   indemnificationAccepted: boolean;
   reviewAcknowledged: boolean;
+  // New legal fields
+  ageVerified: boolean;
+  propertyConditionDisclosed: boolean;
+  zoningCompliant: boolean;
+  rightToList: boolean;
+  contentUsageRights: boolean;
+  neighborAcknowledged: boolean;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  cancellationPolicy: string;
+  cancellationAccepted: boolean;
+  parkingSpots: string;
+  loadInAccess: string;
+  accessInstructions: string;
+  propertyManagerName: string;
+  propertyManagerPhone: string;
 };
 
 const initialForm: FormState = {
@@ -106,6 +122,21 @@ const initialForm: FormState = {
   insuranceConfirmed: false,
   indemnificationAccepted: false,
   reviewAcknowledged: false,
+  ageVerified: false,
+  propertyConditionDisclosed: false,
+  zoningCompliant: false,
+  rightToList: false,
+  contentUsageRights: false,
+  neighborAcknowledged: false,
+  emergencyContactName: '',
+  emergencyContactPhone: '',
+  cancellationPolicy: '',
+  cancellationAccepted: false,
+  parkingSpots: '',
+  loadInAccess: '',
+  accessInstructions: '',
+  propertyManagerName: '',
+  propertyManagerPhone: '',
 };
 
 const dayOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -167,8 +198,9 @@ export default function ListPropertyPage() {
     });
   };
 
-  const toggleBooleanField = (field: 'hasLiabilityInsurance' | 'hasProductionInsurance') => {
+  const toggleBooleanField = (field: 'hasLiabilityInsurance' | 'hasProductionInsurance' | 'ageVerified' | 'propertyConditionDisclosed' | 'zoningCompliant' | 'rightToList' | 'contentUsageRights' | 'neighborAcknowledged' | 'cancellationAccepted') => {
     setForm((prev) => ({ ...prev, [field]: !prev[field] }));
+    setErrors((prev) => { const n = { ...prev }; delete n[field]; return n; });
   };
 
   const toggleArrayItem = (field: 'amenities' | 'availableDays' | 'complianceChecklist', item: string) => {
@@ -219,6 +251,16 @@ export default function ListPropertyPage() {
       if (!form.insuranceConfirmed) nextErrors.insuranceConfirmed = 'You must confirm adequate insurance coverage.';
       if (!form.indemnificationAccepted) nextErrors.indemnificationAccepted = 'You must accept the indemnification terms.';
       if (!form.reviewAcknowledged) nextErrors.reviewAcknowledged = 'You must acknowledge the review process.';
+      if (!form.ageVerified) nextErrors.ageVerified = 'You must confirm you are at least 18 years of age.';
+      if (!form.propertyConditionDisclosed) nextErrors.propertyConditionDisclosed = 'You must confirm the property condition disclosure.';
+      if (!form.zoningCompliant) nextErrors.zoningCompliant = 'You must confirm zoning and STR compliance.';
+      if (!form.rightToList) nextErrors.rightToList = 'You must confirm your right to list this property.';
+      if (!form.contentUsageRights) nextErrors.contentUsageRights = 'You must grant content usage rights.';
+      if (!form.neighborAcknowledged) nextErrors.neighborAcknowledged = 'You must acknowledge the neighbor notification policy.';
+      if (!form.emergencyContactName.trim()) nextErrors.emergencyContactName = 'Emergency contact name is required.';
+      if (!form.emergencyContactPhone.trim()) nextErrors.emergencyContactPhone = 'Emergency contact phone is required.';
+      if (!form.cancellationPolicy) nextErrors.cancellationPolicy = 'Please select a cancellation policy.';
+      if (!form.cancellationAccepted) nextErrors.cancellationAccepted = 'You must accept the cancellation policy terms.';
     }
 
     setErrors(nextErrors);
@@ -300,6 +342,21 @@ export default function ListPropertyPage() {
       formData.append('insuranceConfirmed', String(form.insuranceConfirmed));
       formData.append('indemnificationAccepted', String(form.indemnificationAccepted));
       formData.append('reviewAcknowledged', String(form.reviewAcknowledged));
+      formData.append('ageVerified', String(form.ageVerified));
+      formData.append('propertyConditionDisclosed', String(form.propertyConditionDisclosed));
+      formData.append('zoningCompliant', String(form.zoningCompliant));
+      formData.append('rightToList', String(form.rightToList));
+      formData.append('contentUsageRights', String(form.contentUsageRights));
+      formData.append('neighborAcknowledged', String(form.neighborAcknowledged));
+      formData.append('emergencyContactName', form.emergencyContactName);
+      formData.append('emergencyContactPhone', form.emergencyContactPhone);
+      formData.append('cancellationPolicy', form.cancellationPolicy);
+      formData.append('cancellationAccepted', String(form.cancellationAccepted));
+      formData.append('parkingSpots', form.parkingSpots);
+      formData.append('loadInAccess', form.loadInAccess);
+      formData.append('accessInstructions', form.accessInstructions);
+      formData.append('propertyManagerName', form.propertyManagerName);
+      formData.append('propertyManagerPhone', form.propertyManagerPhone);
       // Photo files
       for (const file of photoFilesRef.current) {
         formData.append('photos', file);
@@ -875,6 +932,168 @@ export default function ListPropertyPage() {
                   {(errors.ownershipCertified || errors.ownerAgreementAccepted || errors.insuranceConfirmed || errors.indemnificationAccepted || errors.reviewAcknowledged) && (
                     <p className="mt-3 text-sm text-red-600">Please check all required boxes above to continue.</p>
                   )}
+
+                  {/* Additional required legal checkboxes */}
+                  <div className="mt-4 space-y-3">
+                    {[
+                      { field: 'ageVerified' as const, label: 'I am at least 18 years of age.' },
+                      { field: 'propertyConditionDisclosed' as const, label: 'This property is free of known hazards including but not limited to mold, asbestos, lead paint, and structural deficiencies.' },
+                      { field: 'zoningCompliant' as const, label: 'I confirm this property is legally permitted for short-term rental or production use under applicable local zoning laws.' },
+                      { field: 'rightToList' as const, label: 'I confirm there are no liens, legal disputes, or HOA restrictions that would prevent me from listing this property.' },
+                      { field: 'contentUsageRights' as const, label: 'I grant productions the right to photograph and film the interior and exterior of the property for commercial use.' },
+                      { field: 'neighborAcknowledged' as const, label: 'I acknowledge that production activity may be visible to neighbors and I accept responsibility for any neighbor complaints.' },
+                    ].map(({ field, label }) => (
+                      <label key={field} className="flex min-h-[48px] cursor-pointer items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
+                        <input
+                          type="checkbox"
+                          checked={form[field]}
+                          onChange={() => toggleBooleanField(field)}
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600"
+                        />
+                        <span className="text-sm leading-relaxed">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {(errors.ageVerified || errors.propertyConditionDisclosed || errors.zoningCompliant || errors.rightToList || errors.contentUsageRights || errors.neighborAcknowledged) && (
+                    <p className="mt-3 text-sm text-red-600">Please check all required legal agreement boxes above to continue.</p>
+                  )}
+                </div>
+
+                {/* Emergency Contact */}
+                <div className="mt-8 border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Emergency Contact</h3>
+                  <p className="mb-5 text-sm text-black/60">Required for all listings. This contact will be reached in case of an emergency during a booking.</p>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Emergency contact name <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        className={inputClassName}
+                        value={form.emergencyContactName}
+                        onChange={(e) => updateField('emergencyContactName', sanitizeInput(e.target.value))}
+                        placeholder="Jane Smith"
+                      />
+                      {renderError('emergencyContactName')}
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Emergency contact phone <span className="text-red-500">*</span></label>
+                      <input
+                        type="tel"
+                        className={inputClassName}
+                        value={form.emergencyContactPhone}
+                        onChange={(e) => updateField('emergencyContactPhone', sanitizeInput(e.target.value))}
+                        placeholder="+1 (555) 000-0000"
+                      />
+                      {renderError('emergencyContactPhone')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cancellation Policy */}
+                <div className="mt-8 border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Cancellation Policy</h3>
+                  <p className="mb-5 text-sm text-black/60">Select the policy that best fits your situation. This will be shown to productions before they book.</p>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Policy <span className="text-red-500">*</span></label>
+                      <select
+                        className={inputClassName}
+                        value={form.cancellationPolicy}
+                        onChange={(e) => updateField('cancellationPolicy', e.target.value)}
+                      >
+                        <option value="">Select policy</option>
+                        <option value="flexible">Flexible</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="strict">Strict</option>
+                      </select>
+                      {renderError('cancellationPolicy')}
+                    </div>
+                    <div className="flex items-end">
+                      <label className="flex min-h-[48px] w-full cursor-pointer items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
+                        <input
+                          type="checkbox"
+                          checked={form.cancellationAccepted}
+                          onChange={() => toggleBooleanField('cancellationAccepted')}
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600"
+                        />
+                        <span className="text-sm leading-relaxed">
+                          I have read and accept the{' '}
+                          <a href="/legal/cancellation" target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 underline hover:text-blue-800">
+                            cancellation policy terms
+                          </a>
+                          .
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  {renderError('cancellationAccepted')}
+                </div>
+
+                {/* Property Access & Logistics */}
+                <div className="mt-8 border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Property Access &amp; Logistics</h3>
+                  <p className="mb-5 text-sm text-black/60">Optional but helps productions plan load-in and access. You can update this any time.</p>
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className="md:w-1/3">
+                      <label className="mb-2 block text-sm font-medium">Number of parking spots available</label>
+                      <input
+                        type="number"
+                        min="0"
+                        className={inputClassName}
+                        value={form.parkingSpots}
+                        onChange={(e) => updateField('parkingSpots', e.target.value)}
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Load-in access description</label>
+                      <textarea
+                        rows={3}
+                        className={`${inputClassName} min-h-[96px]`}
+                        value={form.loadInAccess}
+                        onChange={(e) => updateField('loadInAccess', sanitizeInput(e.target.value))}
+                        placeholder="Describe vehicle access, loading dock, elevator, stairs, etc."
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Gate codes or special access instructions</label>
+                      <textarea
+                        rows={3}
+                        className={`${inputClassName} min-h-[96px]`}
+                        value={form.accessInstructions}
+                        onChange={(e) => updateField('accessInstructions', sanitizeInput(e.target.value))}
+                        placeholder="Any codes, keys, or special instructions for accessing the property"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Property Manager (Optional) */}
+                <div className="mt-8 border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Property Manager <span className="text-sm font-normal text-black/50">(Optional)</span></h3>
+                  <p className="mb-5 text-sm text-black/60">If someone else manages day-to-day access, add their details here.</p>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Property manager name</label>
+                      <input
+                        type="text"
+                        className={inputClassName}
+                        value={form.propertyManagerName}
+                        onChange={(e) => updateField('propertyManagerName', sanitizeInput(e.target.value))}
+                        placeholder="Alex Johnson"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Property manager phone</label>
+                      <input
+                        type="tel"
+                        className={inputClassName}
+                        value={form.propertyManagerPhone}
+                        onChange={(e) => updateField('propertyManagerPhone', sanitizeInput(e.target.value))}
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+                  </div>
                 </div>
               </section>
             )}
@@ -908,6 +1127,24 @@ export default function ListPropertyPage() {
                     <h3 className="font-semibold">Pricing & availability</h3>
                     <p className="mt-2 text-sm text-black/70">Base rate: ${form.baseRate || '0'} · Cleaning: ${form.cleaningFee || '0'} · Deposit: ${form.securityDeposit || '0'}</p>
                     <p className="text-sm text-black/70">Days: {form.availableDays.join(', ') || 'None selected'}</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 md:col-span-2">
+                    <h3 className="font-semibold">Legal &amp; Operational</h3>
+                    <p className="mt-2 text-sm text-black/70">
+                      Legal agreements accepted: {[form.ownershipCertified, form.ownerAgreementAccepted, form.insuranceConfirmed, form.indemnificationAccepted, form.reviewAcknowledged, form.ageVerified, form.propertyConditionDisclosed, form.zoningCompliant, form.rightToList, form.contentUsageRights, form.neighborAcknowledged, form.cancellationAccepted].filter(Boolean).length} / 12
+                    </p>
+                    <p className="text-sm text-black/70">
+                      Emergency contact: {form.emergencyContactName || '—'}{form.emergencyContactPhone ? ` · ${form.emergencyContactPhone}` : ''}
+                    </p>
+                    <p className="text-sm text-black/70">
+                      Cancellation policy: {form.cancellationPolicy ? form.cancellationPolicy.charAt(0).toUpperCase() + form.cancellationPolicy.slice(1) : '—'}
+                    </p>
+                    {form.parkingSpots && (
+                      <p className="text-sm text-black/70">Parking spots: {form.parkingSpots}</p>
+                    )}
+                    {form.propertyManagerName && (
+                      <p className="text-sm text-black/70">Property manager: {form.propertyManagerName}{form.propertyManagerPhone ? ` · ${form.propertyManagerPhone}` : ''}</p>
+                    )}
                   </div>
                 </div>
 

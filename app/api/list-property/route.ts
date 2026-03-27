@@ -59,6 +59,21 @@ export async function POST(request: NextRequest) {
     const insuranceConfirmed = formData.get('insuranceConfirmed') === 'true';
     const indemnificationAccepted = formData.get('indemnificationAccepted') === 'true';
     const reviewAcknowledged = formData.get('reviewAcknowledged') === 'true';
+    const ageVerified = formData.get('ageVerified') === 'true';
+    const propertyConditionDisclosed = formData.get('propertyConditionDisclosed') === 'true';
+    const zoningCompliant = formData.get('zoningCompliant') === 'true';
+    const rightToList = formData.get('rightToList') === 'true';
+    const contentUsageRights = formData.get('contentUsageRights') === 'true';
+    const neighborAcknowledged = formData.get('neighborAcknowledged') === 'true';
+    const emergencyContactName = String(formData.get('emergencyContactName') || '').trim();
+    const emergencyContactPhone = String(formData.get('emergencyContactPhone') || '').trim();
+    const cancellationPolicy = String(formData.get('cancellationPolicy') || '').trim();
+    const cancellationAccepted = formData.get('cancellationAccepted') === 'true';
+    const parkingSpotsRaw = String(formData.get('parkingSpots') || '').trim();
+    const loadInAccess = String(formData.get('loadInAccess') || '').trim();
+    const accessInstructions = String(formData.get('accessInstructions') || '').trim();
+    const propertyManagerName = String(formData.get('propertyManagerName') || '').trim();
+    const propertyManagerPhone = String(formData.get('propertyManagerPhone') || '').trim();
 
     if (!title || !propertyType || !address || !city || !state || !baseRate) {
       return NextResponse.json({ error: 'Missing required property fields.' }, { status: 400 });
@@ -66,6 +81,15 @@ export async function POST(request: NextRequest) {
 
     if (!ownershipCertified || !ownerAgreementAccepted || !insuranceConfirmed || !indemnificationAccepted || !reviewAcknowledged) {
       return NextResponse.json({ error: 'All legal agreements must be accepted.' }, { status: 400 });
+    }
+    if (!ageVerified || !propertyConditionDisclosed || !zoningCompliant || !rightToList || !contentUsageRights || !neighborAcknowledged || !cancellationAccepted) {
+      return NextResponse.json({ error: 'All required legal agreements must be accepted.' }, { status: 400 });
+    }
+    if (!emergencyContactName || !emergencyContactPhone) {
+      return NextResponse.json({ error: 'Emergency contact name and phone are required.' }, { status: 400 });
+    }
+    if (!cancellationPolicy) {
+      return NextResponse.json({ error: 'A cancellation policy must be selected.' }, { status: 400 });
     }
 
     const governmentIdFile = formData.get('governmentId') as File | null;
@@ -153,6 +177,21 @@ export async function POST(request: NextRequest) {
       insurance_confirmed: insuranceConfirmed,
       indemnification_accepted: indemnificationAccepted,
       review_acknowledged: reviewAcknowledged,
+      age_verified: ageVerified,
+      property_condition_disclosed: propertyConditionDisclosed,
+      zoning_compliant: zoningCompliant,
+      right_to_list: rightToList,
+      content_usage_rights: contentUsageRights,
+      neighbor_acknowledged: neighborAcknowledged,
+      emergency_contact_name: emergencyContactName || null,
+      emergency_contact_phone: emergencyContactPhone || null,
+      cancellation_policy: cancellationPolicy || null,
+      cancellation_accepted: cancellationAccepted,
+      parking_spots: parkingSpotsRaw ? parseInt(parkingSpotsRaw, 10) || null : null,
+      load_in_access: loadInAccess || null,
+      access_instructions: accessInstructions || null,
+      property_manager_name: propertyManagerName || null,
+      property_manager_phone: propertyManagerPhone || null,
       government_id_url: governmentIdUrl,
       ownership_proof_url: ownershipProofUrl,
       insurance_cert_url: insuranceCertUrl,
