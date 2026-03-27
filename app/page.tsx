@@ -27,7 +27,7 @@ const trustPoints = [
 function MarketplaceSearch() {
   return (
     <form
-      action="/search"
+      action="/properties"
       className="flex w-full flex-col gap-3 rounded-[30px] border border-white/18 bg-white/96 p-3 shadow-[0_28px_80px_rgba(15,23,42,0.2)] backdrop-blur-xl sm:flex-row sm:items-center sm:rounded-full sm:p-2"
     >
       <div className="flex flex-1 items-center gap-3 rounded-full px-2 py-1 sm:px-5 sm:py-2">
