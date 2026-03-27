@@ -98,7 +98,7 @@ export default function ServicesPage() {
                 <div className="mt-auto pt-8">
                   <Link
                     href={service.href}
-                    className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-slate-950 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-600"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
                   >
                     {service.cta}
                     <ArrowRight className="h-4 w-4" />
@@ -112,11 +112,11 @@ export default function ServicesPage() {
 
       {/* Bottom CTA */}
       <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="rounded-[34px] border border-black/6 bg-gradient-to-br from-slate-950 to-slate-800 px-8 py-14 text-center shadow-[0_24px_70px_rgba(15,23,42,0.12)] sm:px-12">
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+        <div className="rounded-[34px] border border-slate-200 bg-slate-50 px-8 py-14 text-center shadow-[0_24px_70px_rgba(15,23,42,0.06)] sm:px-12">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Ready to find your next location?
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base text-slate-300">
+          <p className="mx-auto mt-4 max-w-xl text-base text-slate-600">
             Tell us what you need and our team will personally curate the best options for your production — within 24 hours.
           </p>
           <Link

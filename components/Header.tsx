@@ -162,7 +162,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/register"
-                    className="inline-flex min-h-[44px] items-center rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-600"
+                    className="inline-flex min-h-[44px] items-center rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
                   >
                     Get started
                   </Link>
@@ -317,7 +317,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/register"
-                className="inline-flex min-h-[48px] items-center justify-center rounded-xl bg-slate-950 text-sm font-semibold text-white transition hover:bg-blue-600"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
               >
                 Get started
               </Link>
