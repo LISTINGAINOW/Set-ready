@@ -9,6 +9,7 @@ import PhotoGallery from '@/components/PhotoGallery';
 import ReviewsList from '@/components/ReviewsList';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
+import InquiryForm from '@/components/InquiryForm';
 import { getPropertyBySlug } from '@/lib/properties';
 import reviewsData from '@/data/reviews.json';
 import { getLocationBlockedDates } from '@/lib/availability';
@@ -362,6 +363,10 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <div className="mt-10">
               <h2 className="mb-4 text-2xl font-bold text-black">Reviews & ratings</h2>
               <ReviewsList propertyId={location.id} initialReviews={locationReviews} />
+            </div>
+
+            <div className="mt-10">
+              <InquiryForm propertyId={location.id} propertyName={location.name} />
             </div>
           </div>
         </div>
