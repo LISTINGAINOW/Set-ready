@@ -86,8 +86,8 @@ export default function ProducerBookingsPage() {
       case 'confirmed': return 'bg-green-900/30 text-green-400';
       case 'pending': return 'bg-yellow-900/30 text-yellow-400';
       case 'rejected': return 'bg-red-900/30 text-red-400';
-      case 'cancelled': return 'bg-black text-blue-500';
-      default: return 'bg-black text-blue-500';
+      case 'cancelled': return 'bg-slate-100 text-slate-700';
+      default: return 'bg-slate-100 text-slate-700';
     }
   };
 
@@ -143,7 +143,7 @@ export default function ProducerBookingsPage() {
           {filteredBookings.map(booking => {
             const location = locations.find(l => l.id === booking.locationId);
             return (
-              <div key={booking.id} className="border border-blue-200 rounded-xl p-6 bg-black/85">
+              <div key={booking.id} className="border border-slate-200 rounded-xl p-6 bg-white">
                 <div className="flex flex-col lg:flex-row lg:items-start gap-6">
                   {/* Left side: location info */}
                   <div className="flex-1">
@@ -189,27 +189,27 @@ export default function ProducerBookingsPage() {
                     {booking.notes && (
                       <div className="mb-6">
                         <p className="text-sm text-blue-500">Notes</p>
-                        <p className="text-white">{booking.notes}</p>
+                        <p className="text-slate-700">{booking.notes}</p>
                       </div>
                     )}
 
                     {/* Contact info */}
-                    <div className="border-t border-blue-200 pt-6">
-                      <p className="text-sm text-blue-500 mb-3">Location Owner Contact</p>
+                    <div className="border-t border-slate-200 pt-6">
+                      <p className="text-sm text-slate-500 mb-3">Location Owner Contact</p>
                       <div className="flex flex-wrap gap-4">
                         <div className="flex items-center space-x-2">
-                          <User className="w-4 h-4 text-blue-500" />
-                          <span className="text-white">Jane Doe (Owner)</span>
+                          <User className="w-4 h-4 text-slate-500" />
+                          <span className="text-slate-900">Jane Doe (Owner)</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Mail className="w-4 h-4 text-blue-500" />
+                          <Mail className="w-4 h-4 text-slate-500" />
                           <a href="mailto:owner@example.com" className="text-blue-600 hover:underline">
                             owner@example.com
                           </a>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Phone className="w-4 h-4 text-blue-500" />
-                          <span className="text-white">Owner phone shared after booking confirmation if provided</span>
+                          <Phone className="w-4 h-4 text-slate-500" />
+                          <span className="text-slate-700">Owner phone shared after booking confirmation if provided</span>
                         </div>
                       </div>
                     </div>
@@ -219,7 +219,7 @@ export default function ProducerBookingsPage() {
                   <div className="lg:w-48 space-y-4">
                     <Link
                       href={`/locations/${booking.locationId}`}
-                      className="w-full py-2 rounded-lg border border-blue-200 hover:bg-black transition-colors flex items-center justify-center space-x-2"
+                      className="w-full py-2 rounded-lg border border-slate-200 bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-colors flex items-center justify-center space-x-2"
                     >
                       <MapPin className="w-4 h-4" />
                       <span>View Location</span>

@@ -90,7 +90,7 @@ export default function BookingCalendar({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className={`rounded-full px-4 py-2 text-sm font-semibold ${isHostMode ? 'bg-white text-black' : 'bg-black text-white'}`}>${hourlyRate}/hr</div>
+          <div className={`rounded-full px-4 py-2 text-sm font-semibold ${isHostMode ? 'bg-white text-black' : 'bg-blue-600 text-white'}`}>${hourlyRate}/hr</div>
           <div className={`rounded-full px-4 py-2 text-sm font-semibold ${isHostMode ? 'bg-blue-500/15 text-blue-200' : 'bg-blue-50 text-blue-600'}`}>
             {minimumBookingHours} hour minimum
           </div>
@@ -291,7 +291,7 @@ export default function BookingCalendar({
                   type="button"
                   disabled={!canBook}
                   onClick={() => canBook && onBook?.({ selectedDate, selectedTimeSlots })}
-                  className="mt-5 w-full rounded-2xl bg-black px-6 py-3 font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-black/20 disabled:text-black/40"
+                  className="mt-5 w-full rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
                 >
                   Book
                 </button>

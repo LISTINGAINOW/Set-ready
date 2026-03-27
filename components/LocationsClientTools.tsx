@@ -48,7 +48,7 @@ export default function LocationsClientTools({ locations, searchParams }: { loca
             <p className="mt-2 text-sm text-black/65">Saved searches stay in this browser. New match alerts are logged locally until email delivery is wired up.</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button onClick={saveCurrentSearch} type="button" className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-600">
+            <button onClick={saveCurrentSearch} type="button" className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-white border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600">
               <BookmarkPlus className="h-4 w-4" />
               Save search ({savedCount})
             </button>

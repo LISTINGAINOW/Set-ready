@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2 } from 'lucide-react';
 export default function InterestThankYouPage() {
   return (
     <div className="bg-[#F9FAFB] px-4 py-16 text-black sm:py-24">
-      <div className="mx-auto max-w-2xl rounded-[28px] border-2 border-black bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-12">
+      <div className="mx-auto max-w-2xl rounded-[28px] border-2 border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.06)] sm:p-12">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700">
           <CheckCircle2 className="h-4 w-4" />
           Interest received
@@ -23,7 +23,7 @@ export default function InterestThankYouPage() {
           </Link>
           <Link
             href="/"
-            className="inline-flex min-h-[48px] items-center justify-center rounded-lg border-2 border-black px-6 py-3 font-semibold text-black transition hover:bg-black hover:text-white"
+            className="inline-flex min-h-[48px] items-center justify-center rounded-lg border-2 border-slate-200 px-6 py-3 font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
           >
             Back home
           </Link>

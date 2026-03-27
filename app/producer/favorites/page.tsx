@@ -80,7 +80,7 @@ export default function ProducerFavoritesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {favoriteLocations.map(location => {
             return (
-              <div key={location.id} className="rounded-xl overflow-hidden border border-blue-200 bg-black/80 hover:bg-black transition-colors">
+              <div key={location.id} className="rounded-xl overflow-hidden border border-slate-200 bg-white hover:bg-slate-50 transition-colors">
                 {/* Image placeholder */}
                 <div className="h-48 bg-gradient-to-r from-blue-900/20 to-white flex items-center justify-center">
                   <div className="text-blue-500 text-6xl">📸</div>
@@ -99,7 +99,7 @@ export default function ProducerFavoritesPage() {
                     <span>{location.city}, {location.state}</span>
                   </div>
 
-                  <p className="text-white mb-6 line-clamp-2">{location.description}</p>
+                  <p className="text-slate-700 mb-6 line-clamp-2">{location.description}</p>
 
                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center">
@@ -109,14 +109,14 @@ export default function ProducerFavoritesPage() {
                     </div>
                   </div>
 
-                  <div className="mt-6 pt-6 border-t border-blue-200">
+                  <div className="mt-6 pt-6 border-t border-slate-200">
                     <div className="flex items-center mb-3">
-                      <Shield className="w-4 h-4 mr-2 text-blue-500" />
-                      <span className="text-sm text-blue-500">Amenities:</span>
+                      <Shield className="w-4 h-4 mr-2 text-slate-500" />
+                      <span className="text-sm text-slate-500">Amenities:</span>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {location.amenities.slice(0, 3).map(type => (
-                        <span key={type} className="px-3 py-1 bg-black rounded-full text-sm">
+                        <span key={type} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm">
                           {type}
                         </span>
                       ))}
@@ -125,12 +125,12 @@ export default function ProducerFavoritesPage() {
 
                   <div className="mt-4 flex flex-wrap gap-2">
                     {location.amenities.slice(0, 3).map(amenity => (
-                      <span key={amenity} className="px-3 py-1 bg-black/85 rounded-full text-sm text-blue-500">
+                      <span key={amenity} className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-700">
                         {amenity}
                       </span>
                     ))}
                     {location.amenities.length > 3 && (
-                      <span className="px-3 py-1 bg-black/85 rounded-full text-sm text-blue-500">
+                      <span className="px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-700">
                         +{location.amenities.length - 3}
                       </span>
                     )}

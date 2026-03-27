@@ -71,10 +71,10 @@ export default function BookingInsuranceClient() {
                     <p>• You can manage certificates later from your producer dashboard.</p>
                   </div>
                   <div className="mt-6 flex flex-wrap gap-3">
-                    <Link href="/insurance" className="inline-flex items-center gap-2 rounded-full border border-black px-4 py-2 text-sm font-semibold text-black transition hover:border-blue-500 hover:text-blue-600">
+                    <Link href="/insurance" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:border-blue-500 hover:text-blue-600">
                       View full insurance page
                     </Link>
-                    <button type="button" onClick={() => continueToConfirmation({ insuranceStatus: 'skipped' })} className="inline-flex items-center gap-2 rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600">
+                    <button type="button" onClick={() => continueToConfirmation({ insuranceStatus: 'skipped' })} className="inline-flex items-center gap-2 rounded-full bg-white border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600">
                       Skip for now
                       <ArrowRight className="h-4 w-4" />
                     </button>
