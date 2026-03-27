@@ -106,7 +106,7 @@ export default async function Home() {
 
             <Link
               href="/locations"
-              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-slate-950 px-7 py-4 text-sm font-semibold text-white transition hover:bg-blue-600"
+              className="inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-blue-600 px-7 py-4 text-sm font-semibold text-white transition hover:bg-blue-700"
             >
               Browse properties
               <ArrowRight className="h-4 w-4" />
@@ -178,7 +178,7 @@ export default async function Home() {
           <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
             <Link
               href="/locations"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-slate-950 px-7 py-4 font-semibold text-white transition hover:bg-blue-600"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-blue-600 px-7 py-4 font-semibold text-white transition hover:bg-blue-700"
             >
               Browse available locations
             </Link>

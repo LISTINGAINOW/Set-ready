@@ -82,41 +82,41 @@ export default function FreeListingPage() {
   return (
     <main className="min-h-screen">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-slate-950 px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.18),transparent_60%)]" />
+      <section className="relative overflow-hidden bg-slate-50 px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(37,99,235,0.08),transparent_60%)]" />
         <div className="mx-auto max-w-4xl text-center">
           {/* Live counter badge */}
-          <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/6 px-5 py-2.5 backdrop-blur-sm">
+          <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-blue-200 bg-blue-50 px-5 py-2.5">
             <span className="relative flex h-2.5 w-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-blue-500" />
             </span>
-            <span className="text-sm font-semibold text-white">
-              <span className="text-blue-400">{SPOTS_REMAINING}</span> of {TOTAL_SPOTS} spots remaining
+            <span className="text-sm font-semibold text-slate-700">
+              <span className="text-blue-600">{SPOTS_REMAINING}</span> of {TOTAL_SPOTS} spots remaining
             </span>
           </div>
 
-          <h1 className="text-balance text-5xl font-semibold tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl">
+          <h1 className="text-balance text-5xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-7xl">
             List Your Property Free —{' '}
-            <span className="text-blue-400">Only 500 Spots</span>
+            <span className="text-blue-600">Only 500 Spots</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/70 sm:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 sm:text-xl">
             No listing fees for 6 months. Production companies pay a 10% booking fee — half what
             Giggster charges. You keep 100% of your rental price.
           </p>
 
           <a
             href="#signup"
-            className="mt-10 inline-flex min-h-[52px] items-center rounded-full bg-blue-500 px-8 py-3 text-base font-semibold text-white transition hover:bg-blue-400 active:scale-[0.98]"
+            className="mt-10 inline-flex min-h-[52px] items-center rounded-full bg-blue-600 px-8 py-3 text-base font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
           >
             Claim Your Free Spot
           </a>
 
           {/* Photo requirement callout */}
-          <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-2 rounded-2xl border border-amber-400/20 bg-amber-400/8 px-5 py-3">
-            <Camera className="h-4 w-4 shrink-0 text-amber-400" />
-            <p className="text-sm font-medium text-amber-300">
+          <div className="mx-auto mt-8 flex max-w-sm items-center justify-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-3">
+            <Camera className="h-4 w-4 shrink-0 text-amber-500" />
+            <p className="text-sm font-medium text-amber-700">
               10+ professional photos required to qualify
             </p>
           </div>
@@ -380,7 +380,7 @@ export default function FreeListingPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="min-h-[52px] w-full rounded-2xl bg-slate-950 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-600 active:scale-[0.98] disabled:opacity-60"
+                  className="min-h-[52px] w-full rounded-2xl bg-blue-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60"
                 >
                   {submitting ? 'Submitting…' : 'Claim Your Free Spot'}
                 </button>
