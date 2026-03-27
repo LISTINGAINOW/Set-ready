@@ -228,8 +228,24 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
                 <h2 className="text-xl font-bold text-black sm:text-2xl">Transparent booking pricing</h2>
               </div>
               <p className="mt-3 text-sm text-black/80 sm:text-base">
-                Producers see a transparent 15% service fee added before checkout, hosts keep 100%, and bookings start at $49 before any refundable security deposit.
+                Producers see a transparent 10% service fee added before checkout. Hosts keep 100% — always. No hidden charges.
               </p>
+              {(location as any).pricing && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-black/50">Rates by Production Type</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(location as any).pricing.adult?.enabled && (
+                      <span className="rounded-full bg-pink-50 px-3 py-1 text-sm text-pink-700">🔞 Adult ${(location as any).pricing.adult.hourlyRate}/hr</span>
+                    )}
+                    {(location as any).pricing.events?.enabled && (
+                      <span className="rounded-full bg-purple-50 px-3 py-1 text-sm text-purple-700">🎉 Events ${(location as any).pricing.events.hourlyRate}/hr</span>
+                    )}
+                    {(location as any).pricing.mainstream?.enabled && (
+                      <span className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">🎬 Film/TV ${(location as any).pricing.mainstream.dailyRate ? `$${(location as any).pricing.mainstream.dailyRate}/day` : `$${(location as any).pricing.mainstream.hourlyRate}/hr`}</span>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="mt-6 grid gap-4 md:grid-cols-3">
                 <div className="rounded-xl border border-black bg-white/60 p-4">
                   <p className="text-sm text-black/60">Base rate ({minimumBookingHours} hr min.)</p>
