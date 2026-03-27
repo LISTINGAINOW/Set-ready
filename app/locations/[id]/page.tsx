@@ -241,7 +241,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
                       <span className="rounded-full bg-purple-50 px-3 py-1 text-sm text-purple-700">🎉 Events ${(location as any).pricing.events.hourlyRate}/hr</span>
                     )}
                     {(location as any).pricing.mainstream?.enabled && (
-                      <span className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">🎬 Film/TV ${(location as any).pricing.mainstream.dailyRate ? `$${(location as any).pricing.mainstream.dailyRate}/day` : `$${(location as any).pricing.mainstream.hourlyRate}/hr`}</span>
+                      <span className="rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-700">🎬 Film/TV {(location as any).pricing.mainstream.dailyRate ? `$${(location as any).pricing.mainstream.dailyRate.toLocaleString()}/day` : `$${(location as any).pricing.mainstream.hourlyRate}/hr`}</span>
                     )}
                   </div>
                 </div>
@@ -276,8 +276,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <div className="mb-10">
               <h2 className="mb-4 text-2xl font-bold text-black">About This Location</h2>
               <p className="text-black/80">
-                This {location.style} {location.propertyType} is well suited for {(location.bestUses || []).join(', ')} with amenities like {location.amenities.slice(0, 3).join(', ')}. Located in{' '}
-                {location.city}, {location.state}, it offers a professional setup for crews that need clarity and privacy.
+                {location.style && `This ${location.style} property`}{!location.style && 'This property'} features {location.amenities.slice(0, 3).join(', ')}{location.amenities.length > 3 ? `, and ${location.amenities.length - 3} more amenities` : ''}. Located in{' '}
+                {location.city}, {location.state}, it&apos;s production-ready with professional-grade access, parking, and crew-friendly layouts.
               </p>
             </div>
 

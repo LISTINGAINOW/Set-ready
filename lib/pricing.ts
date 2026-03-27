@@ -1,5 +1,5 @@
 export const HOST_FEE_RATE = 0;
-export const PRODUCER_FEE_RATE = 0.15;
+export const PRODUCER_FEE_RATE = 0.10;
 export const MINIMUM_BOOKING_TOTAL = 49;
 
 export type PricingBreakdown = {
