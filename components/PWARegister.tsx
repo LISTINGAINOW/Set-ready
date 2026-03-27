@@ -8,15 +8,14 @@ export default function PWARegister() {
       return;
     }
 
-    const registerServiceWorker = async () => {
-      try {
-        await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-      } catch (error) {
-        console.error('Service worker registration failed:', error);
+    const unregisterServiceWorkers = async () => {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        await registration.unregister();
       }
     };
 
-    registerServiceWorker();
+    unregisterServiceWorkers();
   }, []);
 
   return null;

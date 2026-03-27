@@ -1,3 +1,4 @@
+// SW Version: 2026-03-26T18:00
 const CACHE_NAME = 'setvenue-v2';
 const OFFLINE_URL = '/offline.html';
 const STATIC_ASSETS = [

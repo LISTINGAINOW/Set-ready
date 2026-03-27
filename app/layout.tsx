@@ -89,6 +89,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            if (!('caches' in window) && !('serviceWorker' in navigator)) return;
+            if (sessionStorage.getItem('sw-cleared')) return;
+            sessionStorage.setItem('sw-cleared', '1');
+            var cleared = false;
+            var promises = [];
+            if ('caches' in window) {
+              promises.push(caches.keys().then(function(keys) {
+                return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+              }));
+            }
+            if ('serviceWorker' in navigator) {
+              promises.push(navigator.serviceWorker.getRegistrations().then(function(regs) {
+                return Promise.all(regs.map(function(r) { cleared = true; return r.unregister(); }));
+              }));
+            }
+            Promise.all(promises).then(function() {
+              if (cleared) window.location.reload();
+            });
+          })();
+        ` }} />
+      </head>
       <body className="antialiased">
         <Script
           defer
