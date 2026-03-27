@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { Resend } from 'resend';
+import { sendSubmissionReceived } from '@/lib/email';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -44,6 +45,10 @@ async function uploadFile(
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
+
+    // Submitter contact (optional — used to send confirmation email to owner)
+    const submitterEmail = String(formData.get('submitterEmail') || '').trim();
+    const submitterFirstName = String(formData.get('submitterFirstName') || '').trim();
 
     // Required field validation
     const title = String(formData.get('title') || '').trim();
@@ -203,6 +208,15 @@ export async function POST(request: NextRequest) {
     if (dbError) {
       console.error('DB insert error:', dbError.message);
       return NextResponse.json({ error: 'Failed to save submission. Please try again.' }, { status: 500 });
+    }
+
+    // Send confirmation to the property owner (if contact info was provided)
+    // TODO: when the form captures submitterEmail/submitterFirstName, this fires automatically.
+    // Alternatively, look up the user record by userId and send to their email.
+    if (submitterEmail && submitterFirstName) {
+      sendSubmissionReceived(submitterEmail, submitterFirstName, title).catch((err: unknown) => {
+        console.warn('Submission confirmation email failed:', err);
+      });
     }
 
     // Send notification email
