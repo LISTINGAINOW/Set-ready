@@ -11,13 +11,13 @@ import PWAInstall from '@/components/PWAInstall';
 const primaryNav = [
   { href: '/locations', label: 'Browse' },
   { href: '/services', label: 'Services' },
-  { href: '/how-it-works', label: 'How it works' },
+  { href: '/how-it-works', label: 'How It Works' },
   { href: '/blog', label: 'Blog' },
 ];
 
 const listingNav = [
   { href: '/list-property', label: 'Host' },
-  { href: '/free-listing', label: 'Free Listing' },
+  { href: '/free-listing', label: 'List Free' },
 ];
 
 export default function Header() {
@@ -88,12 +88,12 @@ export default function Header() {
             <Logo href="/" size="md" showTagline className="min-w-0" />
 
             {/* Desktop nav */}
-            <nav className="hidden items-center gap-6 lg:flex">
+            <nav className="hidden items-center gap-5 lg:flex">
               {[...primaryNav, ...listingNav].map((item) => (
                 <Link
                   key={item.label}
                   href={item.href}
-                  className={`text-sm font-medium transition hover:text-blue-600 ${
+                  className={`whitespace-nowrap text-sm font-medium transition hover:text-blue-600 ${
                     pathname === item.href ? 'text-blue-600' : 'text-slate-600'
                   }`}
                 >
