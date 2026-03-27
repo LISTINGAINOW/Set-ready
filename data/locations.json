@@ -449,7 +449,7 @@
   },
   {
     "id": "16231-dorilee-ln-encino",
-    "name": "Encino Modern Window Home",
+    "name": "Encino Mediterranean Estate",
     "slug": "16231-dorilee-ln-encino",
     "address": "16231 Dorilee Ln",
     "city": "Encino",
@@ -463,16 +463,22 @@
     "minHours": 4,
     "pricePerDay": 0,
     "pricePerHour": 350,
-    "description": "A striking contemporary residence in the heart of Encino featuring dramatic floor-to-ceiling windows that flood every room with natural light. This modern architectural gem showcases clean lines, open-concept living spaces, and a seamless indoor-outdoor flow perfect for film, photography, and commercial productions. The home's white-on-white palette and geometric design elements create a versatile canvas for any creative vision.",
+    "description": "A stunning Mediterranean-style estate in the heart of Encino blending Spanish architectural elegance with modern luxury. This single-story residence features terracotta tile roofing, arched windows, and stucco walls that exude timeless SoCal charm. Inside, soaring ceilings with a grand chandelier anchor the formal living room, complemented by a fireplace, plush furnishings, and abundant natural light through floor-to-ceiling windows. The home includes a private screening room with reclining leather theater seating, a beautifully landscaped patio with outdoor lounge areas, and a swimming pool. Modern bathrooms with glass-enclosed showers and chrome fixtures complete this versatile production-ready property.",
     "amenities": [
-      "Floor-to-Ceiling Windows",
-      "Modern Architecture",
-      "Open Floor Plan",
+      "Swimming Pool",
+      "Home Theater",
+      "Fireplace",
+      "High Ceilings",
+      "Chandelier",
+      "Patio & Outdoor Lounge",
+      "Arched Windows",
       "Natural Light",
-      "Indoor-Outdoor Living",
-      "Contemporary Design",
-      "Spacious Rooms",
-      "Private Location",
+      "Landscaped Gardens",
+      "Modern Bathrooms",
+      "Glass Shower",
+      "Mediterranean Architecture",
+      "Terracotta Roof",
+      "Private & Gated",
       "Parking Available",
       "Production Friendly"
     ],
@@ -623,6 +629,7 @@
     "acceptsBids": true,
     "hostName": "",
     "hostEmail": "",
-    "hostPhone": ""
+    "hostPhone": "",
+    "style": "Mediterranean"
   }
 ]
