@@ -180,6 +180,79 @@ export default async function Home() {
 
       <HowItWorks />
 
+      {/* Social proof — Testimonials */}
+      <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-600">What people are saying</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.06em] text-slate-950 sm:text-4xl">
+              Built for productions that move fast.
+            </h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              {
+                quote: 'We found the exact mid-century vibe we needed in ten minutes. The photos matched perfectly on set day. No wasted scout trips.',
+                name: 'Sarah K.',
+                role: 'Location Manager',
+                company: 'Independent Film',
+              },
+              {
+                quote: 'Zero host fees means I actually keep what I charge. On other platforms, I was losing 20% of every booking to platform fees.',
+                name: 'Marcus T.',
+                role: 'Property Owner',
+                company: 'Malibu Estate',
+              },
+              {
+                quote: 'The booking calendar with multi-day support saved us so much back-and-forth. Selected the whole week and submitted in two clicks.',
+                name: 'Alex R.',
+                role: 'Production Coordinator',
+                company: 'Commercial Production',
+              },
+            ].map((testimonial) => (
+              <div
+                key={testimonial.name}
+                className="flex flex-col justify-between rounded-[28px] border border-black/8 bg-white p-7 shadow-[0_18px_45px_rgba(15,23,42,0.05)]"
+              >
+                <div>
+                  <div className="mb-4 flex gap-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg key={i} className="h-4 w-4 fill-blue-500 text-blue-500" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-base leading-7 text-slate-700">&ldquo;{testimonial.quote}&rdquo;</p>
+                </div>
+                <div className="mt-6 border-t border-slate-100 pt-5">
+                  <p className="text-sm font-semibold text-slate-950">{testimonial.name}</p>
+                  <p className="text-sm text-slate-500">{testimonial.role}, {testimonial.company}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats bar */}
+      <section className="px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl rounded-[32px] border border-blue-100 bg-blue-50/50 px-8 py-10 sm:px-12 sm:py-12">
+          <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
+            {[
+              { value: '0%', label: 'Host fees' },
+              { value: '500+', label: 'Properties onboarding' },
+              { value: '22', label: 'US cities covered' },
+              { value: '10%', label: 'Guest service fee' },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <p className="text-3xl font-bold tracking-[-0.04em] text-blue-600 sm:text-4xl">{stat.value}</p>
+                <p className="mt-2 text-sm font-medium text-slate-600">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="px-4 pb-24 pt-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-[32px] border border-black/10 bg-white p-8 text-center shadow-[0_24px_70px_rgba(15,23,42,0.06)] sm:p-12 lg:p-14">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-blue-600">Ready to scout</p>
