@@ -1,15 +1,18 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AlertCircle, CalendarDays, Check, DollarSign, Home, ImagePlus, Info, Lock, Save } from 'lucide-react';
+import { AlertCircle, CalendarDays, Check, DollarSign, Home, ImagePlus, Info, Lock, Save, Shield } from 'lucide-react';
 import AuthGuard from '@/components/AuthGuard';
 import FeeComparison from '@/components/FeeComparison';
 import { sanitizeInput } from '@/lib/client-security';
 
 const DRAFT_KEY = 'setvenue-host-onboarding-draft';
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
+const MAX_DOC_SIZE_BYTES = 10 * 1024 * 1024;
 const MAX_FILES = 20;
 const ACCEPTED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+const ACCEPTED_DOC_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
 const propertyTypes = ['House', 'Apartment', 'Studio', 'Loft', 'Penthouse', 'Outdoor', 'Villa', 'Warehouse'];
 const amenitiesList = ['Parking', 'Wifi', 'Lighting', 'Changing room', 'Shower', 'Kitchen', 'Pool', 'Sound system'];
 const privacyLevelOptions = ['Public', 'Production', 'NDA Required'] as const;
@@ -24,7 +27,8 @@ const steps = [
   { id: 3, label: 'Photos', description: 'Upload polished images of the space' },
   { id: 4, label: 'Pricing', description: 'Rates, fees, and payout details' },
   { id: 5, label: 'Availability', description: 'When the property can be booked' },
-  { id: 6, label: 'Review & Submit', description: 'Final check before submission' },
+  { id: 6, label: 'Verification & Legal', description: 'Documents and legal agreements' },
+  { id: 7, label: 'Review & Submit', description: 'Final check before submission' },
 ] as const;
 
 const businessLicenseTypes = ['STR', 'Event Venue', 'Commercial'] as const;
@@ -64,6 +68,12 @@ type FormState = {
   hasLiabilityInsurance: boolean;
   hasProductionInsurance: boolean;
   complianceChecklist: string[];
+  // Legal agreements
+  ownershipCertified: boolean;
+  ownerAgreementAccepted: boolean;
+  insuranceConfirmed: boolean;
+  indemnificationAccepted: boolean;
+  reviewAcknowledged: boolean;
 };
 
 const initialForm: FormState = {
@@ -91,17 +101,38 @@ const initialForm: FormState = {
   hasLiabilityInsurance: false,
   hasProductionInsurance: false,
   complianceChecklist: [],
+  ownershipCertified: false,
+  ownerAgreementAccepted: false,
+  insuranceConfirmed: false,
+  indemnificationAccepted: false,
+  reviewAcknowledged: false,
 };
 
 const dayOptions = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 export default function ListPropertyPage() {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const photoFilesRef = useRef<File[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [statusMessage, setStatusMessage] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [docFiles, setDocFiles] = useState<{
+    governmentId: File | null;
+    ownershipProof: File | null;
+    insuranceCert: File | null;
+    hoaApproval: File | null;
+    w9: File | null;
+  }>({
+    governmentId: null,
+    ownershipProof: null,
+    insuranceCert: null,
+    hoaApproval: null,
+    w9: null,
+  });
 
   const inputClassName =
     'min-h-[48px] w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-black outline-none transition focus:border-[#3B82F6] focus:ring-4 focus:ring-blue-500/15';
@@ -180,6 +211,16 @@ export default function ListPropertyPage() {
       if (!form.availabilityNotes.trim()) nextErrors.availabilityNotes = 'Add basic availability notes.';
     }
 
+    if (stepNumber === 6) {
+      if (!docFiles.governmentId) nextErrors.governmentId = 'Government-issued photo ID is required.';
+      if (!docFiles.ownershipProof) nextErrors.ownershipProof = 'Proof of ownership or authorization is required.';
+      if (!form.ownershipCertified) nextErrors.ownershipCertified = 'You must certify ownership or authorization.';
+      if (!form.ownerAgreementAccepted) nextErrors.ownerAgreementAccepted = 'You must accept the Owner Agreement.';
+      if (!form.insuranceConfirmed) nextErrors.insuranceConfirmed = 'You must confirm adequate insurance coverage.';
+      if (!form.indemnificationAccepted) nextErrors.indemnificationAccepted = 'You must accept the indemnification terms.';
+      if (!form.reviewAcknowledged) nextErrors.reviewAcknowledged = 'You must acknowledge the review process.';
+    }
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -198,10 +239,12 @@ export default function ListPropertyPage() {
   const sanitizePhotoFiles = (files: FileList | null) => {
     if (!files) return;
 
-    const accepted = Array.from(files)
+    const acceptedFiles = Array.from(files)
       .slice(0, MAX_FILES)
-      .filter((file) => ACCEPTED_FILE_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE_BYTES)
-      .map((file) => ({ name: sanitizeInput(file.name), size: file.size, type: file.type }));
+      .filter((file) => ACCEPTED_FILE_TYPES.includes(file.type) && file.size <= MAX_FILE_SIZE_BYTES);
+
+    photoFilesRef.current = acceptedFiles;
+    const accepted = acceptedFiles.map((file) => ({ name: sanitizeInput(file.name), size: file.size, type: file.type }));
 
     updateField('photos', accepted);
 
@@ -218,14 +261,70 @@ export default function ListPropertyPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!validateStep(5)) {
-      setCurrentStep(5);
+    if (!validateStep(6)) {
+      setCurrentStep(6);
       return;
     }
 
-    window.localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
-    setCurrentStep(6);
-    setStatusMessage('Review complete. Your listing has been submitted for approval.');
+    setIsSubmitting(true);
+    setStatusMessage('');
+
+    try {
+      const formData = new FormData();
+      // Property fields
+      formData.append('title', form.title);
+      formData.append('propertyType', form.propertyType);
+      formData.append('address', form.address);
+      formData.append('city', form.city);
+      formData.append('state', form.state);
+      formData.append('description', form.description);
+      formData.append('bedrooms', form.bedrooms);
+      formData.append('bathrooms', form.bathrooms);
+      formData.append('maxCapacity', form.maxCapacity);
+      formData.append('privacyLevel', form.privacyLevel);
+      formData.append('bookingMode', form.bookingMode);
+      formData.append('amenities', JSON.stringify(form.amenities));
+      formData.append('baseRate', form.baseRate);
+      formData.append('cleaningFee', form.cleaningFee);
+      formData.append('securityDeposit', form.securityDeposit);
+      formData.append('availableDays', JSON.stringify(form.availableDays));
+      formData.append('availabilityNotes', form.availabilityNotes);
+      // Compliance
+      formData.append('totLicenseNumber', form.totLicenseNumber);
+      formData.append('businessLicenseNumber', form.businessLicenseNumber);
+      formData.append('hasLiabilityInsurance', String(form.hasLiabilityInsurance));
+      formData.append('hasProductionInsurance', String(form.hasProductionInsurance));
+      // Legal agreements
+      formData.append('ownershipCertified', String(form.ownershipCertified));
+      formData.append('ownerAgreementAccepted', String(form.ownerAgreementAccepted));
+      formData.append('insuranceConfirmed', String(form.insuranceConfirmed));
+      formData.append('indemnificationAccepted', String(form.indemnificationAccepted));
+      formData.append('reviewAcknowledged', String(form.reviewAcknowledged));
+      // Photo files
+      for (const file of photoFilesRef.current) {
+        formData.append('photos', file);
+      }
+      // Document files
+      if (docFiles.governmentId) formData.append('governmentId', docFiles.governmentId);
+      if (docFiles.ownershipProof) formData.append('ownershipProof', docFiles.ownershipProof);
+      if (docFiles.insuranceCert) formData.append('insuranceCert', docFiles.insuranceCert);
+      if (docFiles.hoaApproval) formData.append('hoaApproval', docFiles.hoaApproval);
+      if (docFiles.w9) formData.append('w9', docFiles.w9);
+
+      const response = await fetch('/api/list-property', { method: 'POST', body: formData });
+
+      if (response.ok) {
+        window.localStorage.removeItem(DRAFT_KEY);
+        router.push('/list-property/submitted');
+      } else {
+        const err = await response.json().catch(() => ({}));
+        setStatusMessage(err.error || 'Submission failed. Please try again.');
+      }
+    } catch {
+      setStatusMessage('Network error. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderError = (field: string) =>
@@ -275,7 +374,7 @@ export default function ListPropertyPage() {
             <FeeComparison />
           </div>
 
-          <div className="mb-8 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+          <div className="mb-8 grid gap-3 grid-cols-2 sm:grid-cols-3 xl:grid-cols-7">
             {steps.map((step) => (
               <button
                 key={step.id}
@@ -580,6 +679,209 @@ export default function ListPropertyPage() {
             {currentStep === 6 && (
               <section className={cardClassName}>
                 <div className="mb-6 flex items-center">
+                  <Shield className="mr-3 h-6 w-6 text-blue-500" />
+                  <div>
+                    <h2 className="text-2xl font-bold">Verification & Legal</h2>
+                    <p className="text-sm text-black/65">Upload required documents and agree to our terms before submitting.</p>
+                  </div>
+                </div>
+
+                {/* Required Documents */}
+                <div className="mb-8">
+                  <h3 className="mb-1 text-lg font-bold">Required Documents</h3>
+                  <p className="mb-5 text-sm text-black/60">Images or PDFs only. Max 10MB each.</p>
+                  <div className="grid gap-5 md:grid-cols-2">
+                    {/* Government ID */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Government-issued photo ID <span className="text-red-500">*</span></label>
+                      <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-5 text-center transition-colors hover:border-blue-500 ${docFiles.governmentId ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white'}`}>
+                        <input
+                          type="file"
+                          accept={ACCEPTED_DOC_TYPES.join(',')}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] ?? null;
+                            if (file && (!ACCEPTED_DOC_TYPES.includes(file.type) || file.size > MAX_DOC_SIZE_BYTES)) {
+                              setErrors((prev) => ({ ...prev, governmentId: 'File must be an image or PDF under 10MB.' }));
+                              return;
+                            }
+                            setDocFiles((prev) => ({ ...prev, governmentId: file }));
+                            setErrors((prev) => { const n = { ...prev }; delete n.governmentId; return n; });
+                          }}
+                        />
+                        {docFiles.governmentId ? (
+                          <span className="text-sm font-medium text-blue-700">{docFiles.governmentId.name}</span>
+                        ) : (
+                          <>
+                            <span className="text-sm font-medium text-black/70">Driver&apos;s license or passport</span>
+                            <span className="mt-1 text-xs text-black/50">Click to upload</span>
+                          </>
+                        )}
+                      </label>
+                      {errors.governmentId && <p className="mt-2 text-sm text-red-600">{errors.governmentId}</p>}
+                    </div>
+
+                    {/* Ownership Proof */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Proof of ownership or authorization <span className="text-red-500">*</span></label>
+                      <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-5 text-center transition-colors hover:border-blue-500 ${docFiles.ownershipProof ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white'}`}>
+                        <input
+                          type="file"
+                          accept={ACCEPTED_DOC_TYPES.join(',')}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] ?? null;
+                            if (file && (!ACCEPTED_DOC_TYPES.includes(file.type) || file.size > MAX_DOC_SIZE_BYTES)) {
+                              setErrors((prev) => ({ ...prev, ownershipProof: 'File must be an image or PDF under 10MB.' }));
+                              return;
+                            }
+                            setDocFiles((prev) => ({ ...prev, ownershipProof: file }));
+                            setErrors((prev) => { const n = { ...prev }; delete n.ownershipProof; return n; });
+                          }}
+                        />
+                        {docFiles.ownershipProof ? (
+                          <span className="text-sm font-medium text-blue-700">{docFiles.ownershipProof.name}</span>
+                        ) : (
+                          <>
+                            <span className="text-sm font-medium text-black/70">Deed, lease, or management agreement</span>
+                            <span className="mt-1 text-xs text-black/50">Click to upload</span>
+                          </>
+                        )}
+                      </label>
+                      {errors.ownershipProof && <p className="mt-2 text-sm text-red-600">{errors.ownershipProof}</p>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Optional Documents */}
+                <div className="mb-8 border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Optional Documents</h3>
+                  <p className="mb-5 text-sm text-black/60">These help speed up your approval but are not required.</p>
+                  <div className="grid gap-5 md:grid-cols-3">
+                    {/* COI */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">Certificate of Insurance (COI)</label>
+                      <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-4 text-center transition-colors hover:border-blue-500 ${docFiles.insuranceCert ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white'}`}>
+                        <input
+                          type="file"
+                          accept={ACCEPTED_DOC_TYPES.join(',')}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] ?? null;
+                            if (file && (!ACCEPTED_DOC_TYPES.includes(file.type) || file.size > MAX_DOC_SIZE_BYTES)) return;
+                            setDocFiles((prev) => ({ ...prev, insuranceCert: file }));
+                          }}
+                        />
+                        {docFiles.insuranceCert ? (
+                          <span className="text-xs font-medium text-blue-700 truncate max-w-full">{docFiles.insuranceCert.name}</span>
+                        ) : (
+                          <span className="text-xs text-black/50">Click to upload</span>
+                        )}
+                      </label>
+                    </div>
+
+                    {/* HOA */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">HOA approval letter</label>
+                      <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-4 text-center transition-colors hover:border-blue-500 ${docFiles.hoaApproval ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white'}`}>
+                        <input
+                          type="file"
+                          accept={ACCEPTED_DOC_TYPES.join(',')}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] ?? null;
+                            if (file && (!ACCEPTED_DOC_TYPES.includes(file.type) || file.size > MAX_DOC_SIZE_BYTES)) return;
+                            setDocFiles((prev) => ({ ...prev, hoaApproval: file }));
+                          }}
+                        />
+                        {docFiles.hoaApproval ? (
+                          <span className="text-xs font-medium text-blue-700 truncate max-w-full">{docFiles.hoaApproval.name}</span>
+                        ) : (
+                          <span className="text-xs text-black/50">Click to upload</span>
+                        )}
+                      </label>
+                    </div>
+
+                    {/* W-9 */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium">W-9 tax form</label>
+                      <label className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border border-dashed p-4 text-center transition-colors hover:border-blue-500 ${docFiles.w9 ? 'border-blue-400 bg-blue-50' : 'border-slate-200 bg-white'}`}>
+                        <input
+                          type="file"
+                          accept={ACCEPTED_DOC_TYPES.join(',')}
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0] ?? null;
+                            if (file && (!ACCEPTED_DOC_TYPES.includes(file.type) || file.size > MAX_DOC_SIZE_BYTES)) return;
+                            setDocFiles((prev) => ({ ...prev, w9: file }));
+                          }}
+                        />
+                        {docFiles.w9 ? (
+                          <span className="text-xs font-medium text-blue-700 truncate max-w-full">{docFiles.w9.name}</span>
+                        ) : (
+                          <span className="text-xs text-black/50">Click to upload</span>
+                        )}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Legal Agreements */}
+                <div className="border-t border-slate-200 pt-6">
+                  <h3 className="mb-1 text-lg font-bold">Legal Agreements</h3>
+                  <p className="mb-5 text-sm text-black/60">All boxes must be checked to continue.</p>
+                  <div className="space-y-3">
+                    {[
+                      {
+                        field: 'ownershipCertified' as const,
+                        label: 'I certify that I am the legal owner or authorized representative of this property.',
+                      },
+                      {
+                        field: 'ownerAgreementAccepted' as const,
+                        label: (
+                          <>
+                            I have read and agree to the{' '}
+                            <a href="/legal/owner-agreement" target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 underline hover:text-blue-800">
+                              Owner Agreement
+                            </a>
+                            .
+                          </>
+                        ),
+                      },
+                      {
+                        field: 'insuranceConfirmed' as const,
+                        label: 'I confirm this property has adequate homeowners/renters insurance covering short-term rental use.',
+                      },
+                      {
+                        field: 'indemnificationAccepted' as const,
+                        label: 'I agree to indemnify and hold SetVenue harmless from any claims, damages, or liabilities arising from the use of my property.',
+                      },
+                      {
+                        field: 'reviewAcknowledged' as const,
+                        label: 'I understand my listing will be reviewed before going live and I may be asked for additional documentation.',
+                      },
+                    ].map(({ field, label }) => (
+                      <label key={field} className="flex min-h-[48px] cursor-pointer items-start gap-3 rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
+                        <input
+                          type="checkbox"
+                          checked={form[field]}
+                          onChange={() => setForm((prev) => ({ ...prev, [field]: !prev[field] }))}
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-blue-600"
+                        />
+                        <span className="text-sm leading-relaxed">{label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  {(errors.ownershipCertified || errors.ownerAgreementAccepted || errors.insuranceConfirmed || errors.indemnificationAccepted || errors.reviewAcknowledged) && (
+                    <p className="mt-3 text-sm text-red-600">Please check all required boxes above to continue.</p>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {currentStep === 7 && (
+              <section className={cardClassName}>
+                <div className="mb-6 flex items-center">
                   <Check className="mr-3 h-6 w-6 text-blue-500" />
                   <div>
                     <h2 className="text-2xl font-bold">Review & Submit</h2>
@@ -609,10 +911,15 @@ export default function ListPropertyPage() {
                   </div>
                 </div>
 
-                <div className="mt-8 flex justify-end">
-                  <button type="submit" className="inline-flex min-h-[52px] items-center justify-center rounded-lg bg-[#3B82F6] px-8 py-3 text-lg font-semibold text-white transition hover:bg-blue-600">
-                    Submit Listing
+                <div className="mt-8 flex flex-col items-end gap-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex min-h-[52px] items-center justify-center rounded-lg bg-[#3B82F6] px-8 py-3 text-lg font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSubmitting ? 'Submitting…' : 'Submit for Review'}
                   </button>
+                  <p className="text-sm text-black/50">Your listing will be reviewed by our team before going live. This usually takes 1–2 business days.</p>
                 </div>
               </section>
             )}
@@ -640,14 +947,14 @@ export default function ListPropertyPage() {
                 >
                   Save draft
                 </button>
-                {currentStep < 5 && (
+                {currentStep < 6 && (
                   <button type="button" onClick={goNext} className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#3B82F6] px-6 py-3 font-semibold text-white transition hover:bg-blue-600">
                     Continue
                   </button>
                 )}
-                {currentStep === 5 && (
-                  <button type="submit" className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#3B82F6] px-6 py-3 font-semibold text-white transition hover:bg-blue-600">
-                    Review submission
+                {currentStep === 6 && (
+                  <button type="button" onClick={goNext} className="inline-flex min-h-[48px] items-center justify-center rounded-lg bg-[#3B82F6] px-6 py-3 font-semibold text-white transition hover:bg-blue-600">
+                    Continue to Review
                   </button>
                 )}
               </div>
