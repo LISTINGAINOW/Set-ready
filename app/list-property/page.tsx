@@ -104,8 +104,8 @@ export default function ListPropertyPage() {
   const [isDragging, setIsDragging] = useState(false);
 
   const inputClassName =
-    'min-h-[48px] w-full rounded-lg border-2 border-black bg-white px-4 py-3 text-black outline-none transition focus:border-[#3B82F6] focus:ring-4 focus:ring-blue-500/15';
-  const cardClassName = 'rounded-[24px] border-2 border-black bg-white p-5 sm:p-8';
+    'min-h-[48px] w-full rounded-lg border border-slate-200 bg-white px-4 py-3 text-black outline-none transition focus:border-[#3B82F6] focus:ring-4 focus:ring-blue-500/15';
+  const cardClassName = 'rounded-[24px] border border-slate-200 bg-white p-5 sm:p-8';
 
   useEffect(() => {
     const rawDraft = window.localStorage.getItem(DRAFT_KEY);
@@ -250,7 +250,7 @@ export default function ListPropertyPage() {
                   List for free, keep 100%, and get live in about 8–10 minutes if you have your photos and pricing ready.
                 </p>
               </div>
-              <div className="rounded-2xl border border-black bg-[#F9FAFB] p-5 lg:w-[320px]">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 lg:w-[320px]">
                 <div className="flex items-center justify-between text-sm font-semibold">
                   <span>Progress</span>
                   <span>{progressPercent}%</span>
@@ -262,7 +262,7 @@ export default function ListPropertyPage() {
                 <button
                   type="button"
                   onClick={saveDraft}
-                  className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-lg border-2 border-black px-4 py-2 text-sm font-semibold transition hover:bg-black hover:text-white"
+                  className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold transition hover:bg-blue-600 hover:text-white"
                 >
                   <Save className="mr-2 h-4 w-4" />
                   Save draft
@@ -284,7 +284,7 @@ export default function ListPropertyPage() {
                   if (step.id <= currentStep || validateStep(currentStep)) setCurrentStep(step.id);
                 }}
                 className={`rounded-2xl border-2 p-4 text-left transition ${
-                  step.id === currentStep ? 'border-[#3B82F6] bg-blue-50' : 'border-black bg-white'
+                  step.id === currentStep ? 'border-[#3B82F6] bg-blue-50' : 'border-slate-200 bg-white'
                 }`}
               >
                 <div className="text-sm font-semibold">Step {step.id}</div>
@@ -385,7 +385,7 @@ export default function ListPropertyPage() {
                   <label className="mb-3 block text-sm font-medium">Amenities</label>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {amenitiesList.map((amenity) => (
-                      <label key={amenity} className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                      <label key={amenity} className="flex min-h-[48px] cursor-pointer items-center rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
                         <input type="checkbox" checked={form.amenities.includes(amenity)} onChange={() => toggleArrayItem('amenities', amenity)} className="mr-3 accent-blue-500" />
                         <span>{amenity}</span>
                       </label>
@@ -418,11 +418,11 @@ export default function ListPropertyPage() {
                       </select>
                     </div>
                     <div className="flex flex-col gap-4 justify-center">
-                      <label className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                      <label className="flex min-h-[48px] cursor-pointer items-center rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
                         <input type="checkbox" checked={form.hasLiabilityInsurance} onChange={() => toggleBooleanField('hasLiabilityInsurance')} className="mr-3 accent-blue-500" />
                         <span className="font-medium">General Liability Insurance</span>
                       </label>
-                      <label className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                      <label className="flex min-h-[48px] cursor-pointer items-center rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
                         <input type="checkbox" checked={form.hasProductionInsurance} onChange={() => toggleBooleanField('hasProductionInsurance')} className="mr-3 accent-blue-500" />
                         <span className="font-medium">Production Insurance</span>
                       </label>
@@ -432,7 +432,7 @@ export default function ListPropertyPage() {
                     <label className="mb-3 block text-sm font-medium">Compliance Checklist (optional)</label>
                     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       {complianceChecklistItems.map((item) => (
-                        <label key={item} className="flex min-h-[48px] cursor-pointer items-center rounded-lg border-2 border-black bg-white p-4 text-black transition-colors hover:border-blue-500">
+                        <label key={item} className="flex min-h-[48px] cursor-pointer items-center rounded-lg border border-slate-200 bg-white p-4 text-black transition-colors hover:border-blue-500">
                           <input type="checkbox" checked={form.complianceChecklist.includes(item)} onChange={() => toggleArrayItem('complianceChecklist', item)} className="mr-3 accent-blue-500" />
                           <span className="text-sm">{item}</span>
                         </label>
@@ -478,7 +478,7 @@ export default function ListPropertyPage() {
                     setIsDragging(false);
                     sanitizePhotoFiles(e.dataTransfer.files);
                   }}
-                  className={`rounded-xl border-2 border-dashed p-6 text-center transition-colors sm:p-12 ${isDragging ? 'border-blue-500 bg-white' : 'border-black bg-white'}`}
+                  className={`rounded-xl border border-dashed p-6 text-center transition-colors sm:p-12 ${isDragging ? 'border-blue-500 bg-white' : 'border-slate-200 bg-white'}`}
                 >
                   <ImagePlus className="mx-auto mb-6 h-14 w-14 text-blue-500 sm:h-16 sm:w-16" />
                   <p className="mb-2 text-lg font-semibold text-black sm:text-xl">Drag photos here or click to browse</p>
@@ -488,7 +488,7 @@ export default function ListPropertyPage() {
                 {renderError('photos')}
 
                 {form.photos.length > 0 && (
-                  <div className="mt-6 rounded-2xl border border-black bg-[#F9FAFB] p-4">
+                  <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <h3 className="font-semibold">Ready for upload</h3>
                     <ul className="mt-3 space-y-2 text-sm text-black/70">
                       {form.photos.map((photo) => (
@@ -517,7 +517,7 @@ export default function ListPropertyPage() {
                     <label className="mb-3 block text-sm font-medium">Booking flow</label>
                     <div className="grid gap-4 md:grid-cols-2">
                       {bookingModeOptions.map((option) => (
-                        <label key={option.value} className={`cursor-pointer rounded-2xl border-2 p-4 transition ${form.bookingMode === option.value ? 'border-[#3B82F6] bg-blue-50' : 'border-black bg-white'}`}>
+                        <label key={option.value} className={`cursor-pointer rounded-2xl border-2 p-4 transition ${form.bookingMode === option.value ? 'border-[#3B82F6] bg-blue-50' : 'border-slate-200 bg-white'}`}>
                           <input type="radio" name="bookingMode" value={option.value} checked={form.bookingMode === option.value} onChange={() => updateField('bookingMode', option.value)} className="sr-only" />
                           <p className="font-semibold text-black">{option.label}</p>
                           <p className="mt-2 text-sm text-black/65">{option.description}</p>
@@ -559,7 +559,7 @@ export default function ListPropertyPage() {
                     <label className="mb-3 block text-sm font-medium">Available days</label>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
                       {dayOptions.map((day) => (
-                        <label key={day} className="flex min-h-[48px] cursor-pointer items-center justify-center rounded-lg border-2 border-black bg-white p-3 text-black transition hover:border-blue-500">
+                        <label key={day} className="flex min-h-[48px] cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white p-3 text-black transition hover:border-blue-500">
                           <input type="checkbox" checked={form.availableDays.includes(day)} onChange={() => toggleArrayItem('availableDays', day)} className="mr-2 accent-blue-500" />
                           {day}
                         </label>
@@ -587,22 +587,22 @@ export default function ListPropertyPage() {
                   </div>
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-2xl border border-black bg-[#F9FAFB] p-4">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <h3 className="font-semibold">Basic Info</h3>
                     <p className="mt-2 text-sm text-black/70">{form.title || '—'} · {form.propertyType || '—'}</p>
                     <p className="text-sm text-black/70">{form.address || '—'}, {form.city || '—'}, {form.state || '—'}</p>
                   </div>
-                  <div className="rounded-2xl border border-black bg-[#F9FAFB] p-4">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <h3 className="font-semibold">Details</h3>
                     <p className="mt-2 text-sm text-black/70">{form.bedrooms || '0'} bed · {form.bathrooms || '0'} bath · {form.maxCapacity || '0'} guests</p>
                     <p className="text-sm text-black/70">Privacy: {form.privacyLevel} · Booking: {form.bookingMode === 'instant' ? 'Instant book' : 'Request to book'}</p>
                     <p className="text-sm text-black/70">Amenities: {form.amenities.join(', ') || 'None selected'}</p>
                   </div>
-                  <div className="rounded-2xl border border-black bg-[#F9FAFB] p-4">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <h3 className="font-semibold">Photos</h3>
                     <p className="mt-2 text-sm text-black/70">{form.photos.length} validated image file(s) selected.</p>
                   </div>
-                  <div className="rounded-2xl border border-black bg-[#F9FAFB] p-4">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                     <h3 className="font-semibold">Pricing & availability</h3>
                     <p className="mt-2 text-sm text-black/70">Base rate: ${form.baseRate || '0'} · Cleaning: ${form.cleaningFee || '0'} · Deposit: ${form.securityDeposit || '0'}</p>
                     <p className="text-sm text-black/70">Days: {form.availableDays.join(', ') || 'None selected'}</p>
@@ -628,7 +628,7 @@ export default function ListPropertyPage() {
                 type="button"
                 onClick={goBack}
                 disabled={currentStep === 1}
-                className="inline-flex min-h-[48px] items-center justify-center rounded-lg border-2 border-black px-6 py-3 font-semibold transition hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-200 px-6 py-3 font-semibold transition hover:bg-blue-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Back
               </button>
@@ -636,7 +636,7 @@ export default function ListPropertyPage() {
                 <button
                   type="button"
                   onClick={saveDraft}
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-lg border-2 border-black px-6 py-3 font-semibold transition hover:bg-black hover:text-white"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-lg border border-slate-200 px-6 py-3 font-semibold transition hover:bg-blue-600 hover:text-white"
                 >
                   Save draft
                 </button>
@@ -654,7 +654,7 @@ export default function ListPropertyPage() {
             </div>
           </form>
 
-          <section className="mt-10 rounded-3xl border-2 border-black bg-white p-5 sm:p-8">
+          <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-5 sm:p-8">
             <div className="flex items-start gap-3">
               <AlertCircle className="mt-0.5 h-5 w-5 text-blue-500" />
               <div>
