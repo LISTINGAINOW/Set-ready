@@ -138,16 +138,17 @@ export default function Header() {
 
               {user ? (
                 <div className="flex items-center gap-3">
-                  <button
+                  <Link
+                    href="/dashboard/owner"
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500"
                     aria-label={`Account: ${user.firstName}`}
-                    title={user.firstName}
+                    title={`Hi, ${user.firstName} — View Dashboard`}
                   >
                     {userInitials}
-                  </button>
+                  </Link>
                   <button
                     onClick={handleLogout}
-                    className="inline-flex min-h-[44px] items-center rounded-full border border-black/8 px-4 py-2 text-sm font-medium text-slate-950 transition hover:border-blue-200 hover:text-blue-600"
+                    className="inline-flex min-h-[44px] items-center rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-900 transition hover:border-blue-200 hover:text-blue-600"
                   >
                     Logout
                   </button>
