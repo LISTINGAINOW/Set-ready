@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from './utils/supabase/middleware';
 
-const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const GENERAL_API_LIMIT = 120;
-const AUTH_API_LIMIT = 20;
+// Windows
+const WINDOW_1MIN = 60 * 1000;
+const WINDOW_15MIN = 15 * 60 * 1000;
+
+// Limits
+const FORM_SUBMISSION_LIMIT = 10;  // POST form endpoints — 10 per minute
+const READ_LIMIT = 30;              // GET API endpoints — 30 per minute
+const AUTH_API_LIMIT = 20;          // Auth endpoints — 20 per 15 minutes (brute-force protection)
+const GENERAL_API_LIMIT = 120;      // Everything else — 120 per 15 minutes
+
 const rateLimitStore = new Map<string, number[]>();
+
+// Routes that accept form submissions (writes)
+const FORM_ROUTES = [
+  '/api/inquiries',
+  '/api/bookings',
+  '/api/newsletter',
+  '/api/contact',
+  '/api/owner/listings',
+  '/api/payments',
+  '/api/interest',
+  '/api/bid',
+];
 
 function getClientIp(request: NextRequest) {
   return (
@@ -14,22 +33,39 @@ function getClientIp(request: NextRequest) {
   );
 }
 
-function getRateLimitKey(request: NextRequest) {
+function getRateLimitConfig(request: NextRequest): { key: string; limit: number; windowMs: number } {
   const ip = getClientIp(request);
-  const scope = request.nextUrl.pathname.startsWith('/api/auth') ? 'auth' : request.nextUrl.pathname;
-  return `${scope}:${ip}`;
+  const pathname = request.nextUrl.pathname;
+  const method = request.method;
+
+  if (pathname.startsWith('/api/auth')) {
+    return { key: `auth:${ip}`, limit: AUTH_API_LIMIT, windowMs: WINDOW_15MIN };
+  }
+
+  const isFormSubmission = method === 'POST' || method === 'PUT' || method === 'PATCH';
+  const isFormRoute = FORM_ROUTES.some((route) => pathname.startsWith(route));
+
+  if (isFormSubmission && isFormRoute) {
+    return { key: `form:${pathname}:${ip}`, limit: FORM_SUBMISSION_LIMIT, windowMs: WINDOW_1MIN };
+  }
+
+  if (method === 'GET' && pathname.startsWith('/api/')) {
+    return { key: `read:${pathname}:${ip}`, limit: READ_LIMIT, windowMs: WINDOW_1MIN };
+  }
+
+  return { key: `general:${pathname}:${ip}`, limit: GENERAL_API_LIMIT, windowMs: WINDOW_15MIN };
 }
 
-function applyRateLimit(key: string, limit: number) {
+function applyRateLimit(key: string, limit: number, windowMs: number) {
   const now = Date.now();
-  const recent = (rateLimitStore.get(key) || []).filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS);
+  const recent = (rateLimitStore.get(key) || []).filter((timestamp) => now - timestamp < windowMs);
   recent.push(now);
   rateLimitStore.set(key, recent);
 
   return {
     blocked: recent.length > limit,
     remaining: Math.max(0, limit - recent.length),
-    reset: recent[0] ? recent[0] + RATE_LIMIT_WINDOW_MS : now + RATE_LIMIT_WINDOW_MS,
+    reset: recent[0] ? recent[0] + windowMs : now + windowMs,
   };
 }
 
@@ -58,8 +94,8 @@ function buildSecurityHeaders(response: NextResponse) {
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isApiRoute = pathname.startsWith('/api/');
-  const limit = pathname.startsWith('/api/auth') ? AUTH_API_LIMIT : GENERAL_API_LIMIT;
-  const rateLimit = applyRateLimit(getRateLimitKey(request), limit);
+  const { key, limit, windowMs } = getRateLimitConfig(request);
+  const rateLimit = applyRateLimit(key, limit, windowMs);
 
   if (isApiRoute && rateLimit.blocked) {
     const retryAfter = Math.max(1, Math.ceil((rateLimit.reset - Date.now()) / 1000));
