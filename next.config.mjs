@@ -21,10 +21,16 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=(self)',
   },
   {
+    // MED-3: HSTS header
+    key: 'Strict-Transport-Security',
+    value: 'max-age=31536000; includeSubDomains',
+  },
+  {
+    // MED-2: Removed unsafe-eval from script-src
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
+      "script-src 'self' 'unsafe-inline' https://js.stripe.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",

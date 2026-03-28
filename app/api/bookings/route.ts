@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import bookingsData from '@/data/bookings.json';
 import { getClientIp, isValidEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
+import { requireAdminSession, requireUserSession } from '@/lib/auth-middleware';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 let inMemoryBookings: Booking[] = (bookingsData.bookings || []) as Booking[];
 
@@ -22,6 +24,7 @@ interface BookingRequest {
 
 interface Booking extends BookingRequest {
   id: string;
+  userId?: string;
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;
 }
@@ -54,10 +57,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Please provide a valid email address' }, { status: 400 });
     }
 
+    // Attach userId from session if present (optional for booking creation)
+    let userId: string | undefined;
+    const sessionCookie = request.cookies.get('ds-session')?.value;
+    if (sessionCookie) {
+      const { verifySessionCookie } = await import('@/lib/auth-middleware');
+      userId = verifySessionCookie(sessionCookie) ?? undefined;
+    }
+
     const bookings = await readBookings();
     const newBooking: Booking = {
       ...body,
       id: `booking_${uuidv4().slice(0, 8)}`,
+      userId,
       status: 'pending',
       createdAt: new Date().toISOString(),
     };
@@ -74,10 +86,34 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+// CRIT-3: GET requires auth. Regular users see only their own bookings; admins see all.
+export async function GET(request: NextRequest) {
   try {
+    // Check if admin first
+    const adminCheck = requireAdminSession(request);
+    if (adminCheck === true) {
+      const bookings = await readBookings();
+      return NextResponse.json({ bookings });
+    }
+
+    // Otherwise require user session
+    const userId = requireUserSession(request);
+    if (userId instanceof NextResponse) return userId;
+
+    // Look up user email to filter bookings (bookings store email, not userId for legacy reasons)
+    const supabase = createAdminClient();
+    const { data: user } = await supabase
+      .from('users')
+      .select('email')
+      .eq('id', userId)
+      .single();
+
     const bookings = await readBookings();
-    return NextResponse.json({ bookings });
+    // Return bookings belonging to this user (by userId or email match)
+    const userBookings = bookings.filter(
+      (b) => b.userId === userId || (user && b.email === user.email)
+    );
+    return NextResponse.json({ bookings: userBookings });
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }

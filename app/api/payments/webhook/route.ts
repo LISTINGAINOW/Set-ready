@@ -1,66 +1,29 @@
+/**
+ * HIGH-4: This webhook handler has been consolidated into /api/webhooks/stripe.
+ * This route is kept as a redirect shim so that any Stripe dashboard entries
+ * pointing to this URL continue to work until updated.
+ */
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-02-25.clover',
-    })
-  : null;
-
-const BOOKINGS_PATH = path.join(process.cwd(), 'data', 'bookings.json');
 
 export async function POST(request: NextRequest) {
-  if (!stripe) {
-    return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
-  }
-
+  // Forward the raw body and all headers to the canonical handler
   const body = await request.text();
-  const signature = request.headers.get('stripe-signature');
+  const headers: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
 
-  if (!signature) {
-    return NextResponse.json({ error: 'Missing signature' }, { status: 400 });
-  }
+  const canonicalUrl = new URL('/api/webhooks/stripe', request.nextUrl.origin);
 
-  let event: Stripe.Event;
+  const forwarded = await fetch(canonicalUrl.toString(), {
+    method: 'POST',
+    headers,
+    body,
+  });
 
-  try {
-    event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Invalid signature';
-    return NextResponse.json({ error: message }, { status: 400 });
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const bookingId = session.metadata?.booking_id;
-
-    if (bookingId) {
-      try {
-        const data = JSON.parse(await fs.readFile(BOOKINGS_PATH, 'utf-8'));
-        const booking = data.bookings.find(
-          (b: { id: string }) => b.id === bookingId
-        );
-
-        if (booking) {
-          booking.status = 'confirmed';
-          booking.stripeSessionId = session.id;
-          booking.amountPaid = (session.amount_total ?? 0) / 100;
-          booking.platformFee =
-            ((session.amount_total ?? 0) - Math.round((session.amount_total ?? 0) / 1.1)) / 100;
-          booking.paidAt = new Date().toISOString();
-          await fs.writeFile(BOOKINGS_PATH, JSON.stringify(data, null, 2));
-        }
-      } catch (err) {
-        console.error('Failed to update booking:', err);
-      }
-    }
-  }
-
-  return NextResponse.json({ received: true });
+  const responseBody = await forwarded.text();
+  return new NextResponse(responseBody, {
+    status: forwarded.status,
+    headers: { 'Content-Type': forwarded.headers.get('Content-Type') || 'application/json' },
+  });
 }

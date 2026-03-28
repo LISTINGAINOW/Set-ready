@@ -1,13 +1,20 @@
 import { createHash, randomBytes, timingSafeEqual } from 'crypto';
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import type { NextRequest } from 'next/server';
 
-const AUDIT_DIR = '/tmp/discreet-set-security';
-const AUDIT_LOG_FILE = join(AUDIT_DIR, 'audit.log');
-const RATE_LIMIT_FILE = join(AUDIT_DIR, 'rate-limit-store.json');
+// CRIT-6: SESSION_SECRET must be set — no hardcoded fallback
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    throw new Error('SESSION_SECRET environment variable is not set. Set it to a strong random value.');
+  }
+  return secret;
+}
+
+const RATE_LIMIT_DIR = '/tmp/discreet-set-security';
+const RATE_LIMIT_FILE = join(RATE_LIMIT_DIR, 'rate-limit-store.json');
 const CSRF_HEADER = 'x-csrf-token';
-const SESSION_SECRET = process.env.SESSION_SECRET || 'discreet-set-session-secret';
 
 export const PASSWORD_RULES_MESSAGE = 'Password must be at least 8 characters and include uppercase, lowercase, and a number.';
 
@@ -55,17 +62,9 @@ export function getPasswordStrength(password: string) {
   return { score, label: 'Strong' };
 }
 
-function ensureAuditDir() {
-  if (!existsSync(AUDIT_DIR)) mkdirSync(AUDIT_DIR, { recursive: true });
-}
-
+// MED-8: Log to console (Vercel Function Logs) instead of ephemeral /tmp
 export function writeAuditLog(action: string, details: Record<string, unknown> = {}) {
-  ensureAuditDir();
-  appendFileSync(
-    AUDIT_LOG_FILE,
-    JSON.stringify({ timestamp: new Date().toISOString(), action, ...details }) + '\n',
-    'utf8'
-  );
+  console.log(JSON.stringify({ timestamp: new Date().toISOString(), action, ...details }));
 }
 
 export function getClientIp(request: NextRequest) {
@@ -77,7 +76,7 @@ export function getClientIp(request: NextRequest) {
 }
 
 function signSessionValue(value: string) {
-  return createHash('sha256').update(`${value}.${SESSION_SECRET}`).digest('hex');
+  return createHash('sha256').update(`${value}.${getSessionSecret()}`).digest('hex');
 }
 
 export function createSessionCookieValue(userId: string) {
@@ -112,8 +111,13 @@ export function validateCsrf(request: NextRequest) {
   return timingSafeEqual(a, b) && isSameOriginRequest(request);
 }
 
+function ensureRateLimitDir() {
+  const { mkdirSync } = require('fs') as typeof import('fs');
+  if (!existsSync(RATE_LIMIT_DIR)) mkdirSync(RATE_LIMIT_DIR, { recursive: true });
+}
+
 export function recordAuthRateLimit(ip: string, route: string) {
-  ensureAuditDir();
+  ensureRateLimitDir();
   const now = Date.now();
   const isLogin = route.includes('/login');
   const windowMs = isLogin ? 15 * 60 * 1000 : 60 * 60 * 1000;

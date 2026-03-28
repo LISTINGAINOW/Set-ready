@@ -65,7 +65,9 @@ function formatDate(iso: string) {
 }
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // HIGH-5: Auth state is driven by the httpOnly admin-session cookie.
+  // We check auth by attempting to fetch data; a 401 means not logged in.
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
@@ -75,33 +77,45 @@ export default function AdminPage() {
   const [fetchError, setFetchError] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
-  // Check saved auth on mount
+  // On mount, probe auth status by fetching submissions
   useEffect(() => {
-    const saved = localStorage.getItem('adminPassword');
-    if (saved) {
-      setIsAuthenticated(true);
-    }
+    probeAuth();
   }, []);
 
   // Fetch submissions when authenticated or filter changes
   useEffect(() => {
-    if (!isAuthenticated) return;
-    fetchSubmissions(activeFilter);
+    if (isAuthenticated) {
+      fetchSubmissions(activeFilter);
+    }
   }, [isAuthenticated, activeFilter]);
 
+  async function probeAuth() {
+    try {
+      const res = await fetch('/api/admin/submissions', { credentials: 'include' });
+      if (res.status === 401 || res.status === 403) {
+        setIsAuthenticated(false);
+      } else if (res.ok) {
+        const json = await res.json();
+        setSubmissions(json.submissions ?? []);
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch {
+      setIsAuthenticated(false);
+    }
+  }
+
   async function fetchSubmissions(filter: FilterTab) {
-    const pwd = localStorage.getItem('adminPassword') ?? '';
     setLoading(true);
     setFetchError('');
     try {
       const url = filter === 'all'
         ? '/api/admin/submissions'
         : `/api/admin/submissions?status=${filter}`;
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${pwd}` },
-      });
+      // Credentials: 'include' sends the httpOnly admin-session cookie automatically
+      const res = await fetch(url, { credentials: 'include' });
       if (res.status === 401) {
-        localStorage.removeItem('adminPassword');
         setIsAuthenticated(false);
         return;
       }
@@ -122,11 +136,13 @@ export default function AdminPage() {
       const res = await fetch('/api/admin/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ password }),
       });
       const json = await res.json();
       if (json.ok) {
-        localStorage.setItem('adminPassword', password);
+        // Cookie is set server-side (httpOnly); no localStorage needed
+        setPassword('');
         setIsAuthenticated(true);
       } else {
         setAuthError('Incorrect password.');
@@ -138,8 +154,8 @@ export default function AdminPage() {
     }
   }
 
-  function handleLogout() {
-    localStorage.removeItem('adminPassword');
+  async function handleLogout() {
+    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
     setIsAuthenticated(false);
     setSubmissions([]);
     setPassword('');
@@ -150,6 +166,15 @@ export default function AdminPage() {
     acc[s.status] = (acc[s.status] ?? 0) + 1;
     return acc;
   }, {});
+
+  // While probing auth, show nothing (brief flash)
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

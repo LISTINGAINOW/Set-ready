@@ -32,6 +32,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# MED-6: Local data files contain PII (bookings, leads, subscribers, users)
+# Keep files locally but do not commit them to version control.
+data/*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

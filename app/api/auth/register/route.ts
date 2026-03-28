@@ -66,7 +66,9 @@ export async function POST(request: NextRequest) {
     await createUser(newUser);
     writeAuditLog('auth.register.success', { ip, email, userId: newUser.id });
 
-    const verificationLink = `/verify-email?email=${encodeURIComponent(newUser.email)}&token=${verificationToken}`;
+    // LOW-2: Use absolute URL with NEXT_PUBLIC_SITE_URL
+    const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || '').replace(/\/$/, '');
+    const verificationLink = `${siteUrl}/verify-email?email=${encodeURIComponent(newUser.email)}&token=${verificationToken}`;
 
     try {
       await sendVerificationEmail(newUser.email, newUser.firstName, verificationLink);
@@ -80,11 +82,12 @@ export async function POST(request: NextRequest) {
       console.error('Failed to send welcome email:', emailError);
     }
 
+    // CRIT-7: verificationLink is intentionally NOT included in the response —
+    // it is only sent via email to prevent token leakage.
     const response = NextResponse.json(
       {
         message: 'Verification email sent. Please check your inbox.',
         user: sanitizeUser(newUser),
-        verificationLink,
       },
       { status: 201 }
     );

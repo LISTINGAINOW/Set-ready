@@ -4,6 +4,15 @@ import { updateSession } from './utils/supabase/middleware';
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const GENERAL_API_LIMIT = 120;
 const AUTH_API_LIMIT = 20;
+
+/**
+ * HIGH-3: Rate limiting caveat — this Map() is instance-local on Vercel serverless.
+ * Each function instance has its own counter, so limits are per-instance, not global.
+ * For production-grade rate limiting, replace this with Vercel KV or Upstash Redis.
+ *
+ * TODO(HIGH-3): Replace rateLimitStore with a distributed store (Vercel KV / Upstash)
+ * to enforce rate limits across all serverless instances.
+ */
 const rateLimitStore = new Map<string, number[]>();
 
 function getClientIp(request: NextRequest) {
@@ -38,11 +47,14 @@ function buildSecurityHeaders(response: NextResponse) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  // MED-3: Add HSTS header
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  // MED-2: Removed unsafe-eval from script-src
   response.headers.set(
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "script-src 'self' 'unsafe-inline' https://js.stripe.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",

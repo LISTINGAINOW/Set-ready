@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendSubmissionApproved, sendSubmissionRejected, sendChangesRequested } from '@/lib/email';
-
-function checkAuth(request: NextRequest): boolean {
-  const auth = request.headers.get('authorization');
-  const password = auth?.replace('Bearer ', '');
-  return password === process.env.ADMIN_PASSWORD;
-}
+import { requireAdminSession } from '@/lib/auth-middleware';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!checkAuth(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const authResult = requireAdminSession(request);
+  if (authResult !== true) return authResult;
 
   const { id } = await params;
   const supabase = createAdminClient();
@@ -36,9 +30,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  if (!checkAuth(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const authResult = requireAdminSession(request);
+  if (authResult !== true) return authResult;
 
   const { id } = await params;
   const body = await request.json();
