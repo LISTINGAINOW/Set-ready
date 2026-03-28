@@ -19,6 +19,7 @@ import { calculateBookingPricing, MINIMUM_BOOKING_TOTAL, PRODUCER_FEE_RATE } fro
 import PropertyJsonLd from '@/components/PropertyJsonLd';
 import SimilarProperties from '@/components/SimilarProperties';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import ShareButton from '@/components/ShareButton';
 
 const AreaMap = dynamic(() => import('@/components/AreaMap'), {
   ssr: false,
@@ -190,7 +191,10 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           </div>
 
           <div className="rounded-2xl border border-black bg-white/50 p-5 sm:p-8">
-            <h1 className="mb-4 text-3xl font-bold text-black sm:text-4xl">{location.name}</h1>
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <h1 className="text-3xl font-bold text-black sm:text-4xl">{location.name}</h1>
+              <ShareButton title={location.name} />
+            </div>
             <div className="mb-6 flex items-start text-black/60">
               <MapPin className="mr-2 mt-0.5 h-5 w-5 shrink-0" />
               <span className="text-sm sm:text-base">
@@ -408,7 +412,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           </div>
         </div>
 
-        <div className="space-y-6 lg:space-y-8">
+        <div className="space-y-6 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:space-y-8 lg:overflow-y-auto lg:pb-4">
           <div className="rounded-2xl border border-black bg-white/50 p-5 sm:p-8">
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <h2 className="text-2xl font-bold text-black">{bookingMode === 'instant' ? 'Instant Book' : 'Request Booking'}</h2>
