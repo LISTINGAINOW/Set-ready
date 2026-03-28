@@ -38,11 +38,50 @@ const faqItems = [
     question: 'Can I book both a shoot location AND crew housing?',
     answer: 'Yes! That\'s the SetVenue advantage. Book your shoot location and crew stay in one place. Production managers love this — one platform, one invoice, less coordination.',
   },
+  {
+    question: 'Can I book a location for multiple days or weeks?',
+    answer: 'Absolutely. SetVenue supports single-day, multi-day, weekly, and monthly bookings. Use the multi-day calendar to select a date range. Many properties offer discounted daily or weekly rates for longer shoots.',
+  },
+  {
+    question: 'Do I need a film permit?',
+    answer: 'It depends on the location and production type. Most commercial shoots in Los Angeles require a permit from FilmLA. Small photo shoots on private property may be exempt. Check our city-specific permit guides for details, or contact us and we will help you figure it out.',
+  },
+  {
+    question: 'Is insurance required?',
+    answer: 'Yes. All productions must carry general liability insurance and name the property owner as additionally insured. Most productions already have this through their production insurance. If you need help, we can point you to providers who offer per-shoot coverage starting around $300.',
+  },
+  {
+    question: 'How much does it cost to list my property?',
+    answer: 'Nothing. SetVenue charges property owners zero fees — ever. You set your own rates and keep 100% of your rental income. The first 500 property owners get a free listing for 6 months with no strings attached.',
+  },
 ];
+
+function FAQJsonLd() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
 
 export default function FAQPage() {
   return (
     <main className="min-h-screen bg-white px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      <FAQJsonLd />
       <div className="mx-auto max-w-5xl rounded-[32px] border border-black bg-white p-8 shadow-[0_24px_70px_rgba(15,23,42,0.08)] sm:p-10 lg:p-12">
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-600">FAQ</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-black sm:text-5xl">Common questions, answered clearly.</h1>

@@ -10,6 +10,7 @@ import {
   validateCsrf,
   writeAuditLog,
 } from '@/lib/security';
+import { sendInquiryConfirmation } from '@/lib/email';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -274,6 +275,11 @@ export async function POST(request: NextRequest) {
         subject: `New Location Request: ${name}${productionType ? ` — ${productionType}` : ''}${preferredCity ? ` in ${preferredCity}` : ''}`,
         html,
         text,
+      });
+      // Send confirmation to submitter (fire-and-forget)
+      const firstName = name.split(' ')[0] || name;
+      sendInquiryConfirmation(email, firstName, 'your location request').catch((err) => {
+        console.error('Failed to send find-location confirmation email:', err);
       });
     } else {
       console.warn('RESEND_API_KEY not set — skipping notification email');

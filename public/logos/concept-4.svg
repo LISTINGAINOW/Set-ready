@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- Abstract Mark: geometric shape suggesting a venue/space with a "play" or "set" feeling -->
+  <!-- Overlapping rectangles forming a perspective room/venue -->
+  <!-- Back wall -->
+  <rect x="24" y="24" width="72" height="72" rx="4" fill="none" stroke="#111" stroke-width="2.5"/>
+  <!-- Inner frame — like a viewfinder or screen -->
+  <rect x="36" y="36" width="48" height="48" rx="2" fill="none" stroke="#111" stroke-width="2"/>
+  <!-- Perspective lines connecting corners — depth illusion -->
+  <line x1="24" y1="24" x2="36" y2="36" stroke="#111" stroke-width="1.5"/>
+  <line x1="96" y1="24" x2="84" y2="36" stroke="#111" stroke-width="1.5"/>
+  <line x1="24" y1="96" x2="36" y2="84" stroke="#111" stroke-width="1.5"/>
+  <line x1="96" y1="96" x2="84" y2="84" stroke="#111" stroke-width="1.5"/>
+  <!-- Center accent — play/record button -->
+  <polygon points="54,52 54,68 68,60" fill="#E85D3A"/>
+  <!-- Small crosshair marks -->
+  <line x1="57" y1="36" x2="63" y2="36" stroke="#111" stroke-width="1" opacity="0.5"/>
+  <line x1="60" y1="33" x2="60" y2="39" stroke="#111" stroke-width="1" opacity="0.5"/>
+  <line x1="57" y1="84" x2="63" y2="84" stroke="#111" stroke-width="1" opacity="0.5"/>
+  <line x1="60" y1="81" x2="60" y2="87" stroke="#111" stroke-width="1" opacity="0.5"/>
+</svg>

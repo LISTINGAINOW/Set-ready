@@ -16,6 +16,9 @@ import { getLocationBlockedDates } from '@/lib/availability';
 import type { Review } from '@/types/review';
 import { getBookingMode, getDisplayAddress, getVerificationHighlights } from '@/lib/location-utils';
 import { calculateBookingPricing, MINIMUM_BOOKING_TOTAL, PRODUCER_FEE_RATE } from '@/lib/pricing';
+import PropertyJsonLd from '@/components/PropertyJsonLd';
+import SimilarProperties from '@/components/SimilarProperties';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 const AreaMap = dynamic(() => import('@/components/AreaMap'), {
   ssr: false,
@@ -81,6 +84,20 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const primaryPhoto = location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80';
   const url = `https://setvenue.com/locations/${id}`;
 
+  // Dynamic OG image with property details
+  const ogParams = new URLSearchParams({
+    title: location.name,
+    city: location.city,
+    state: location.state,
+    ...(location.pricePerHour ? { price: String(location.pricePerHour) } : {}),
+    ...(location.beds ? { beds: String(location.beds) } : {}),
+    ...(location.baths ? { baths: String(location.baths) } : {}),
+    ...(location.sqft ? { sqft: String(location.sqft) } : {}),
+    ...(primaryPhoto ? { image: primaryPhoto } : {}),
+    type: 'property',
+  });
+  const ogImageUrl = `https://setvenue.com/api/og?${ogParams.toString()}`;
+
   return {
     title,
     description,
@@ -91,13 +108,13 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       url,
       siteName: 'SetVenue',
       type: 'website',
-      images: [{ url: primaryPhoto, width: 1200, height: 800, alt: location.name }],
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: location.name }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [primaryPhoto],
+      images: [ogImageUrl],
     },
   };
 }
@@ -131,11 +148,15 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-      <div className="mb-6 sm:mb-8">
-        <a href="/locations" className="inline-flex min-h-[44px] items-center text-sm text-black/60 hover:text-black sm:text-base">
-          ← Back to Browse
-        </a>
-      </div>
+      <PropertyJsonLd location={location} />
+      <Breadcrumbs
+        items={[
+          { label: 'Home', href: '/' },
+          { label: 'Locations', href: '/locations' },
+          { label: `${location.city}, ${location.state}`, href: `/locations/city/${location.city.toLowerCase().replace(/\s+/g, '-')}` },
+          { label: location.name },
+        ]}
+      />
 
       {/* Compliance / regulatory banner */}
       {regulationsBanner && (
@@ -451,8 +472,14 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
           </div>
         </div>
       </div>
+
+      {/* Similar Properties */}
+      <SimilarProperties
+        currentId={location.id}
+        city={location.city}
+        style={location.style}
+        maxResults={3}
+      />
     </div>
   );
 }
-
-

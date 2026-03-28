@@ -12,7 +12,16 @@ const footerSections = [
     links: [
       { href: '/about', label: 'About' },
       { href: '/how-it-works', label: 'How It Works' },
+      { href: '/blog', label: 'Blog' },
+      { href: '/for-productions', label: 'For Productions' },
+    ],
+  },
+  {
+    title: 'Property Owners',
+    links: [
       { href: '/list-property', label: 'List Your Property' },
+      { href: '/earn', label: 'Earnings Calculator' },
+      { href: '/free-listing', label: 'Free Listing Offer' },
     ],
   },
   {

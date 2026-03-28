@@ -108,14 +108,50 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'Organization',
               name: 'SetVenue',
+              legalName: 'Set Venue LLC',
               url: siteUrl,
-              logo: `${siteUrl}/icons/icon-512.png`,
+              logo: `${siteUrl}/logos/concept-5.svg`,
               description: defaultDescription,
-              sameAs: [],
+              foundingDate: '2026-03-23',
+              founder: { '@type': 'Person', name: 'Joshua Feuer' },
+              address: {
+                '@type': 'PostalAddress',
+                addressRegion: 'CA',
+                addressCountry: 'US',
+              },
+              sameAs: ['https://x.com/SetVenueHQ'],
               contactPoint: {
                 '@type': 'ContactPoint',
-                email: 'support@setvenue.com',
-                contactType: 'customer support',
+                email: 'noreply@setvenue.com',
+                contactType: 'customer service',
+                url: `${siteUrl}/contact`,
+              },
+              areaServed: { '@type': 'Country', name: 'United States' },
+              knowsAbout: [
+                'Film location scouting',
+                'Production venue rentals',
+                'Photo shoot locations',
+                'Event venue booking',
+                'Crew housing',
+              ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'SetVenue',
+              url: siteUrl,
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: `${siteUrl}/properties?q={search_term_string}`,
+                },
+                'query-input': 'required name=search_term_string',
               },
             }),
           }}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- SV Monogram — sophisticated overlapping letters in a circle -->
+  <!-- Outer circle -->
+  <circle cx="60" cy="60" r="56" fill="none" stroke="#111" stroke-width="2.5"/>
+  <!-- S letterform — custom geometric -->
+  <path d="M38 38 C38 38 56 34 56 46 C56 54 38 52 38 62 C38 72 56 70 56 70" 
+        fill="none" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- V letterform — overlapping with S -->
+  <path d="M54 36 L70 78 L86 36" 
+        fill="none" stroke="#E85D3A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Small accent dot -->
+  <circle cx="60" cy="98" r="2.5" fill="#E85D3A"/>
+</svg>
