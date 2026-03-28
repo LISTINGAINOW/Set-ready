@@ -50,9 +50,11 @@ export default function LocationCard({ location }: LocationCardProps) {
   const { toast } = useToast();
   const [isReserveOpen, setIsReserveOpen] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [selection, setSelection] = useState<{ selectedDate: string; selectedTimeSlots: string[] }>({
+  const [selection, setSelection] = useState<{ selectedDate: string; selectedDates?: string[]; selectedTimeSlots: string[]; isMultiDay?: boolean }>({
     selectedDate: '',
+    selectedDates: [],
     selectedTimeSlots: [],
+    isMultiDay: false,
   });
 
   useEffect(() => {
@@ -233,7 +235,9 @@ export default function LocationCard({ location }: LocationCardProps) {
                   <div>
                     <h3 className="text-xl font-bold text-black">Continue to booking</h3>
                     <p className="mt-1 text-sm text-black/60">
-                      {selection.selectedDate && selection.selectedTimeSlots.length > 0
+                      {selection.isMultiDay && (selection.selectedDates?.length || 0) > 1
+                        ? `${selection.selectedDates?.length} days selected — dates will be prefilled in the booking request.`
+                        : selection.selectedDate && selection.selectedTimeSlots.length > 0
                         ? 'Your selected date and time will be prefilled in the booking request.'
                         : 'Choose a date and one or more time blocks to continue.'}
                     </p>
@@ -250,7 +254,13 @@ export default function LocationCard({ location }: LocationCardProps) {
                       securityDepositRequiredWhen={location.securityDepositRequiredWhen}
                       initialDate={selection.selectedDate}
                       initialTimeSlots={selection.selectedTimeSlots}
-                      triggerLabel={selection.selectedDate && selection.selectedTimeSlots.length > 0 ? 'Book selected time' : 'Log in to book'}
+                      triggerLabel={
+                        selection.isMultiDay && (selection.selectedDates?.length || 0) > 1
+                          ? `Book ${selection.selectedDates?.length} days`
+                          : selection.selectedDate && selection.selectedTimeSlots.length > 0
+                            ? 'Book selected time'
+                            : 'Log in to book'
+                      }
                     />
                   </div>
                 </div>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" width="120" height="140">
+  <!-- Location Pin + Film: map pin with film reel/lens integrated -->
+  <!-- Pin body -->
+  <path d="M60 130 C60 130 20 82 20 52 C20 29.9 37.9 12 60 12 C82.1 12 100 29.9 100 52 C100 82 60 130 60 130Z" 
+        fill="none" stroke="#111" stroke-width="3.5"/>
+  <!-- Film lens circle (inside pin) -->
+  <circle cx="60" cy="52" r="22" fill="none" stroke="#111" stroke-width="3"/>
+  <!-- Lens inner ring -->
+  <circle cx="60" cy="52" r="12" fill="none" stroke="#111" stroke-width="2"/>
+  <!-- Lens center dot -->
+  <circle cx="60" cy="52" r="4" fill="#E85D3A"/>
+  <!-- Film sprocket details — small rectangles around the outer circle -->
+  <rect x="58" y="26" width="4" height="6" rx="1" fill="#111"/>
+  <rect x="58" y="72" width="4" height="6" rx="1" fill="#111"/>
+  <rect x="34" y="50" width="6" height="4" rx="1" fill="#111"/>
+  <rect x="80" y="50" width="6" height="4" rx="1" fill="#111"/>
+  <!-- Diagonal sprockets -->
+  <rect x="41.5" y="33" width="4" height="5" rx="1" fill="#111" transform="rotate(-45 43.5 35.5)"/>
+  <rect x="74.5" y="33" width="4" height="5" rx="1" fill="#111" transform="rotate(45 76.5 35.5)"/>
+  <rect x="41.5" y="66" width="4" height="5" rx="1" fill="#111" transform="rotate(45 43.5 68.5)"/>
+  <rect x="74.5" y="66" width="4" height="5" rx="1" fill="#111" transform="rotate(-45 76.5 68.5)"/>
+</svg>

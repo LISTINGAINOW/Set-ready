@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" width="400" height="80">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600&amp;display=swap');
+    </style>
+  </defs>
+  <!-- Wordmark: "SetVenue" with subtle film clapper integrated into the 'S' -->
+  <g fill="none">
+    <!-- Mini clapper board lines integrated above the S -->
+    <rect x="8" y="18" width="22" height="3" rx="1" fill="#111" transform="rotate(-12 19 19.5)"/>
+    <rect x="8" y="22" width="22" height="3" rx="1" fill="#111" transform="rotate(-4 19 23.5)"/>
+  </g>
+  <!-- "Set" in semibold -->
+  <text x="6" y="56" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="600" font-size="42" fill="#111" letter-spacing="-1.5">Set</text>
+  <!-- "Venue" in light weight -->
+  <text x="98" y="56" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="42" fill="#111" letter-spacing="-1.5">Venue</text>
+  <!-- Subtle accent line under "Set" -->
+  <rect x="6" y="62" width="86" height="2.5" rx="1.25" fill="#E85D3A"/>
+  <!-- Tagline -->
+  <text x="6" y="76" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="9" fill="#888" letter-spacing="3">PREMIUM LOCATIONS</text>
+</svg>

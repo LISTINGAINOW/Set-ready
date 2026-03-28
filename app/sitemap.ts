@@ -14,6 +14,8 @@ const staticRoutes = [
   '/free-listing',
   '/list-property',
   '/find-location',
+  '/for-productions',
+  '/earn',
   '/about',
   '/blog',
   '/contact',

@@ -10,6 +10,7 @@ import {
   validateCsrf,
   writeAuditLog,
 } from '@/lib/security';
+import { sendInquiryConfirmation } from '@/lib/email';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -221,6 +222,11 @@ export async function POST(request: NextRequest) {
         subject: `New Booking Inquiry: ${name} — ${productionType}${propertyName ? ` @ ${propertyName}` : ''}`,
         html,
         text,
+      });
+      // Send confirmation email to the submitter (fire-and-forget)
+      const firstName = name.split(' ')[0] || name;
+      sendInquiryConfirmation(email, firstName, propertyName || 'your selected property').catch((err) => {
+        console.error('Failed to send inquiry confirmation email:', err);
       });
     } else {
       console.warn('RESEND_API_KEY not set — skipping notification email');
