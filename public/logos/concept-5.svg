@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 60" width="340" height="60">
+  <!-- Minimal Icon + Wordmark: small location-pin icon with play triangle, "SetVenue" right -->
+  <g>
+    <!-- Icon: simplified pin with play button inside -->
+    <path d="M20 48 C20 48 4 32 4 20 C4 11.2 11.2 4 20 4 C28.8 4 36 11.2 36 20 C36 32 20 48 20 48Z" 
+          fill="#111"/>
+    <!-- Play triangle cutout -->
+    <polygon points="15,14 15,26 27,20" fill="#fff"/>
+    <!-- Accent dot at pin bottom -->
+    <circle cx="20" cy="54" r="2" fill="#E85D3A"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="50" y="38" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="600" font-size="34" fill="#111" letter-spacing="-1">Set</text>
+  <text x="118" y="38" font-family="'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="300" font-size="34" fill="#111" letter-spacing="-1">Venue</text>
+  <!-- Thin separator line -->
+  <rect x="50" y="44" width="120" height="1" fill="#E85D3A" opacity="0.6"/>
+</svg>
