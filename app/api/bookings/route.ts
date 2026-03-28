@@ -88,17 +88,22 @@ export async function POST(request: NextRequest) {
 
 // CRIT-3: GET requires auth. Regular users see only their own bookings; admins see all.
 export async function GET(request: NextRequest) {
-  try {
-    // Check if admin first
-    const adminCheck = requireAdminSession(request);
-    if (adminCheck === true) {
+  // Check if admin first
+  const adminCheck = requireAdminSession(request);
+  if (adminCheck === true) {
+    try {
       const bookings = await readBookings();
       return NextResponse.json({ bookings });
+    } catch (error) {
+      return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
     }
+  }
 
-    // Otherwise require user session
-    const userId = requireUserSession(request);
-    if (userId instanceof NextResponse) return userId;
+  // Otherwise require user session — fail-closed (no try/catch around auth)
+  const userId = requireUserSession(request);
+  if (userId instanceof NextResponse) return userId;
+
+  try {
 
     // Look up user email to filter bookings (bookings store email, not userId for legacy reasons)
     const supabase = createAdminClient();
