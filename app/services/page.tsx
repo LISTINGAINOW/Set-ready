@@ -12,6 +12,11 @@ export const metadata: Metadata = {
     url: 'https://setvenue.com/services',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Production Services | SetVenue',
+    description: 'Location Concierge, Crew Housing bundles, and Permit Guidance — all in one place.',
+  },
 };
 
 const services = [

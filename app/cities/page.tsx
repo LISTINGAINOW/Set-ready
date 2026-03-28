@@ -12,6 +12,11 @@ export const metadata: Metadata = {
     url: '/cities',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'All Cities | SetVenue',
+    description: 'SetVenue is available nationwide. Browse production-ready locations in 22 US cities.',
+  },
 };
 
 const allCities = [

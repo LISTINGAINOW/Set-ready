@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     url: 'https://setvenue.com/list-property',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'List Your Home for Film & Production | SetVenue',
+    description: 'Earn money hosting film shoots, photo sessions, and productions. Free to join, full host control.',
+  },
 };
 
 export default function ListPropertyLayout({ children }: { children: React.ReactNode }) {

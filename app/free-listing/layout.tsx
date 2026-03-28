@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     url: 'https://setvenue.com/free-listing',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'List Your Property Free | SetVenue',
+    description: 'Keep 100% of your earnings. No upfront fees — reach production crews, photographers, and event planners.',
+  },
 };
 
 export default function FreeListingLayout({ children }: { children: React.ReactNode }) {

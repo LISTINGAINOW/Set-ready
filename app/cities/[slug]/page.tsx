@@ -506,6 +506,11 @@ export async function generateMetadata({
       url: `/cities/${slug}`,
       type: 'website',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   };
 }
 

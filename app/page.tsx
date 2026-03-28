@@ -17,6 +17,11 @@ export const metadata: Metadata = {
     url: 'https://setvenue.com',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SetVenue — Premium Film & Production Location Rentals',
+    description: 'Find and book film locations, photo shoot venues, production spaces, and crew housing. Lower fees than Giggster or Peerspace.',
+  },
 };
 
 const heroImage = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1800&q=80';

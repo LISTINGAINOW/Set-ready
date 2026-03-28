@@ -8,6 +8,11 @@ export const metadata: Metadata = {
     title: 'How Much Could Your Property Earn? | SetVenue',
     description: 'Film productions pay $150-$1,500/hr for the right space. With SetVenue, keep 100% of your rental income — no host fees ever.',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'How Much Could Your Property Earn? | SetVenue',
+    description: 'Film productions pay $150-$1,500/hr for the right space. With SetVenue, keep 100% of your rental income — no host fees ever.',
+  },
 };
 
 export default function EarnLayout({ children }: { children: React.ReactNode }) {

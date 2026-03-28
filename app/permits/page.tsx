@@ -12,6 +12,11 @@ export const metadata: Metadata = {
     url: 'https://setvenue.com/permits',
     type: 'website',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Film Permit Guides | SetVenue',
+    description: 'City-specific filming permit guides for LA, Atlanta, NYC, Austin, Miami, Nashville, New Orleans, and more.',
+  },
 };
 
 const cities = [

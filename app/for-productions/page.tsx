@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     title: 'For Production Companies | SetVenue',
     description: 'Film locations, photo shoot venues, and crew housing — one platform, lower fees.',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'For Production Companies | SetVenue',
+    description: 'Film locations, photo shoot venues, and crew housing — one platform, lower fees.',
+  },
 };
 
 const painPoints = [

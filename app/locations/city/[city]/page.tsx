@@ -323,6 +323,11 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
       url: `/locations/city/${city}`,
       type: 'website',
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${hub.headline} | SetVenue`,
+      description: hub.description,
+    },
   };
 }
 
