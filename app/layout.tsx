@@ -180,6 +180,12 @@ export default function RootLayout({
         ` }} />
       </head>
       <body className="antialiased pb-16 lg:pb-0">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:inline-flex focus:min-h-[44px] focus:items-center focus:rounded-full focus:bg-blue-600 focus:px-5 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg focus:outline-none"
+        >
+          Skip to main content
+        </a>
         <Script
           defer
           data-domain="setvenue.com"
@@ -190,7 +196,9 @@ export default function RootLayout({
           <PWARegister />
           <SessionSecurity />
           <Header />
-          {children}
+          <div id="main-content" tabIndex={-1}>
+            {children}
+          </div>
           <Footer />
           <AIAssistant />
           <MobileBottomNav />

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Heart, Menu, Search, X } from 'lucide-react';
 import Logo from '@/components/Logo';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFavoriteLocationIds, subscribeToFavorites } from '@/lib/favorites';
 import { usePathname, useRouter } from 'next/navigation';
 import PWAInstall from '@/components/PWAInstall';
@@ -28,6 +28,8 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -55,10 +57,42 @@ export default function Header() {
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    if (isMobileMenuOpen && drawerRef.current) {
+      const firstFocusable = drawerRef.current.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      firstFocusable?.focus();
+    }
+    if (!isMobileMenuOpen && hamburgerRef.current) {
+      hamburgerRef.current.focus();
+    }
     return () => {
       document.body.style.overflow = '';
     };
   }, [isMobileMenuOpen]);
+
+  const handleDrawerKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab' || !drawerRef.current) return;
+    const focusable = Array.from(
+      drawerRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey) {
+      if (document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      }
+    } else {
+      if (document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -173,6 +207,7 @@ export default function Header() {
 
             {/* Mobile hamburger */}
             <button
+              ref={hamburgerRef}
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/8 text-slate-950 transition hover:border-blue-200 hover:text-blue-600 lg:hidden"
@@ -197,11 +232,13 @@ export default function Header() {
 
       {/* Slide-in panel */}
       <div
+        ref={drawerRef}
         id="mobile-site-menu"
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
         aria-hidden={!isMobileMenuOpen}
+        onKeyDown={handleDrawerKeyDown}
         className={`fixed inset-y-0 right-0 z-[70] flex w-[85vw] max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
