@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-
-function checkAuth(request: NextRequest): boolean {
-  const adminPassword = process.env.ADMIN_PASSWORD;
-  if (!adminPassword) return false;
-  const auth = request.headers.get('authorization');
-  return auth === `Bearer ${adminPassword}`;
-}
+import { requireAdminSession } from '@/lib/auth-middleware';
 
 function groupByKey(
   arr: Record<string, unknown>[],
@@ -30,9 +24,8 @@ function groupByMonth(dates: string[]): Record<string, number> {
 }
 
 export async function GET(request: NextRequest) {
-  if (!checkAuth(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const authResult = requireAdminSession(request);
+  if (authResult !== true) return authResult;
 
   try {
     const supabase = createAdminClient();

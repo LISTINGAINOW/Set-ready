@@ -79,14 +79,16 @@ const TEMPLATES: Record<string, () => string> = {
 };
 
 export async function GET(request: NextRequest) {
+  // LOW-1: Fail-closed — deny all access if ADMIN_PASSWORD is not configured
   const adminPassword = process.env.ADMIN_PASSWORD;
-  if (adminPassword) {
-    const providedPassword =
-      request.nextUrl.searchParams.get("pwd") ||
-      request.headers.get("x-admin-password");
-    if (providedPassword !== adminPassword) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!adminPassword) {
+    return NextResponse.json({ error: "Admin access not configured" }, { status: 503 });
+  }
+
+  // HIGH-2: Header-only auth — no query param (avoids password in server logs/URLs)
+  const providedPassword = request.headers.get("x-admin-password");
+  if (providedPassword !== adminPassword) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const template = request.nextUrl.searchParams.get("template") ?? "";

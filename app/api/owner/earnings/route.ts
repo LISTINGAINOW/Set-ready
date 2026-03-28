@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { requireUserSession } from '@/lib/auth-middleware';
 
 export async function GET(request: NextRequest) {
+  // CRIT-2: user_id comes from the authenticated session, NOT from a query param
+  const userId = requireUserSession(request);
+  if (userId instanceof NextResponse) return userId;
+
   const { searchParams } = new URL(request.url);
-  const userId    = searchParams.get('user_id');
   const startDate = searchParams.get('start');   // ISO date string, optional
   const endDate   = searchParams.get('end');     // ISO date string, optional
-
-  if (!userId) {
-    return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
-  }
 
   const supabase = createAdminClient();
 

@@ -1,16 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { updateSession } from './utils/supabase/middleware';
 
-// Windows
+// Rate limit windows
 const WINDOW_1MIN = 60 * 1000;
 const WINDOW_15MIN = 15 * 60 * 1000;
 
-// Limits
+// Granular limits per endpoint type
 const FORM_SUBMISSION_LIMIT = 10;  // POST form endpoints — 10 per minute
 const READ_LIMIT = 30;              // GET API endpoints — 30 per minute
 const AUTH_API_LIMIT = 20;          // Auth endpoints — 20 per 15 minutes (brute-force protection)
 const GENERAL_API_LIMIT = 120;      // Everything else — 120 per 15 minutes
 
+/**
+ * HIGH-3: Rate limiting caveat — this Map() is instance-local on Vercel serverless.
+ * Each function instance has its own counter, so limits are per-instance, not global.
+ * For production-grade rate limiting, replace this with Vercel KV or Upstash Redis.
+ *
+ * TODO(HIGH-3): Replace rateLimitStore with a distributed store (Vercel KV / Upstash)
+ * to enforce rate limits across all serverless instances.
+ */
 const rateLimitStore = new Map<string, number[]>();
 
 // Routes that accept form submissions (writes)
@@ -74,11 +82,14 @@ function buildSecurityHeaders(response: NextResponse) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
+  // MED-3: Add HSTS header
+  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  // MED-2: Removed unsafe-eval from script-src
   response.headers.set(
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "script-src 'self' 'unsafe-inline' https://js.stripe.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",

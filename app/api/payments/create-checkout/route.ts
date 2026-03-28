@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { requireUserSession } from '@/lib/auth-middleware';
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -8,6 +9,10 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export async function POST(request: NextRequest) {
+  // HIGH-1: Require authentication before creating Stripe checkout sessions
+  const userId = requireUserSession(request);
+  if (userId instanceof NextResponse) return userId;
+
   try {
     const body = await request.json();
     const { booking_id, location_id, amount, guest_email, location_title } = body;

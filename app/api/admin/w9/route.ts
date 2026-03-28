@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
-
-function isAuthorized(request: NextRequest): boolean {
-  const auth = request.headers.get('authorization') ?? '';
-  const token = auth.replace(/^Bearer\s+/i, '').trim();
-  return token.length > 0 && token === process.env.ADMIN_PASSWORD;
-}
+import { requireAdminSession } from '@/lib/auth-middleware';
 
 export async function GET(request: NextRequest) {
-  if (!isAuthorized(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const authResult = requireAdminSession(request);
+  if (authResult !== true) return authResult;
 
   const supabase = createAdminClient();
 
