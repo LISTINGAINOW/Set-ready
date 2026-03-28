@@ -48,7 +48,7 @@ export default function HostAvailabilityPage() {
   const [draftStartDate, setDraftStartDate] = useState('');
   const [draftEndDate, setDraftEndDate] = useState('');
   const [draftReason, setDraftReason] = useState('');
-  const [calendarSelection, setCalendarSelection] = useState<{ selectedDate: string; selectedTimeSlots: string[] }>({
+  const [calendarSelection, setCalendarSelection] = useState<{ selectedDate: string; selectedDates?: string[]; selectedTimeSlots: string[]; isMultiDay?: boolean }>({
     selectedDate: '',
     selectedTimeSlots: [],
   });
