@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import bookingsData from '@/data/bookings.json';
+import locationsData from '@/data/locations.json';
 import { getClientIp, isValidEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
 import { requireAdminSession, requireUserSession } from '@/lib/auth-middleware';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { sendBookingRequestConfirmation, sendOwnerBookingNotification, type BookingRecord } from '@/lib/email';
 
 let inMemoryBookings: Booking[] = (bookingsData.bookings || []) as Booking[];
+
+interface LocationData {
+  id: string;
+  name: string;
+  hostEmail?: string;
+}
+const locations = locationsData as unknown as LocationData[];
 
 interface BookingRequest {
   locationId: string;
@@ -16,6 +25,9 @@ interface BookingRequest {
   startTime: string;
   endTime: string;
   productionType: string;
+  crewSize?: string;
+  budget?: string;
+  specialRequirements?: string;
   notes: string;
   baseRate?: number;
   serviceFee?: number;
@@ -27,6 +39,7 @@ interface Booking extends BookingRequest {
   userId?: string;
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;
+  propertyName?: string;
 }
 
 async function readBookings(): Promise<Booking[]> {
@@ -77,6 +90,42 @@ export async function POST(request: NextRequest) {
     bookings.push(newBooking);
     await writeBookings(bookings);
     writeAuditLog('booking.created', { ip, bookingId: newBooking.id, locationId: newBooking.locationId, email: newBooking.email });
+
+    // Fire-and-forget: send confirmation email to renter + notification to owner
+    const locationRecord = locations.find((l) => l.id === newBooking.locationId);
+    const propertyName = locationRecord?.name ?? `Property ${newBooking.locationId}`;
+    const bookingRecord: BookingRecord = {
+      id: newBooking.id,
+      property_id: newBooking.locationId,
+      contact_name: newBooking.name,
+      contact_email: newBooking.email,
+      company_name: '',
+      production_type: newBooking.productionType,
+      booking_start: newBooking.date,
+      property_name: propertyName,
+    };
+    sendBookingRequestConfirmation(bookingRecord).catch((err) => {
+      console.error('[booking] Failed to send renter confirmation email:', err);
+    });
+    if (locationRecord?.hostEmail) {
+      sendOwnerBookingNotification(locationRecord.hostEmail, {
+        bookingId: newBooking.id,
+        propertyName,
+        renterName: newBooking.name,
+        renterEmail: newBooking.email,
+        renterPhone: newBooking.phone,
+        productionType: newBooking.productionType,
+        date: newBooking.date,
+        startTime: newBooking.startTime,
+        endTime: newBooking.endTime,
+        crewSize: newBooking.crewSize,
+        budget: newBooking.budget,
+        specialRequirements: newBooking.specialRequirements,
+        notes: newBooking.notes,
+      }).catch((err) => {
+        console.error('[booking] Failed to send owner notification email:', err);
+      });
+    }
 
     return NextResponse.json({ booking: newBooking, message: 'Booking request created' }, { status: 201 });
   } catch (error) {

@@ -106,6 +106,9 @@ export default function BookingModal({
     startTime: initialSelection.startTime,
     endTime: initialSelection.endTime,
     productionType: 'Photo shoot',
+    crewSize: '',
+    budget: '',
+    specialRequirements: '',
     notes: '',
   });
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>(initialSelection.selectedTimeSlots);
@@ -177,6 +180,9 @@ export default function BookingModal({
       startTime: normalized.startTime,
       endTime: normalized.endTime,
       productionType: 'Photo shoot',
+      crewSize: '',
+      budget: '',
+      specialRequirements: '',
       notes: '',
     });
     setShowOfferFields(false);
@@ -494,9 +500,33 @@ export default function BookingModal({
                 )}
               </div>
 
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-black/60">Crew Size</label>
+                  <input type="number" name="crewSize" value={formData.crewSize} onChange={handleChange} min="1" max="500" className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. 12" />
+                </div>
+                <div>
+                  <label className="mb-2 block text-black/60">Budget</label>
+                  <select name="budget" value={formData.budget} onChange={handleChange} className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Select budget range</option>
+                    <option value="Under $1K">Under $1K</option>
+                    <option value="$1K–$5K">$1K–$5K</option>
+                    <option value="$5K–$10K">$5K–$10K</option>
+                    <option value="$10K–$25K">$10K–$25K</option>
+                    <option value="$25K–$50K">$25K–$50K</option>
+                    <option value="$50K+">$50K+</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
-                <label className="mb-2 block text-black/60">Special Requests / Notes</label>
-                <textarea name="notes" value={formData.notes} onChange={handleChange} rows={4} className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Any additional requirements, equipment needed, etc." />
+                <label className="mb-2 block text-black/60">Special Requirements</label>
+                <textarea name="specialRequirements" value={formData.specialRequirements} onChange={handleChange} rows={3} className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Generator access, specific rooms, equipment staging area, etc." />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-black/60">Additional Notes</label>
+                <textarea name="notes" value={formData.notes} onChange={handleChange} rows={3} className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Anything else the host should know." />
               </div>
 
               <div className="flex justify-end gap-4 border-t border-black pt-6">

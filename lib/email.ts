@@ -1038,6 +1038,157 @@ export async function sendPaymentSuccessful(
   return sendEmailWithRetry(payload, booking.id, "payment_successful");
 }
 
+// ── B4b. Booking Cancelled (to renter) ────────────────────────────────────────
+
+function buildBookingCancelledHtml(
+  firstName: string,
+  propertyName: string
+): string {
+  const name = esc(firstName);
+  const venue = esc(propertyName);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6b7280;">Booking update</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Your booking has been cancelled</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">
+        Your booking for <strong>${venue}</strong> has been cancelled. If you believe this was in error or have questions, please reach out to our support team.
+      </p>
+      <p style="margin:0 0 16px;font-size:14px;color:#6b7280;line-height:1.7;">
+        You're welcome to explore other available venues and submit a new booking request at any time.
+      </p>
+      ${cta("https://setvenue.com/locations", "Browse other venues")}
+      <p style="margin:24px 0 0;font-size:13px;color:#9ca3af;">
+        Questions? <a href="mailto:support@setvenue.com" style="color:#6b7280;">support@setvenue.com</a>
+      </p>
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because your SetVenue booking was cancelled."
+  );
+}
+
+export async function sendBookingCancelled(
+  booking: BookingRecord
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Booking cancelled — ${propertyName}`,
+    html: buildBookingCancelledHtml(firstName, propertyName),
+    text: `Hi ${firstName},\n\nYour booking for ${propertyName} has been cancelled.\n\nBrowse other venues: https://setvenue.com/locations\nQuestions? Email support@setvenue.com\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "booking_cancelled");
+}
+
+// ── B4c. Owner Booking Notification ───────────────────────────────────────────
+
+export interface SimpleBookingNotice {
+  bookingId: string;
+  propertyName: string;
+  renterName: string;
+  renterEmail: string;
+  renterPhone?: string;
+  productionType: string;
+  date: string;
+  startTime?: string;
+  endTime?: string;
+  crewSize?: string;
+  budget?: string;
+  specialRequirements?: string;
+  notes?: string;
+}
+
+function buildOwnerBookingNotificationHtml(notice: SimpleBookingNotice): string {
+  const venue = esc(notice.propertyName);
+  const renter = esc(notice.renterName);
+  const email = esc(notice.renterEmail);
+  const phone = notice.renterPhone ? esc(notice.renterPhone) : "";
+  const prodType = esc(notice.productionType);
+  const dateStr = esc(notice.date);
+  const timeStr = notice.startTime && notice.endTime
+    ? esc(`${notice.startTime} – ${notice.endTime}`)
+    : "";
+
+  const rows = [
+    infoRow("Booking ID", `<span style="font-family:monospace;font-size:12px;">${esc(notice.bookingId)}</span>`),
+    infoRow("Renter", renter),
+    infoRow("Email", `<a href="mailto:${email}" style="color:#2563eb;text-decoration:none;">${email}</a>`),
+    phone ? infoRow("Phone", phone) : "",
+    infoRow("Production type", prodType),
+    infoRow("Date", dateStr),
+    timeStr ? infoRow("Time", timeStr) : "",
+    notice.crewSize ? infoRow("Crew size", esc(notice.crewSize)) : "",
+    notice.budget ? infoRow("Budget", esc(notice.budget)) : "",
+  ].filter(Boolean).join("\n");
+
+  const content = `
+  <tr>
+    <td style="padding:36px 40px 28px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">New booking request</p>
+      <h1 style="margin:0 0 6px;font-size:22px;font-weight:700;color:#111827;line-height:1.25;">New Booking Request for ${venue}</h1>
+      <p style="margin:0;font-size:15px;color:#6b7280;">A renter has submitted a booking request for your property.</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 40px 28px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        <tr>
+          <td style="padding:16px 20px;background-color:#f9fafb;border-bottom:1px solid #e5e7eb;">
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Request details</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 20px 16px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              ${rows}
+            </table>
+          </td>
+        </tr>
+      </table>
+      ${(notice.specialRequirements || notice.notes) ? `<div style="margin-top:16px;padding:16px 20px;background-color:#f9fafb;border-radius:10px;border:1px solid #e5e7eb;">
+        <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">${notice.specialRequirements ? "Special requirements" : "Notes"}</p>
+        <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap;">${esc(notice.specialRequirements || notice.notes || "")}</p>
+      </div>` : ""}
+      ${cta("https://setvenue.com/admin/bookings", "View in admin dashboard")}
+    </td>
+  </tr>`;
+
+  return emailLayout(
+    content,
+    "You received this because a new booking was submitted for your SetVenue property."
+  );
+}
+
+export async function sendOwnerBookingNotification(
+  ownerEmail: string,
+  notice: SimpleBookingNotice
+): Promise<void> {
+  if (!resend) {
+    console.warn("[email] RESEND_API_KEY not set — skipping owner notification");
+    return;
+  }
+  try {
+    await resend.emails.send({
+      from: "SetVenue <noreply@setvenue.com>",
+      to: ownerEmail,
+      replyTo: notice.renterEmail,
+      subject: `New Booking Request for ${notice.propertyName} — from ${notice.renterName}`,
+      html: buildOwnerBookingNotificationHtml(notice),
+      text: `New booking request\n\nProperty: ${notice.propertyName}\nFrom: ${notice.renterName} (${notice.renterEmail})\nType: ${notice.productionType}\nDate: ${notice.date}${notice.startTime ? `\nTime: ${notice.startTime} – ${notice.endTime}` : ""}\nBooking ID: ${notice.bookingId}\n\nReview at: https://setvenue.com/admin/bookings\n\n© ${new Date().getFullYear()} SetVenue`,
+    });
+  } catch (err) {
+    console.error("[email] Failed to send owner notification:", err);
+  }
+}
+
 // ── B5. Payment Failed (to renter) ────────────────────────────────────────────
 
 function buildPaymentFailedHtml(

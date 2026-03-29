@@ -10,6 +10,7 @@ import ReviewsList from '@/components/ReviewsList';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
 import InquiryForm from '@/components/InquiryForm';
+import QuickQuestion from '@/components/QuickQuestion';
 import { getPropertyBySlug } from '@/lib/properties';
 import reviewsData from '@/data/reviews.json';
 import { getLocationBlockedDates } from '@/lib/availability';
@@ -408,6 +409,10 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
 
             <div className="mt-10">
               <InquiryForm propertyId={location.id} propertyName={location.name} />
+            </div>
+
+            <div className="mt-6">
+              <QuickQuestion propertyId={location.id} propertyName={location.name} />
             </div>
           </div>
         </div>
