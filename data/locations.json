@@ -643,5 +643,681 @@
       "Corporate Retreat",
       "Luxury Vacation"
     ]
+  },
+  {
+    "id": "fulton-modern-sherman-oaks",
+    "name": "Fulton Modern",
+    "slug": "fulton-modern-sherman-oaks",
+    "address": "5225 Fulton Ave",
+    "city": "Sherman Oaks",
+    "state": "CA",
+    "zip": "91401",
+    "lat": 34.1506,
+    "lng": -118.4545,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 150,
+    "description": "A sleek contemporary modern home featuring an open-concept living area with soaring high ceilings, polished concrete and hardwood flooring, and a crisp monochromatic white and gray color scheme throughout. The kitchen showcases high-gloss cabinetry while the bathroom features a sleek glass shower enclosure — all connected by recessed lighting and minimalist decor that create an effortlessly clean, production-ready aesthetic. White walls and wood accents complete the refined, camera-friendly interior.",
+    "amenities": [
+      "High Ceilings",
+      "Hardwood Floors",
+      "Concrete Flooring",
+      "Open Floor Plan",
+      "Recessed Lighting",
+      "High-Gloss Kitchen Cabinets",
+      "Glass Shower",
+      "White Walls",
+      "Minimalist Decor",
+      "Indoor Staircase",
+      "Natural Light",
+      "Wood Accents",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 150,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 200,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 3000,
+        "hourlyRate": 150,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Contemporary",
+    "vibe": "Crisp minimalist modern with high ceilings and concrete-hardwood floors. Clean monochromatic palette ideal for editorial and commercial shoots.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Commercial Shoot",
+      "Events"
+    ]
+  },
+  {
+    "id": "encino-stylish-home",
+    "name": "Encino Stylish Home",
+    "slug": "encino-stylish-home",
+    "address": "16221 Elisa Place",
+    "city": "Encino",
+    "state": "CA",
+    "zip": "91436",
+    "lat": 34.1555,
+    "lng": -118.4985,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 175,
+    "description": "A refined modern Spanish colonial residence featuring elegant arched doorways, terrazzo flooring, and soaring ceilings bathed in recessed light. The open floor plan connects a formal dining area and kitchen with built-in cabinetry, anchored by a prominent fireplace as the central focal point, while floor-to-ceiling windows ensure extraordinary natural light throughout. A manicured lawn with trimmed hedges and a classic beige stucco exterior deliver timeless curb appeal.",
+    "amenities": [
+      "Arched Doorways",
+      "Terrazzo Flooring",
+      "Hardwood Floors",
+      "High Ceilings",
+      "Recessed Lighting",
+      "Fireplace",
+      "Floor-to-Ceiling Windows",
+      "Natural Light",
+      "Open Floor Plan",
+      "Built-in Cabinetry",
+      "Dining Area",
+      "Manicured Lawn",
+      "Beige Stucco Exterior",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 225,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 3500,
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Spanish Colonial",
+    "vibe": "Modern Spanish colonial elegance with arched doorways, terrazzo floors, and a prominent fireplace. Flooded with natural light from floor-to-ceiling windows.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Events",
+      "Corporate Retreat",
+      "Luxury Vacation"
+    ]
+  },
+  {
+    "id": "dorilee-modern-white-encino",
+    "name": "Dorilee Modern White",
+    "slug": "dorilee-modern-white-encino",
+    "address": "16231 Dorilee Ln",
+    "city": "Encino",
+    "state": "CA",
+    "zip": "91436",
+    "lat": 34.1561,
+    "lng": -118.5012,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 200,
+    "description": "A striking modern white residence defined by clean architectural lines, minimalist design, and a bold two-material exterior — white siding on the lower level and stone/stucco on the upper level. Floor-to-ceiling windows ensure abundant natural light throughout while black accents create dramatic contrast against the white walls and hardwood flooring. The flat roofline, open front porch, and high-quality finishes complete the bright, airy, and thoroughly photogenic atmosphere.",
+    "amenities": [
+      "Floor-to-Ceiling Windows",
+      "Hardwood Floors",
+      "Black Accent Details",
+      "Open Front Porch",
+      "Flat Roofline",
+      "Natural Light",
+      "White Walls",
+      "Stone/Stucco Exterior",
+      "White Siding",
+      "Minimalist Design",
+      "Clean Lines",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 200,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 250,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 4000,
+        "hourlyRate": 200,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Modern",
+    "vibe": "Crisp modern white architecture with dramatic black accents. Abundant natural light and minimalist finishes create a bright, airy, camera-ready canvas.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Commercial Shoot",
+      "Events"
+    ]
+  },
+  {
+    "id": "castaic-canyon-estate",
+    "name": "Castaic Canyon Estate",
+    "slug": "castaic-canyon-estate",
+    "address": "28218 Cascade Road",
+    "city": "Castaic",
+    "state": "CA",
+    "zip": "91384",
+    "lat": 34.4883,
+    "lng": -118.6316,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 125,
+    "description": "A modern home with a clean neutral palette centered around a standout kitchen featuring stainless steel appliances, polished stone countertops, and a central island providing generous workspace. High-quality flooring and a spacious, open layout allow abundant natural light to pour in, creating a bright and welcoming atmosphere throughout. The contemporary aesthetic and versatile spaces make this property an ideal backdrop for production use.",
+    "amenities": [
+      "Stainless Steel Appliances",
+      "Stone Countertops",
+      "Kitchen Island",
+      "Natural Light",
+      "Open Floor Plan",
+      "High-Quality Flooring",
+      "Spacious Layout",
+      "Neutral Palette",
+      "Contemporary Design",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 125,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 2500,
+        "hourlyRate": 125,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Contemporary",
+    "vibe": "Modern neutral-palette home with a chef's kitchen and polished stone surfaces. Bright and spacious with a welcoming, production-ready atmosphere.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Events",
+      "Corporate Retreat"
+    ]
+  },
+  {
+    "id": "woodland-hills-private-oasis",
+    "name": "Woodland Hills Private Oasis",
+    "slug": "woodland-hills-private-oasis",
+    "address": "22616 Oxnard St",
+    "city": "Woodland Hills",
+    "state": "CA",
+    "zip": "91367",
+    "lat": 34.1683,
+    "lng": -118.6059,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 150,
+    "description": "A secluded residential retreat in Woodland Hills offering a true private oasis experience with dedicated outdoor space away from the bustle of the city. This property's intimate atmosphere and self-contained outdoor areas make it ideal for exclusive productions, private events, and retreat-style shoots. The private setting provides a rare sense of seclusion in the San Fernando Valley.",
+    "amenities": [
+      "Private Outdoor Space",
+      "Secluded Setting",
+      "Outdoor Areas",
+      "Natural Light",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1464146072230-91cabc968266?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 150,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 200,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 3000,
+        "hourlyRate": 150,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Residential",
+    "vibe": "Secluded private oasis in Woodland Hills with dedicated outdoor space. Intimate and self-contained — perfect for exclusive productions and retreat-style shoots.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Events",
+      "Luxury Retreat",
+      "Corporate Retreat"
+    ]
+  },
+  {
+    "id": "knoll-drive-celebrity-view-la",
+    "name": "Knoll Drive Celebrity View",
+    "slug": "knoll-drive-celebrity-view-la",
+    "address": "3343 N Knoll Dr",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90068",
+    "lat": 34.1173,
+    "lng": -118.3280,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 6,
+    "pricePerDay": 0,
+    "pricePerHour": 250,
+    "description": "A prestigious multi-level home perched in the Hollywood Hills with commanding panoramic views of the city skyline and the iconic Hollywood landscape. View-oriented rooms throughout the property maximize the dramatic vistas, making every angle a cinematic backdrop for high-end productions and luxury events. This celebrity-caliber property offers the quintessential Los Angeles experience with unmatched visual impact.",
+    "amenities": [
+      "City Views",
+      "Hollywood Views",
+      "Panoramic Views",
+      "Multi-Level Layout",
+      "View-Oriented Rooms",
+      "Hollywood Hills Location",
+      "Natural Light",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1565402170291-8491f14678db?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 250,
+        "minHours": 6,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 325,
+        "minHours": 6,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 5000,
+        "hourlyRate": 250,
+        "minHours": 6,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Contemporary",
+    "vibe": "Dramatic Hollywood Hills vantage point with commanding city and skyline views. Multi-level celebrity-caliber home ideal for premium productions and luxury events.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Events",
+      "Luxury Retreat",
+      "Corporate Retreat"
+    ]
+  },
+  {
+    "id": "blix-modern-toluca-lake",
+    "name": "Blix Modern Toluca Lake",
+    "slug": "blix-modern-toluca-lake",
+    "address": "11241 Blix St",
+    "city": "Toluca Lake",
+    "state": "CA",
+    "zip": "91602",
+    "lat": 34.1636,
+    "lng": -118.3614,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 175,
+    "description": "A clean, contemporary modern residence situated in the highly desirable Toluca Lake neighborhood, offering a refined aesthetic well-suited for film and photo productions. The property features quality finishes and a contemporary design throughout, providing a versatile and photogenic backdrop for a wide range of creative projects. Its Toluca Lake location places it moments from major studios and production facilities.",
+    "amenities": [
+      "Contemporary Design",
+      "Clean Lines",
+      "Natural Light",
+      "Quality Finishes",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 225,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 3500,
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Modern",
+    "vibe": "Clean contemporary modern in sought-after Toluca Lake. Studio-adjacent location with a refined, versatile interior ready for any production.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Commercial Shoot",
+      "Events"
+    ]
+  },
+  {
+    "id": "otsego-mini-mansion-sherman-oaks",
+    "name": "Otsego Mini Mansion",
+    "slug": "otsego-mini-mansion-sherman-oaks",
+    "address": "14817 Otsego St",
+    "city": "Sherman Oaks",
+    "state": "CA",
+    "zip": "91403",
+    "lat": 34.1499,
+    "lng": -118.4393,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 6,
+    "pricePerDay": 0,
+    "pricePerHour": 200,
+    "description": "An impressive modern mini mansion in Sherman Oaks with bold contemporary design elements and quality finishes that command attention at every turn. The property's grand scale and striking architectural character make it an ideal canvas for high-production-value shoots, luxury events, and premium brand campaigns. Its distinctive modern aesthetic offers unique and versatile visual opportunities for film, television, and commercial productions.",
+    "amenities": [
+      "Contemporary Design",
+      "Modern Architecture",
+      "Grand Scale",
+      "Quality Finishes",
+      "Natural Light",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 75,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 200,
+        "minHours": 6,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 275,
+        "minHours": 6,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 4000,
+        "hourlyRate": 200,
+        "minHours": 6,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Modern",
+    "vibe": "Grand-scale modern mini mansion with bold contemporary architecture in Sherman Oaks. A striking, high-impact property ideal for premium productions and luxury events.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Events",
+      "Luxury Retreat",
+      "Corporate Retreat"
+    ]
+  },
+  {
+    "id": "winnetka-grand-woodland-hills",
+    "name": "Winnetka Grand House",
+    "slug": "winnetka-grand-woodland-hills",
+    "address": "5900 Winnetka Ave",
+    "city": "Woodland Hills",
+    "state": "CA",
+    "zip": "91367",
+    "lat": 34.1712,
+    "lng": -118.5958,
+    "status": "active",
+    "featured": true,
+    "bookingMode": "request",
+    "minHours": 4,
+    "pricePerDay": 0,
+    "pricePerHour": 175,
+    "description": "A well-maintained two-story home in Woodland Hills with a modern architectural style featuring clean lines, large windows, and a refined white and beige exterior clad in stone and stucco siding. Inside, hardwood floors, an updated kitchen with ample countertop space, and a contemporary staircase with modern railing create a bright and airy atmosphere throughout. The master bedroom with en-suite bathroom and a manicured landscaped lawn complete this excellent-condition property ready for production.",
+    "amenities": [
+      "Hardwood Floors",
+      "Large Windows",
+      "Updated Kitchen",
+      "Ample Countertops",
+      "Modern Staircase",
+      "Contemporary Railing",
+      "Master Suite",
+      "En-Suite Bathroom",
+      "Natural Light",
+      "Landscaped Lawn",
+      "Two-Story",
+      "Stone & Stucco Exterior",
+      "White & Beige Exterior",
+      "Parking Available",
+      "Production Friendly"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=1200&q=80"
+    ],
+    "squareFeet": 0,
+    "bedrooms": 0,
+    "bathrooms": 0,
+    "yearBuilt": 0,
+    "lotSize": "",
+    "parking": "Available",
+    "maxGuests": 50,
+    "contactName": "SetVenue",
+    "contactEmail": "noreply@setvenue.com",
+    "propertyType": "SingleFamily",
+    "pricing": {
+      "adult": {
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      },
+      "events": {
+        "hourlyRate": 225,
+        "minHours": 4,
+        "enabled": true
+      },
+      "mainstream": {
+        "dailyRate": 3500,
+        "hourlyRate": 175,
+        "minHours": 4,
+        "enabled": true
+      }
+    },
+    "acceptsBids": true,
+    "hostName": "Sharon Feuer",
+    "hostEmail": "sharonfeuer@aol.com",
+    "hostPhone": "8182198101",
+    "style": "Modern",
+    "vibe": "Excellent-condition two-story modern home with bright interiors, hardwood floors, and a manicured lawn. A versatile Woodland Hills backdrop for any production.",
+    "bestUses": [
+      "Film Production",
+      "Photo Shoot",
+      "Music Video",
+      "Events",
+      "Corporate Retreat",
+      "Luxury Vacation"
+    ]
   }
 ]
