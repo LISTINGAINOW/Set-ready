@@ -1,0 +1,22 @@
+{
+  "subscribers": [
+    {
+      "id": "sub_a6619d05",
+      "email": "tester@example.com",
+      "signupDate": "2026-03-22T20:51:04.560Z",
+      "source": "footer",
+      "preferences": [
+        "new-locations",
+        "deals"
+      ],
+      "active": false,
+      "gdprConsent": true,
+      "status": "unsubscribed",
+      "doubleOptInToken": "fc5120c3271fa9c65e211218367576fadef89e0737b9e215",
+      "unsubscribeToken": "4cf59196d1ff8f404f25e4c8962d73332a753d521c1a4aa7",
+      "confirmedAt": "2026-03-22T20:51:04.629Z",
+      "unsubscribedAt": "2026-03-22T20:51:04.700Z",
+      "updatedAt": "2026-03-22T20:51:04.700Z"
+    }
+  ]
+}

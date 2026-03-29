@@ -33,26 +33,18 @@ yarn-error.log*
 .vercel
 
 # MED-6: Data files that contain PII — keep locally but do not commit.
-# NOTE: data/bookings.json is intentionally tracked (empty seed file for static import).
-data/leads.json
+# NOTE: seed JSON files in data/ are tracked (needed for build).
+# Runtime-generated files are gitignored:
 data/leads_*.json
-data/newsletter-subscribers.json
-data/users.json
-data/blog-posts.json
 data/email-campaigns.json
 data/email-templates.json
-data/favorites.json
 data/free-listing-signups.json
-data/locations.json
 data/media-outreach-list.json
-data/messages.json
-data/offers.json
 data/outreach-log.json
 data/partnership-emails.json
 data/property-analysis.json
 data/property-import-errors.json
 data/property-import-log.json
-data/reviews.json
 
 # typescript
 *.tsbuildinfo
