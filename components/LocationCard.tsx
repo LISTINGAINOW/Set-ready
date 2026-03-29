@@ -109,10 +109,7 @@ export default function LocationCard({ location }: LocationCardProps) {
               <div className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/92 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-700 backdrop-blur-md">
                 {formatPropertyType(location.propertyType)}
               </div>
-              <div className="absolute bottom-4 left-4 inline-flex items-baseline gap-1 rounded-full bg-white/94 px-4 py-2 text-slate-950 backdrop-blur-md">
-                <span className="text-xl font-semibold tracking-[-0.04em]">${location.pricePerHour}</span>
-                <span className="text-sm text-slate-500">/ hour</span>
-              </div>
+              {/* Price moved below photo for readability */}
             </div>
           </Link>
         </div>
@@ -123,7 +120,11 @@ export default function LocationCard({ location }: LocationCardProps) {
               <Link href={`/locations/${location.id}`} className="line-clamp-2 text-2xl font-semibold tracking-[-0.04em] text-slate-950 transition hover:text-blue-600">
                 {location.name}
               </Link>
-              <div className="mt-3 flex items-center gap-2 text-sm text-slate-500">
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-xl font-bold tracking-[-0.03em] text-slate-950">${location.pricePerHour}</span>
+                <span className="text-sm font-medium text-slate-400">/ hour</span>
+              </div>
+              <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
                 <MapPin className="h-4 w-4 text-blue-500" />
                 <span className="truncate">{`${location.city}, ${location.state}`}</span>
               </div>
