@@ -5,7 +5,7 @@ import { requireUserSession } from '@/lib/auth-middleware';
 export async function GET(request: NextRequest) {
   // CRIT-2: user_id comes from the authenticated session, NOT from a query param
   const userId = requireUserSession(request);
-  if (userId instanceof NextResponse) return userId;
+  if (typeof userId !== 'string') return userId;
 
   const supabase = createAdminClient();
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   // CRIT-2: user_id comes from the authenticated session, NOT from a query param
   const userId = requireUserSession(request);
-  if (userId instanceof NextResponse) return userId;
+  if (typeof userId !== 'string') return userId;
 
   let body: { first_name?: string; last_name?: string };
   try {

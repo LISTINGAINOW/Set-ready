@@ -11,7 +11,7 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function POST(request: NextRequest) {
   // HIGH-1: Require authentication before creating Stripe checkout sessions
   const userId = requireUserSession(request);
-  if (userId instanceof NextResponse) return userId;
+  if (typeof userId !== 'string') return userId;
 
   try {
     const body = await request.json();

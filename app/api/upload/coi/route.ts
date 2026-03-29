@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
   // CRIT-5: Require authentication before accepting any upload
   const userId = requireUserSession(request);
-  if (userId instanceof NextResponse) return userId;
+  if (typeof userId !== 'string') return userId;
 
   try {
     const formData = await request.formData();

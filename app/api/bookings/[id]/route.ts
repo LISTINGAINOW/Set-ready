@@ -53,7 +53,7 @@ export async function PATCH(
     let userId: string | null = null;
     if (!isAdmin) {
       const result = requireUserSession(request);
-      if (result instanceof NextResponse) return result;
+      if (typeof result !== 'string') return result;
       userId = result;
     }
 
@@ -100,7 +100,7 @@ export async function DELETE(
     let userId: string | null = null;
     if (!isAdmin) {
       const result = requireUserSession(request);
-      if (result instanceof NextResponse) return result;
+      if (typeof result !== 'string') return result;
       userId = result;
     }
 

@@ -99,12 +99,14 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Otherwise require user session — fail-closed (no try/catch around auth)
+  // Otherwise require user session — fail-closed
   const userId = requireUserSession(request);
-  if (userId instanceof NextResponse) return userId;
+  // If userId is not a plain string, it's an error response — return it
+  if (typeof userId !== 'string') {
+    return userId;
+  }
 
   try {
-
     // Look up user email to filter bookings (bookings store email, not userId for legacy reasons)
     const supabase = createAdminClient();
     const { data: user } = await supabase
