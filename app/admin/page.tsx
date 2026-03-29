@@ -1,374 +1,97 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { verifyAdminToken } from '@/lib/auth-middleware';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import Link from 'next/link';
-import {
-  Building2,
-  BedDouble,
-  Bath,
-  Users,
-  DollarSign,
-  Clock,
-  CheckCircle,
-  XCircle,
-  RefreshCw,
-  ChevronRight,
-  Eye,
-} from 'lucide-react';
+import { Building2, Calendar, MessageSquare, Users, DollarSign, Clock } from 'lucide-react';
 
-interface Submission {
-  id: string;
-  title: string | null;
-  address: string | null;
-  city: string | null;
-  state: string | null;
-  zip: string | null;
-  status: 'pending_review' | 'approved' | 'rejected' | 'changes_requested';
-  property_type: string | null;
-  bedrooms: number | null;
-  bathrooms: number | null;
-  max_capacity: number | null;
-  base_rate: number | null;
-  created_at: string;
-  reviewer_notes: string | null;
-  reviewed_at: string | null;
+function readData<T>(filename: string): T {
+  const content = readFileSync(join(process.cwd(), 'data', filename), 'utf-8');
+  return JSON.parse(content);
 }
 
-type FilterTab = 'all' | 'pending_review' | 'approved' | 'rejected' | 'changes_requested';
+export default function AdminDashboardPage() {
+  const token = cookies().get('admin-session')?.value;
+  if (!token || !verifyAdminToken(token)) {
+    redirect('/admin/login');
+  }
 
-const STATUS_CONFIG = {
-  pending_review: { label: 'Pending Review', bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Clock },
-  approved: { label: 'Approved', bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle },
-  rejected: { label: 'Rejected', bg: 'bg-red-100', text: 'text-red-800', icon: XCircle },
-  changes_requested: { label: 'Changes Requested', bg: 'bg-blue-100', text: 'text-blue-800', icon: RefreshCw },
-};
+  const locations = readData<unknown[]>('locations.json');
+  const { bookings } = readData<{ bookings: Array<{ status: string; total?: number; amount?: number }> }>('bookings.json');
+  const { conversations } = readData<{ conversations: Array<{ unreadCount: number }> }>('messages.json');
+  const { leads } = readData<{ leads: Array<{ status?: string }> }>('leads.json');
 
-const TABS: { key: FilterTab; label: string }[] = [
-  { key: 'all', label: 'All' },
-  { key: 'pending_review', label: 'Pending Review' },
-  { key: 'approved', label: 'Approved' },
-  { key: 'rejected', label: 'Rejected' },
-  { key: 'changes_requested', label: 'Changes Requested' },
-];
+  const stats = {
+    totalProperties: locations.length,
+    totalBookings: bookings.length,
+    pendingBookings: bookings.filter((b) => b.status === 'pending').length,
+    totalRevenue: bookings.reduce((sum, b) => sum + (b.total ?? b.amount ?? 0), 0),
+    unreadMessages: conversations.filter((c) => c.unreadCount > 0).length,
+    newLeads: leads.filter((l) => !l.status || l.status === 'new').length,
+  };
 
-function StatusBadge({ status }: { status: Submission['status'] }) {
-  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending_review;
+  const statCards = [
+    { label: 'Total Properties', value: stats.totalProperties, icon: Building2, color: 'text-blue-600', bg: 'bg-blue-50', href: '/admin/properties' },
+    { label: 'Total Bookings', value: stats.totalBookings, icon: Calendar, color: 'text-purple-600', bg: 'bg-purple-50', href: '/admin/bookings' },
+    { label: 'Pending Bookings', value: stats.pendingBookings, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', href: '/admin/bookings' },
+    { label: 'Total Revenue', value: `$${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-50', href: '/admin/bookings' },
+  ];
+
+  const quickLinks = [
+    { label: 'Properties', desc: `${stats.totalProperties} listed`, icon: Building2, href: '/admin/properties', color: 'border-blue-100 hover:border-blue-300' },
+    { label: 'Bookings', desc: `${stats.pendingBookings} pending`, icon: Calendar, href: '/admin/bookings', color: 'border-purple-100 hover:border-purple-300' },
+    { label: 'Messages', desc: `${stats.unreadMessages} unread`, icon: MessageSquare, href: '/admin/messages', color: 'border-green-100 hover:border-green-300' },
+    { label: 'Leads', desc: `${stats.newLeads} new`, icon: Users, href: '/admin/leads', color: 'border-orange-100 hover:border-orange-300' },
+  ];
+
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${config.bg} ${config.text}`}>
-      {config.label}
-    </span>
-  );
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-export default function AdminPage() {
-  // HIGH-5: Auth state is driven by the httpOnly admin-session cookie.
-  // We check auth by attempting to fetch data; a 401 means not logged in.
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); // null = loading
-  const [password, setPassword] = useState('');
-  const [authError, setAuthError] = useState('');
-  const [authLoading, setAuthLoading] = useState(false);
-
-  const [submissions, setSubmissions] = useState<Submission[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [fetchError, setFetchError] = useState('');
-  const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
-
-  // On mount, probe auth status by fetching submissions
-  useEffect(() => {
-    probeAuth();
-  }, []);
-
-  // Fetch submissions when authenticated or filter changes
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchSubmissions(activeFilter);
-    }
-  }, [isAuthenticated, activeFilter]);
-
-  async function probeAuth() {
-    try {
-      const res = await fetch('/api/admin/submissions', { credentials: 'include' });
-      if (res.status === 401 || res.status === 403) {
-        setIsAuthenticated(false);
-      } else if (res.ok) {
-        const json = await res.json();
-        setSubmissions(json.submissions ?? []);
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    } catch {
-      setIsAuthenticated(false);
-    }
-  }
-
-  async function fetchSubmissions(filter: FilterTab) {
-    setLoading(true);
-    setFetchError('');
-    try {
-      const url = filter === 'all'
-        ? '/api/admin/submissions'
-        : `/api/admin/submissions?status=${filter}`;
-      // Credentials: 'include' sends the httpOnly admin-session cookie automatically
-      const res = await fetch(url, { credentials: 'include' });
-      if (res.status === 401) {
-        setIsAuthenticated(false);
-        return;
-      }
-      const json = await res.json();
-      setSubmissions(json.submissions ?? []);
-    } catch {
-      setFetchError('Failed to load submissions.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setAuthLoading(true);
-    setAuthError('');
-    try {
-      const res = await fetch('/api/admin/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ password }),
-      });
-      const json = await res.json();
-      if (json.ok) {
-        // Cookie is set server-side (httpOnly); no localStorage needed
-        setPassword('');
-        setIsAuthenticated(true);
-      } else {
-        setAuthError('Incorrect password.');
-      }
-    } catch {
-      setAuthError('Something went wrong. Try again.');
-    } finally {
-      setAuthLoading(false);
-    }
-  }
-
-  async function handleLogout() {
-    await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
-    setIsAuthenticated(false);
-    setSubmissions([]);
-    setPassword('');
-  }
-
-  // Count by status
-  const counts = submissions.reduce<Record<string, number>>((acc, s) => {
-    acc[s.status] = (acc[s.status] ?? 0) + 1;
-    return acc;
-  }, {});
-
-  // While probing auth, show nothing (brief flash)
-  if (isAuthenticated === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+    <div className="p-6 max-w-5xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <p className="mt-1 text-sm text-slate-500">Welcome back. Here&apos;s what&apos;s happening at SetVenue.</p>
       </div>
-    );
-  }
 
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white text-xl font-bold">
-              S
-            </div>
-            <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard</h1>
-            <p className="mt-1 text-sm text-slate-500">SetVenue listing review portal</p>
-          </div>
-          <form onSubmit={handleLogin} className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              Admin Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-              required
-              autoFocus
-            />
-            {authError && (
-              <p className="mt-2 text-sm text-red-600">{authError}</p>
-            )}
-            <button
-              type="submit"
-              disabled={authLoading}
-              className="mt-4 w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60"
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {statCards.map((card) => {
+          const Icon = card.icon;
+          return (
+            <Link
+              key={card.label}
+              href={card.href}
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition"
             >
-              {authLoading ? 'Checking…' : 'Sign In'}
-            </button>
-          </form>
-        </div>
+              <div className={`inline-flex rounded-xl p-2.5 ${card.bg} mb-3`}>
+                <Icon className={`h-5 w-5 ${card.color}`} />
+              </div>
+              <div className="text-2xl font-bold text-slate-900">{card.value}</div>
+              <div className="text-xs text-slate-500 mt-0.5">{card.label}</div>
+            </Link>
+          );
+        })}
       </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white text-sm font-bold">
-              S
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-slate-900">Admin Dashboard</h1>
-              <p className="text-xs text-slate-500">
-                {loading ? 'Loading…' : `${submissions.length} submission${submissions.length !== 1 ? 's' : ''}`}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 transition"
-          >
-            Sign Out
-          </button>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        {/* Filter Tabs */}
-        <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-          {TABS.map((tab) => {
-            const count = tab.key === 'all'
-              ? Object.values(counts).reduce((a, b) => a + b, 0)
-              : (counts[tab.key] ?? 0);
-            const isActive = activeFilter === tab.key;
+      {/* Quick links */}
+      <div className="mb-6">
+        <h2 className="text-base font-semibold text-slate-900 mb-4">Quick Access</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickLinks.map((link) => {
+            const Icon = link.icon;
             return (
-              <button
-                key={tab.key}
-                onClick={() => setActiveFilter(tab.key)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  isActive
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:bg-slate-50'
-                }`}
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`rounded-2xl border bg-white p-5 shadow-sm transition group ${link.color}`}
               >
-                {tab.label}
-                {count > 0 && (
-                  <span className={`rounded-full px-1.5 py-0.5 text-xs ${
-                    isActive ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {count}
-                  </span>
-                )}
-              </button>
+                <Icon className="h-6 w-6 text-slate-400 group-hover:text-slate-600 mb-3 transition" />
+                <div className="text-sm font-semibold text-slate-900">{link.label}</div>
+                <div className="text-xs text-slate-500 mt-0.5">{link.desc}</div>
+              </Link>
             );
           })}
         </div>
-
-        {/* Content */}
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="text-center">
-              <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
-              <p className="text-sm text-slate-500">Loading submissions…</p>
-            </div>
-          </div>
-        ) : fetchError ? (
-          <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-center">
-            <p className="text-sm text-red-700">{fetchError}</p>
-            <button
-              onClick={() => fetchSubmissions(activeFilter)}
-              className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-            >
-              Retry
-            </button>
-          </div>
-        ) : submissions.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
-            <Building2 className="mx-auto mb-3 h-10 w-10 text-slate-300" />
-            <p className="font-medium text-slate-500">No submissions found</p>
-            <p className="mt-1 text-sm text-slate-400">
-              {activeFilter === 'all' ? 'No listings have been submitted yet.' : `No ${activeFilter.replace('_', ' ')} submissions.`}
-            </p>
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
-            {submissions.map((sub) => (
-              <Link
-                key={sub.id}
-                href={`/admin/submissions/${sub.id}`}
-                className="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <StatusBadge status={sub.status} />
-                    </div>
-                    <h2 className="mt-2 text-base font-semibold text-slate-900 truncate">
-                      {sub.title ?? 'Untitled Property'}
-                    </h2>
-                    <p className="mt-0.5 text-sm text-slate-500 truncate">
-                      {[sub.address, sub.city, sub.state].filter(Boolean).join(', ')}
-                    </p>
-                  </div>
-                  <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-slate-400 transition group-hover:text-blue-600" />
-                </div>
-
-                <div className="mt-4 flex flex-wrap gap-3 text-xs text-slate-600">
-                  {sub.property_type && (
-                    <span className="flex items-center gap-1">
-                      <Building2 className="h-3.5 w-3.5 text-slate-400" />
-                      {sub.property_type}
-                    </span>
-                  )}
-                  {sub.bedrooms != null && (
-                    <span className="flex items-center gap-1">
-                      <BedDouble className="h-3.5 w-3.5 text-slate-400" />
-                      {sub.bedrooms} bd
-                    </span>
-                  )}
-                  {sub.bathrooms != null && (
-                    <span className="flex items-center gap-1">
-                      <Bath className="h-3.5 w-3.5 text-slate-400" />
-                      {sub.bathrooms} ba
-                    </span>
-                  )}
-                  {sub.max_capacity != null && (
-                    <span className="flex items-center gap-1">
-                      <Users className="h-3.5 w-3.5 text-slate-400" />
-                      {sub.max_capacity} guests
-                    </span>
-                  )}
-                  {sub.base_rate != null && (
-                    <span className="flex items-center gap-1">
-                      <DollarSign className="h-3.5 w-3.5 text-slate-400" />
-                      ${sub.base_rate}/hr
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3">
-                  <span className="flex items-center gap-1 text-xs text-slate-400">
-                    <Clock className="h-3 w-3" />
-                    Submitted {formatDate(sub.created_at)}
-                  </span>
-                  <span className="flex items-center gap-1 text-xs font-medium text-blue-600 opacity-0 transition group-hover:opacity-100">
-                    <Eye className="h-3 w-3" />
-                    Review
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </main>
+      </div>
     </div>
   );
 }
