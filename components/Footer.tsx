@@ -176,7 +176,7 @@ export default function Footer() {
             </form>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-8 grid-cols-2 sm:grid-cols-2 xl:grid-cols-4">
             {footerSections.map((section) => (
               <div key={section.title}>
                 <h2 className="text-sm font-semibold uppercase tracking-[0.24em] text-blue-600">{section.title}</h2>
