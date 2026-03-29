@@ -11,6 +11,7 @@ const staticRoutes = [
   '/services',
   '/permits',
   '/search',
+  '/compare',
   '/free-listing',
   '/list-property',
   '/find-location',

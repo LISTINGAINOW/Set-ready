@@ -313,19 +313,20 @@ export async function generateMetadata({ params }: { params: Promise<{ city: str
   const hub = CITY_HUBS[city];
   if (!hub) return {};
 
+  const seoTitle = `Film Locations in ${hub.label} | SetVenue`;
   return {
-    title: `${hub.headline} | SetVenue`,
+    title: seoTitle,
     description: hub.description,
     alternates: { canonical: `/locations/city/${city}` },
     openGraph: {
-      title: `${hub.headline} | SetVenue`,
+      title: seoTitle,
       description: hub.description,
       url: `/locations/city/${city}`,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${hub.headline} | SetVenue`,
+      title: seoTitle,
       description: hub.description,
     },
   };

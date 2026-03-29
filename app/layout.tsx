@@ -10,6 +10,7 @@ import AIAssistant from '@/components/AIAssistant';
 import PWARegister from '@/components/PWARegister';
 import SessionSecurity from '@/components/SessionSecurity';
 import { ToastProvider } from '@/components/ui/toast';
+import CompareFloatingBar from '@/components/CompareFloatingBar';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const siteUrl = 'https://setvenue.com';
@@ -200,6 +201,7 @@ export default function RootLayout({
             {children}
           </div>
           <Footer />
+          <CompareFloatingBar />
           <AIAssistant />
           <MobileBottomNav />
         </ToastProvider>
