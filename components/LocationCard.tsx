@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui/toast';
 import { Location, VerificationBadge } from '@/types/location';
 import { Heart, MapPin, Star, Clock, Users, X } from 'lucide-react';
+import AdultVerifiedBadge from '@/components/AdultVerifiedBadge';
 import Link from 'next/link';
 import Image from 'next/image';
 import { isLocationFavorited, subscribeToFavorites, toggleFavoriteLocation } from '@/lib/favorites';
@@ -142,7 +143,18 @@ export default function LocationCard({ location }: LocationCardProps) {
             <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm text-slate-600">
               {reviewCount} reviews
             </span>
+            {location.adultFriendly && <AdultVerifiedBadge />}
           </div>
+
+          {(location.contentTypes || []).length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {(location.contentTypes || []).filter((t) => t !== 'adult').slice(0, 4).map((type) => (
+                <span key={type} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-medium capitalize text-slate-500">
+                  {type.replace('-', ' ')}
+                </span>
+              ))}
+            </div>
+          )}
 
           <p className="mt-5 line-clamp-2 text-base leading-7 text-slate-600">
             {location.description}

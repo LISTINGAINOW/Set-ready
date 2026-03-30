@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, BadgeCheck, Clock, DollarSign, FileText, MapPin, Search, Shield, Users, Zap } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Clock, DollarSign, FileText, MapPin, Search, Shield, ShieldCheck, Users, Zap } from 'lucide-react';
 import { getFeaturedProperties } from '@/lib/properties';
 import LocationCard from '@/components/LocationCard';
 
@@ -158,6 +158,65 @@ export default async function ForProductionsPage() {
           </div>
         </section>
       )}
+
+      {/* All productions welcome */}
+      <section className="border-y border-slate-100 bg-slate-50/60 px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16">
+            <div className="flex-1">
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700">
+                <ShieldCheck className="h-4 w-4 text-slate-500" />
+                All Productions Welcome
+              </div>
+              <h2 className="text-3xl font-bold tracking-[-0.04em] text-slate-950 sm:text-4xl">
+                We serve ALL professional productions.
+              </h2>
+              <p className="mt-5 text-lg leading-8 text-slate-600">
+                Unlike other platforms, SetVenue does not discriminate based on content type. If it&apos;s legal and insured, you can book here.
+              </p>
+              <p className="mt-4 text-base leading-7 text-slate-600">
+                We host Film &amp; Television, Commercial &amp; Advertising, Music Video, Photography, Events, and Adult Entertainment — all under one roof, all treated with the same professional booking experience.
+              </p>
+              <p className="mt-4 text-base leading-7 text-slate-600">
+                Properties that accept adult productions are clearly marked with the &quot;All Productions Welcome&quot; designation. Every such property is owner-opted-in, insured, and booked through the same secure platform.
+              </p>
+              <div className="mt-8">
+                <Link
+                  href="/legal/adult-production-policy"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 underline underline-offset-4 hover:text-blue-600"
+                >
+                  Read our Adult Production Policy
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+            <div className="flex-shrink-0 lg:w-72">
+              <div className="rounded-[24px] border border-slate-200 bg-white p-7 shadow-sm">
+                <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Accepted production types</p>
+                <ul className="space-y-3">
+                  {[
+                    'Film & Television',
+                    'Commercial & Advertising',
+                    'Music Video',
+                    'Photography & Fashion',
+                    'Events & Gatherings',
+                    'Adult Entertainment (18+)',
+                  ].map((type) => (
+                    <li key={type} className="flex items-center gap-3 text-sm font-medium text-slate-700">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-100">
+                        <svg className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      {type}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Fee comparison */}
       <section className="border-y border-slate-100 bg-slate-50/50 px-4 py-16 sm:px-6 sm:py-20 lg:px-8">

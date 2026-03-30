@@ -22,6 +22,7 @@ type SearchParams = {
   contentPermissions?: string | string[];
   accessibility?: string | string[];
   availability?: string;
+  contentType?: string;
 };
 
 const locationsPageTitle = 'Browse Production Locations';
@@ -185,6 +186,15 @@ function filterLocations(locations: Location[], filters: SearchParams) {
       if (!accessFilters.some((a) => access.includes(a.toLowerCase()))) return false;
     }
 
+    if (filters.contentType) {
+      if (filters.contentType === 'adult') {
+        if (!loc.adultFriendly) return false;
+      } else {
+        const types = ((loc.contentTypes || []) as string[]).map((x: string) => x.toLowerCase());
+        if (!types.includes(filters.contentType.toLowerCase())) return false;
+      }
+    }
+
     return true;
   });
 }
@@ -323,6 +333,28 @@ export default async function LocationsPage({
                       href={buildChipHref(params, 'priceRange', chip)}
                       label={chip}
                       active={params.priceRange === chip}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Content type</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {[
+                    { value: 'film', label: 'Film' },
+                    { value: 'tv', label: 'TV' },
+                    { value: 'commercial', label: 'Commercial' },
+                    { value: 'photography', label: 'Photography' },
+                    { value: 'music-video', label: 'Music Video' },
+                    { value: 'events', label: 'Events' },
+                    { value: 'adult', label: 'All Productions' },
+                  ].map(({ value, label }) => (
+                    <FilterChip
+                      key={value}
+                      href={buildChipHref(params, 'contentType', value)}
+                      label={label}
+                      active={params.contentType === value}
                     />
                   ))}
                 </div>

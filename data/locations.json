@@ -139,7 +139,17 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult",
+      "events"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "2029-del-mar-heights-rd",
@@ -243,7 +253,15 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "6114-merritt-dr-malibu",
@@ -337,7 +355,17 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult",
+      "events"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "600-lone-oak-dr-thousand-oaks",
@@ -449,7 +477,14 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "16231-dorilee-ln-encino",
@@ -642,7 +677,15 @@
       "Events",
       "Corporate Retreat",
       "Luxury Vacation"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "music-video",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "fulton-modern-sherman-oaks",
@@ -837,7 +880,15 @@
       "Music Video",
       "Commercial Shoot",
       "Events"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "encino-stylish-home",
@@ -1183,7 +1234,15 @@
       "Events",
       "Corporate Retreat",
       "Luxury Vacation"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "dorilee-modern-white-encino",
@@ -1400,7 +1459,14 @@
       "Music Video",
       "Commercial Shoot",
       "Events"
-    ]
+    ],
+    "contentTypes": [
+      "commercial",
+      "photography",
+      "music-video",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "castaic-canyon-estate",
@@ -1550,7 +1616,15 @@
       "Music Video",
       "Events",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "woodland-hills-private-oasis",
@@ -1676,7 +1750,17 @@
       "Events",
       "Luxury Retreat",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult",
+      "events"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "knoll-drive-celebrity-view-la",
@@ -1774,7 +1858,16 @@
       "Events",
       "Luxury Retreat",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "blix-modern-toluca-lake",
@@ -1868,7 +1961,15 @@
       "Music Video",
       "Commercial Shoot",
       "Events"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "otsego-mini-mansion-sherman-oaks",
@@ -1959,7 +2060,14 @@
       "Events",
       "Luxury Retreat",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "winnetka-grand-woodland-hills",
@@ -2064,6 +2172,14 @@
       "Events",
       "Corporate Retreat",
       "Luxury Vacation"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   }
 ]

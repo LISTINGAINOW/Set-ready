@@ -83,6 +83,9 @@ export interface Location {
   reviewQuote?: string;
   bookings?: LocationBooking[];
   blockedDates?: LocationAvailabilityBlock[];
+  // Content type & adult opt-in
+  contentTypes?: string[];
+  adultFriendly?: boolean;
   // Compliance / regulatory fields
   totLicenseNumber?: string;
   businessLicenseNumber?: string;
