@@ -381,11 +381,34 @@ export default function ListPropertyPage() {
       if (docFiles.hoaApproval) formData.append('hoaApproval', docFiles.hoaApproval);
       if (docFiles.w9) formData.append('w9', docFiles.w9);
 
-      const response = await fetch('/api/list-property', { method: 'POST', body: formData });
+      const payload = {
+        title: form.title,
+        property_type: form.propertyType,
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        zip: '',
+        description: form.description,
+        beds: form.bedrooms ? parseInt(form.bedrooms, 10) : 0,
+        baths: form.bathrooms ? parseInt(form.bathrooms, 10) : 0,
+        sqft: 0,
+        hourly_rate: form.baseRate ? parseFloat(form.baseRate) : 0,
+        daily_rate: 0,
+        contact_name: form.emergencyContactName || '',
+        contact_email: '',
+        contact_phone: form.emergencyContactPhone || '',
+        photo_urls: [],
+      };
+
+      const response = await fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
       if (response.ok) {
         window.localStorage.removeItem(DRAFT_KEY);
-        router.push('/list-property/submitted');
+        setStatusMessage("Your submission has been received! We'll review your submission within 24 hours.");
       } else {
         const err = await response.json().catch(() => ({}));
         setStatusMessage(err.error || 'Submission failed. Please try again.');
