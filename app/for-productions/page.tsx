@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, BadgeCheck, Clock, DollarSign, FileText, MapPin, Search, Shield, Users, Zap } from 'lucide-react';
+import { getFeaturedProperties } from '@/lib/properties';
+import LocationCard from '@/components/LocationCard';
 
 export const metadata: Metadata = {
   title: 'For Production Companies | SetVenue — Film & Photo Location Rentals',
@@ -73,7 +75,8 @@ const features = [
   },
 ];
 
-export default function ForProductionsPage() {
+export default async function ForProductionsPage() {
+  const featuredLocations = await getFeaturedProperties();
   return (
     <main className="min-h-screen bg-white">
       {/* Hero */}
@@ -130,6 +133,31 @@ export default function ForProductionsPage() {
           </div>
         </div>
       </section>
+
+      {/* Featured locations */}
+      {featuredLocations.length > 0 && (
+        <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-600">Featured locations</p>
+                <h2 className="mt-4 text-3xl font-bold tracking-[-0.04em] text-slate-950 sm:text-4xl">
+                  Production-ready spaces, ready to book.
+                </h2>
+              </div>
+              <Link href="/locations" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-950 transition hover:text-blue-600">
+                Browse all locations
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+              {featuredLocations.slice(0, 3).map((location) => (
+                <LocationCard key={location.id} location={location} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Fee comparison */}
       <section className="border-y border-slate-100 bg-slate-50/50 px-4 py-16 sm:px-6 sm:py-20 lg:px-8">

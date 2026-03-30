@@ -46,7 +46,7 @@ const trustPoints = [
 function MarketplaceSearch() {
   return (
     <form
-      action="/properties"
+      action="/locations"
       className="flex w-full flex-col gap-3 rounded-[30px] border border-white/18 bg-white/96 p-3 shadow-[0_28px_80px_rgba(15,23,42,0.2)] backdrop-blur-xl sm:flex-row sm:items-center sm:rounded-full sm:p-2"
     >
       <div className="flex flex-1 items-center gap-3 rounded-full px-2 py-1 sm:px-5 sm:py-2">
@@ -60,7 +60,7 @@ function MarketplaceSearch() {
           <input
             id="hero-home-search"
             type="search"
-            name="q"
+            name="search"
             placeholder="Search by city, style, or feature"
             className="min-h-[48px] w-full border-0 bg-transparent text-base font-medium text-slate-950 outline-none placeholder:text-slate-400"
           />
@@ -239,13 +239,25 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Social proof banner */}
+      <section className="px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-blue-50 px-6 py-4">
+          <p className="text-center text-sm font-semibold text-blue-700">
+            Trusted by 40+ property owners — zero platform fees for hosts, 10% service fee for guests.{' '}
+            <Link href="/for-productions" className="underline hover:no-underline">
+              Compare to Giggster &amp; Peerspace →
+            </Link>
+          </p>
+        </div>
+      </section>
+
       {/* Stats bar */}
       <section className="px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-[32px] border border-blue-100 bg-blue-50/50 px-8 py-10 sm:px-12 sm:py-12">
           <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
             {[
               { value: '0%', label: 'Host fees' },
-              { value: '500+', label: 'Properties onboarding' },
+              { value: '40+', label: 'Property owners trusted us' },
               { value: '22', label: 'US cities covered' },
               { value: '10%', label: 'Guest service fee' },
             ].map((stat) => (

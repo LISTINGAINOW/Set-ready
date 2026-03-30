@@ -9,7 +9,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import PWAInstall from '@/components/PWAInstall';
 
 const primaryNav = [
-  { href: '/locations', label: 'Browse' },
+  { href: '/locations', label: 'Browse Locations' },
   { href: '/services', label: 'Services' },
   { href: '/how-it-works', label: 'How It Works' },
   { href: '/blog', label: 'Blog' },
@@ -134,6 +134,12 @@ export default function Header() {
                   {item.label}
                 </Link>
               ))}
+              <Link
+                href="/list-property"
+                className="inline-flex min-h-[36px] items-center rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-900 transition hover:border-blue-400 hover:text-blue-600"
+              >
+                List Your Property
+              </Link>
               <Link
                 href="/find-location"
                 className="inline-flex min-h-[36px] items-center rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
@@ -324,6 +330,12 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
+            <Link
+              href="/list-property"
+              className="mt-2 flex min-h-[48px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:border-blue-400 hover:text-blue-600"
+            >
+              List Your Property — Free
+            </Link>
           </div>
 
           {/* CTA */}
