@@ -148,6 +148,7 @@ const initialForm: FormState = {
     'Social Media & Influencer Content',
     'Corporate Events & Meetings',
     'Wedding & Special Occasions',
+    // Adult Entertainment (18+) is off by default — owners must explicitly opt in
   ],
 };
 
@@ -902,30 +903,38 @@ export default function ListPropertyPage() {
                   <p className="mb-5 text-sm text-black/60">Select which types of productions you are comfortable hosting. You can change these at any time.</p>
                   <div className="space-y-2">
                     {([
-                      { id: 'Mainstream Film & Television', label: 'Mainstream Film & Television' },
-                      { id: 'Commercial & Advertising', label: 'Commercial & Advertising' },
-                      { id: 'Music Videos', label: 'Music Videos' },
-                      { id: 'Photo Shoots', label: 'Photo Shoots' },
-                      { id: 'Events & Private Parties', label: 'Events & Private Parties' },
-                      { id: 'Student & Independent Film', label: 'Student & Independent Film' },
-                      { id: 'Social Media & Influencer Content', label: 'Social Media & Influencer Content' },
-                      { id: 'Adult Content (18+)', label: 'Adult Content (18+)' },
-                      { id: 'Corporate Events & Meetings', label: 'Corporate Events & Meetings' },
-                      { id: 'Wedding & Special Occasions', label: 'Wedding & Special Occasions' },
-                    ] as { id: string; label: string }[]).map(({ id, label }) => {
+                      { id: 'Mainstream Film & Television', label: 'Mainstream Film & Television', note: null },
+                      { id: 'Commercial & Advertising', label: 'Commercial & Advertising', note: null },
+                      { id: 'Music Videos', label: 'Music Videos', note: null },
+                      { id: 'Photo Shoots', label: 'Photo Shoots', note: null },
+                      { id: 'Events & Private Parties', label: 'Events & Private Parties', note: null },
+                      { id: 'Student & Independent Film', label: 'Student & Independent Film', note: null },
+                      { id: 'Social Media & Influencer Content', label: 'Social Media & Influencer Content', note: null },
+                      { id: 'Adult Entertainment (18+)', label: 'Adult Entertainment (18+)', note: 'By enabling this, you confirm you are comfortable with adult content being produced at your property. All productions must carry insurance and comply with applicable laws. See our Adult Production Policy for details.' },
+                      { id: 'Corporate Events & Meetings', label: 'Corporate Events & Meetings', note: null },
+                      { id: 'Wedding & Special Occasions', label: 'Wedding & Special Occasions', note: null },
+                    ] as { id: string; label: string; note: string | null }[]).map(({ id, label, note }) => {
                       const isOn = form.contentPermissions.includes(id);
                       return (
-                        <div key={id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-blue-200">
-                          <span className="text-sm font-medium text-black">{label}</span>
-                          <button
-                            type="button"
-                            role="switch"
-                            aria-checked={isOn}
-                            onClick={() => toggleArrayItem('contentPermissions', id)}
-                            className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isOn ? 'bg-blue-600' : 'bg-slate-300'}`}
-                          >
-                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${isOn ? 'translate-x-6' : 'translate-x-1'}`} />
-                          </button>
+                        <div key={id} className={`rounded-xl border bg-white px-4 py-3 transition-colors hover:border-blue-200 ${note ? 'border-slate-300' : 'border-slate-200'}`}>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-black">{label}</span>
+                            <button
+                              type="button"
+                              role="switch"
+                              aria-checked={isOn}
+                              onClick={() => toggleArrayItem('contentPermissions', id)}
+                              className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isOn ? 'bg-blue-600' : 'bg-slate-300'}`}
+                            >
+                              <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform ${isOn ? 'translate-x-6' : 'translate-x-1'}`} />
+                            </button>
+                          </div>
+                          {note && isOn && (
+                            <p className="mt-2 text-xs leading-5 text-slate-500">{note}</p>
+                          )}
+                          {note && !isOn && (
+                            <p className="mt-1 text-xs text-slate-400">Off by default. Enable only if you are comfortable with adult productions at your property.</p>
+                          )}
                         </div>
                       );
                     })}

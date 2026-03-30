@@ -139,7 +139,17 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult",
+      "events"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "2029-del-mar-heights-rd",
@@ -243,7 +253,15 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "6114-merritt-dr-malibu",
@@ -337,7 +355,17 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult",
+      "events"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "600-lone-oak-dr-thousand-oaks",
@@ -449,7 +477,14 @@
     "acceptsBids": true,
     "hostName": "Sharon Feuer",
     "hostEmail": "sharonfeuer@aol.com",
-    "hostPhone": "8182198101"
+    "hostPhone": "8182198101",
+    "contentTypes": [
+      "film",
+      "tv",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "16231-dorilee-ln-encino",
@@ -642,7 +677,15 @@
       "Events",
       "Corporate Retreat",
       "Luxury Vacation"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "music-video",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "fulton-modern-sherman-oaks",
@@ -660,7 +703,7 @@
     "minHours": 4,
     "pricePerDay": 0,
     "pricePerHour": 150,
-    "description": "A sleek contemporary modern home featuring an open-concept living area with soaring high ceilings, polished concrete and hardwood flooring, and a crisp monochromatic white and gray color scheme throughout. The kitchen showcases high-gloss cabinetry while the bathroom features a sleek glass shower enclosure — all connected by recessed lighting and minimalist decor that create an effortlessly clean, production-ready aesthetic. White walls and wood accents complete the refined, camera-friendly interior.",
+    "description": "A sleek contemporary modern home featuring an open-concept living area with soaring high ceilings, polished concrete and hardwood flooring, and a crisp monochromatic white and gray color scheme throughout. The kitchen showcases high-gloss cabinetry while the bathroom features a sleek glass shower enclosure \u2014 all connected by recessed lighting and minimalist decor that create an effortlessly clean, production-ready aesthetic. White walls and wood accents complete the refined, camera-friendly interior.",
     "amenities": [
       "High Ceilings",
       "Hardwood Floors",
@@ -720,7 +763,15 @@
       "Music Video",
       "Commercial Shoot",
       "Events"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "encino-stylish-home",
@@ -800,7 +851,15 @@
       "Events",
       "Corporate Retreat",
       "Luxury Vacation"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "dorilee-modern-white-encino",
@@ -818,7 +877,7 @@
     "minHours": 4,
     "pricePerDay": 0,
     "pricePerHour": 200,
-    "description": "A striking modern white residence defined by clean architectural lines, minimalist design, and a bold two-material exterior — white siding on the lower level and stone/stucco on the upper level. Floor-to-ceiling windows ensure abundant natural light throughout while black accents create dramatic contrast against the white walls and hardwood flooring. The flat roofline, open front porch, and high-quality finishes complete the bright, airy, and thoroughly photogenic atmosphere.",
+    "description": "A striking modern white residence defined by clean architectural lines, minimalist design, and a bold two-material exterior \u2014 white siding on the lower level and stone/stucco on the upper level. Floor-to-ceiling windows ensure abundant natural light throughout while black accents create dramatic contrast against the white walls and hardwood flooring. The flat roofline, open front porch, and high-quality finishes complete the bright, airy, and thoroughly photogenic atmosphere.",
     "amenities": [
       "Floor-to-Ceiling Windows",
       "Hardwood Floors",
@@ -877,7 +936,14 @@
       "Music Video",
       "Commercial Shoot",
       "Events"
-    ]
+    ],
+    "contentTypes": [
+      "commercial",
+      "photography",
+      "music-video",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "castaic-canyon-estate",
@@ -952,7 +1018,15 @@
       "Music Video",
       "Events",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "woodland-hills-private-oasis",
@@ -1015,14 +1089,24 @@
     "hostEmail": "sharonfeuer@aol.com",
     "hostPhone": "8182198101",
     "style": "Residential",
-    "vibe": "Secluded private oasis in Woodland Hills with dedicated outdoor space. Intimate and self-contained — perfect for exclusive productions and retreat-style shoots.",
+    "vibe": "Secluded private oasis in Woodland Hills with dedicated outdoor space. Intimate and self-contained \u2014 perfect for exclusive productions and retreat-style shoots.",
     "bestUses": [
       "Film Production",
       "Photo Shoot",
       "Events",
       "Luxury Retreat",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult",
+      "events"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "knoll-drive-celebrity-view-la",
@@ -1033,7 +1117,7 @@
     "state": "CA",
     "zip": "90068",
     "lat": 34.1173,
-    "lng": -118.3280,
+    "lng": -118.328,
     "status": "active",
     "featured": true,
     "bookingMode": "request",
@@ -1096,7 +1180,16 @@
       "Events",
       "Luxury Retreat",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "music-video",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "blix-modern-toluca-lake",
@@ -1166,7 +1259,15 @@
       "Music Video",
       "Commercial Shoot",
       "Events"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "music-video",
+      "adult"
+    ],
+    "adultFriendly": true
   },
   {
     "id": "otsego-mini-mansion-sherman-oaks",
@@ -1238,7 +1339,14 @@
       "Events",
       "Luxury Retreat",
       "Corporate Retreat"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   },
   {
     "id": "winnetka-grand-woodland-hills",
@@ -1318,6 +1426,14 @@
       "Events",
       "Corporate Retreat",
       "Luxury Vacation"
-    ]
+    ],
+    "contentTypes": [
+      "film",
+      "tv",
+      "commercial",
+      "photography",
+      "events"
+    ],
+    "adultFriendly": false
   }
 ]

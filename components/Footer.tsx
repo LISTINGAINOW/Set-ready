@@ -38,6 +38,7 @@ const footerSections = [
       { href: '/legal/privacy', label: 'Privacy Policy' },
       { href: '/legal/terms', label: 'Terms of Service' },
       { href: '/legal/privacy', label: 'Cookie Policy' },
+      { href: '/legal/adult-production-policy', label: 'Adult Production Policy' },
     ],
   },
 ];

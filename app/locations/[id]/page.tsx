@@ -21,6 +21,7 @@ import PropertyJsonLd from '@/components/PropertyJsonLd';
 import SimilarProperties from '@/components/SimilarProperties';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ShareButton from '@/components/ShareButton';
+import AdultVerifiedBadge from '@/components/AdultVerifiedBadge';
 
 const AreaMap = dynamic(() => import('@/components/AreaMap'), {
   ssr: false,
@@ -168,8 +169,8 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
         </div>
       )}
 
-      {/* Insurance badges */}
-      {(location.hasLiabilityInsurance || location.hasProductionInsurance) && (
+      {/* Insurance badges + Adult Verified badge */}
+      {(location.hasLiabilityInsurance || location.hasProductionInsurance || location.adultFriendly) && (
         <div className="mb-6 flex flex-wrap gap-3">
           {location.hasLiabilityInsurance && (
             <span className="inline-flex items-center gap-2 rounded-full border border-green-300 bg-green-50 px-4 py-1.5 text-sm font-semibold text-green-800">
@@ -182,6 +183,36 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               <ShieldCheck className="h-4 w-4" />
               Production Insurance
             </span>
+          )}
+          {location.adultFriendly && <AdultVerifiedBadge variant="full" linkToPolicy />}
+        </div>
+      )}
+
+      {/* Content types accepted */}
+      {(location.contentTypes || []).length > 0 && (
+        <div className="mb-6">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">Content types accepted</p>
+          <div className="flex flex-wrap gap-2">
+            {(location.contentTypes || []).map((type) => (
+              <span
+                key={type}
+                className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                  type === 'adult'
+                    ? 'border border-slate-300 bg-slate-100 text-slate-600'
+                    : 'bg-slate-100 text-slate-600'
+                }`}
+              >
+                {type.replace('-', ' ')}
+              </span>
+            ))}
+          </div>
+          {location.adultFriendly && (
+            <p className="mt-3 text-sm text-slate-600">
+              This property welcomes all professional productions including adult entertainment.{' '}
+              <a href="/legal/adult-production-policy" className="font-medium text-blue-600 underline hover:text-blue-800">
+                View policy
+              </a>
+            </p>
           )}
         </div>
       )}
