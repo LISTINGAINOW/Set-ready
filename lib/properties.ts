@@ -65,6 +65,36 @@ function toLocation(p: DbProperty): Location {
 
 const fallback = locationsData as unknown as Location[];
 
+function mergeWithFallback(dbLocation: Location): Location {
+  const fallbackLocation = fallback.find((l) => l.slug === dbLocation.slug || l.id === dbLocation.id);
+  if (!fallbackLocation) return dbLocation;
+
+  const dbFirstImage = dbLocation.images?.[0] ?? '';
+  const fallbackFirstImage = fallbackLocation.images?.[0] ?? '';
+  const dbUsesLocalImages = typeof dbFirstImage === 'string' && dbFirstImage.startsWith('/images/');
+  const fallbackHasSupabaseImages = typeof fallbackFirstImage === 'string' && fallbackFirstImage.includes('supabase.co');
+  const fallbackHasMoreImages = (fallbackLocation.images?.length ?? 0) > (dbLocation.images?.length ?? 0);
+
+  const useFallbackImages = fallbackHasSupabaseImages || dbUsesLocalImages || fallbackHasMoreImages;
+
+  return {
+    ...dbLocation,
+    // Prefer richer curated fallback media/content when DB is stale
+    images: useFallbackImages ? (fallbackLocation.images ?? dbLocation.images) : dbLocation.images,
+    pricePerHour: dbLocation.pricePerHour || fallbackLocation.pricePerHour,
+    pricePerDay: dbLocation.pricePerDay || fallbackLocation.pricePerDay,
+    contentTypes: fallbackLocation.contentTypes ?? dbLocation.contentTypes,
+    adultFriendly: fallbackLocation.adultFriendly ?? dbLocation.adultFriendly,
+  };
+}
+
+function mergeDbAndFallback(dbLocations: Location[]): Location[] {
+  const mergedDb = dbLocations.map(mergeWithFallback);
+  const dbIds = new Set(mergedDb.map((l) => l.id));
+  const fallbackOnly = fallback.filter((l) => !dbIds.has(l.id));
+  return [...mergedDb, ...fallbackOnly];
+}
+
 export async function getAllProperties(): Promise<Location[]> {
   try {
     const supabase = await createClient();
@@ -75,7 +105,7 @@ export async function getAllProperties(): Promise<Location[]> {
       .eq('status', 'active');
 
     if (error || !data?.length) return fallback;
-    return (data as DbProperty[]).map(toLocation);
+    return mergeDbAndFallback((data as DbProperty[]).map(toLocation));
   } catch {
     return fallback;
   }
@@ -95,7 +125,7 @@ export async function getFeaturedProperties(): Promise<Location[]> {
     if (error || !data?.length) {
       return fallback.filter((l) => l.featured).slice(0, 6);
     }
-    return (data as DbProperty[]).map(toLocation);
+    return (data as DbProperty[]).map(toLocation).map(mergeWithFallback);
   } catch {
     return fallback.filter((l) => l.featured).slice(0, 6);
   }
@@ -115,7 +145,7 @@ export async function getPropertyBySlug(slug: string): Promise<Location | null> 
     if (error || !data) {
       return fallback.find((l) => l.slug === slug) ?? null;
     }
-    return toLocation(data as DbProperty);
+    return mergeWithFallback(toLocation(data as DbProperty));
   } catch {
     return fallback.find((l) => l.slug === slug) ?? null;
   }
