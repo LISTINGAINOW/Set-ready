@@ -35,13 +35,6 @@ const fallbackPhotos: Record<string, string> = {
   cabin: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1200&q=80',
 };
 
-function formatPropertyType(propertyType: string) {
-  return propertyType
-    .split(' ')
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
-}
-
 function getPrimaryPhoto(location: Location) {
   const firstPhoto = location.images?.find((photo) => typeof photo === 'string' && photo.trim().length > 0);
   return firstPhoto || fallbackPhotos[location.propertyType] || fallbackPhotos.house;
@@ -107,9 +100,6 @@ export default function LocationCard({ location }: LocationCardProps) {
                 className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/32 via-black/0 to-transparent" />
-              <div className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/92 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-700 backdrop-blur-md">
-                {formatPropertyType(location.propertyType)}
-              </div>
               {/* Price moved below photo for readability */}
             </div>
           </Link>

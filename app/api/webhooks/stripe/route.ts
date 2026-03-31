@@ -3,12 +3,17 @@ import Stripe from 'stripe';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { sendPaymentSuccessful, sendPaymentFailed, type BookingRecord } from '@/lib/email';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
-
 export async function POST(request: Request) {
   try {
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+    if (!stripeSecretKey) {
+      return new Response('Missing Stripe secret key', { status: 500 });
+    }
+
+    const stripe = new Stripe(stripeSecretKey);
+
     const body = await request.text();
     const headersList = await headers();
     const sig = headersList.get('stripe-signature');

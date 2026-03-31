@@ -21,10 +21,8 @@ export default function PropertyJsonLd({ location }: Props) {
     url,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: location.address,
       addressLocality: location.city,
       addressRegion: location.state,
-      postalCode: location.zip,
       addressCountry: 'US',
     },
     ...(location.latitude && location.longitude

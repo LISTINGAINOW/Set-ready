@@ -3,7 +3,9 @@ import type { Location } from '@/types/location';
 export type BookingMode = 'instant' | 'request';
 
 export function getDisplayAddress(location: Location) {
-  return `${location.address}, ${location.city}, ${location.state}`;
+  const cityState = [location.city, location.state].filter(Boolean).join(', ');
+  if (cityState) return `${cityState} · Exact address shared after confirmed booking`;
+  return 'Exact address shared after confirmed booking';
 }
 
 export function getBookingMode(location: Location) {
