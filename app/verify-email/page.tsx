@@ -58,28 +58,28 @@ function VerifyEmailContent() {
   // No token — show check your inbox state
   if (!token) {
     return (
-      <div className="min-h-screen bg-black px-4 py-16 text-white">
-        <div className="mx-auto max-w-lg rounded-3xl border border-white/10 bg-[#111111] p-10 shadow-2xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-500">Email sent</p>
+      <div className="min-h-screen bg-[#f6f8fb] px-4 py-16 text-black">
+        <div className="mx-auto max-w-lg rounded-3xl border border-black/10 bg-white p-10 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Email sent</p>
           <h1 className="mt-4 text-3xl font-bold">Check your inbox</h1>
-          <p className="mt-4 text-base text-zinc-400">
+          <p className="mt-4 text-base text-black/70">
             We sent a verification link to{' '}
             {email ? (
-              <span className="font-medium text-white">{email}</span>
+              <span className="font-medium text-black">{email}</span>
             ) : (
               'your email address'
             )}
             . Click the link to activate your account.
           </p>
-          <p className="mt-4 text-sm text-zinc-500">
+          <p className="mt-4 text-sm text-black/60">
             Didn&apos;t receive it? Check your spam folder or{' '}
-            <Link href="/register" className="text-blue-400 hover:underline">
+            <Link href="/register" className="text-blue-600 hover:underline">
               register again
             </Link>
             .
           </p>
           <div className="mt-8">
-            <Link href="/login" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white hover:bg-white/5">
+            <Link href="/login" className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-black px-5 py-3 text-sm font-semibold text-black transition hover:border-blue-600 hover:text-blue-600">
               Go to login
             </Link>
           </div>
@@ -90,40 +90,40 @@ function VerifyEmailContent() {
 
   // Token present — show verification in progress / result
   return (
-    <div className="min-h-screen bg-black px-4 py-16 text-white">
-      <div className="mx-auto max-w-lg rounded-3xl border border-white/10 bg-[#111111] p-10 shadow-2xl">
+    <div className="min-h-screen bg-[#f6f8fb] px-4 py-16 text-black">
+      <div className="mx-auto max-w-lg rounded-3xl border border-black/10 bg-white p-10 shadow-[0_24px_80px_rgba(15,23,42,0.08)]">
         {status === 'verifying' && (
           <>
             <div className="flex items-center gap-3">
-              <svg className="h-5 w-5 animate-spin text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 animate-spin text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
               </svg>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-500">Verifying</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Verifying</p>
             </div>
             <h1 className="mt-4 text-3xl font-bold">Confirming your email&hellip;</h1>
-            <p className="mt-4 text-base text-zinc-400">Please wait while we verify your account.</p>
+            <p className="mt-4 text-base text-black/70">Please wait while we verify your account.</p>
           </>
         )}
 
         {status === 'verified' && (
           <>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-500">Success</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Success</p>
             <h1 className="mt-4 text-3xl font-bold">Email verified</h1>
-            <p className="mt-4 text-base text-zinc-400">Your account is active. Redirecting you now&hellip;</p>
+            <p className="mt-4 text-base text-black/70">Your account is active. Redirecting you now&hellip;</p>
           </>
         )}
 
         {status === 'error' && (
           <>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-500">Error</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-red-600">Error</p>
             <h1 className="mt-4 text-3xl font-bold">Verification failed</h1>
-            <p className="mt-4 text-base text-zinc-400">{errorMessage || 'The link may be invalid or already used.'}</p>
+            <p className="mt-4 text-base text-black/70">{errorMessage || 'The link may be invalid or already used.'}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/register" className="rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold hover:bg-blue-700">
+              <Link href="/register" className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
                 Register again
               </Link>
-              <Link href="/login" className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white hover:bg-white/5">
+              <Link href="/login" className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-black px-5 py-3 text-sm font-semibold text-black transition hover:border-blue-600 hover:text-blue-600">
                 Go to login
               </Link>
             </div>
@@ -136,7 +136,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-black text-white flex items-center justify-center">Loading&hellip;</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#f6f8fb] text-black/70 flex items-center justify-center">Loading&hellip;</div>}>
       <VerifyEmailContent />
     </Suspense>
   );
