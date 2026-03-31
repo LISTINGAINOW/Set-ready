@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { sanitizeObject } from '@/lib/security';
-
-const supabase = createSupabaseClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createAdminClient();
+
     // MED-1: Sanitize all input before DB insert
     const body = sanitizeObject(await request.json() as Record<string, unknown>);
 
