@@ -35,10 +35,10 @@ export default function FeeComparison({ compact = false }: FeeComparisonProps) {
             {comparisonRows.map((row) => (
               <tr
                 key={row.platform}
-                className={row.platform === 'SetVenue' ? 'bg-blue-50/60 text-slate-900' : 'border-t border-slate-200 text-slate-800'}
+                className={row.platform === 'SetVenue' ? 'bg-slate-50 text-slate-900' : 'border-t border-slate-200 text-slate-800'}
               >
-                <td className={`px-6 py-4 font-semibold ${row.platform === 'SetVenue' ? 'text-blue-700' : 'text-slate-900'}`}>{row.platform}</td>
-                <td className={`px-6 py-4 ${row.platform === 'SetVenue' ? 'font-semibold text-blue-700' : ''}`}>{row.totalFee}</td>
+                <td className={`px-6 py-4 ${row.platform === 'SetVenue' ? 'font-semibold text-slate-900' : 'font-normal text-slate-900'}`}>{row.platform}</td>
+                <td className={`px-6 py-4 ${row.platform === 'SetVenue' ? 'font-semibold text-slate-900' : 'font-normal text-slate-800'}`}>{row.totalFee}</td>
                 <td className="px-6 py-4">{row.hostFee}</td>
                 <td className="px-6 py-4">{row.guestFee}</td>
               </tr>
