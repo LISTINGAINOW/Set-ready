@@ -94,7 +94,7 @@ export default async function ConversationPage({ params }: { params: Promise<{ i
                 <div className="mt-4 flex items-start gap-3 text-sm text-black/70 sm:text-base">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
                   <span>
-                    {location.address}, {location.city}, {location.state}
+                    {[location.city, location.state].filter(Boolean).join(', ') || 'Address hidden'} · Exact address shared after confirmed booking
                   </span>
                 </div>
                 <p className="mt-4 text-sm leading-6 text-black/70">{location.description}</p>
