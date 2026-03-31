@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-
-const supabase = createSupabaseClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+import { requireAdminSession } from '@/lib/auth-middleware';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export async function POST(request: NextRequest) {
+  // CRIT-6: Only authenticated admins can respond to bids
+  const admin = requireAdminSession(request);
+  if (admin !== true) return admin;
+
   try {
+    const supabase = createAdminClient();
+
     const body = await request.json();
     const { bidId, action, counterPrice, ownerMessage } = body;
 
