@@ -23,7 +23,7 @@ const painPoints = [
   {
     icon: Clock,
     problem: 'Scouting takes weeks',
-    solution: 'Search 500+ curated locations with production-ready details. Filter by city, style, capacity, and amenities in seconds.',
+    solution: 'Search our curated collection of production-ready locations with detailed production specs. Filter by city, style, capacity, and amenities in seconds.',
   },
   {
     icon: DollarSign,
