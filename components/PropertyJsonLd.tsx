@@ -1,6 +1,6 @@
 /**
  * JSON-LD structured data for property pages.
- * Outputs Schema.org LodgingBusiness + Place markup for Google rich results.
+ * Outputs Schema.org Product + Place markup for Google rich results.
  */
 
 import type { Location } from '@/types/location';
@@ -13,9 +13,13 @@ export default function PropertyJsonLd({ location }: Props) {
   const primaryPhoto = location.images?.[0] || '';
   const url = `https://setvenue.com/locations/${location.id}`;
 
+  // Determine pricing for offers
+  const price = location.pricePerHour || location.pricePerDay;
+  const priceUnit = location.pricePerHour ? 'hour' : 'day';
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': ['LodgingBusiness', 'Place'],
+    '@type': ['Product', 'Place'],
     name: location.name,
     description: location.description,
     url,
@@ -42,11 +46,22 @@ export default function PropertyJsonLd({ location }: Props) {
           name: location.name,
         }
       : undefined,
-    priceRange: location.pricePerHour
-      ? `From $${location.pricePerHour}/hr`
-      : location.pricePerDay
-        ? `From $${location.pricePerDay}/day`
-        : undefined,
+    // Add offers with pricing if available
+    ...(price
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: price.toFixed(2),
+            priceCurrency: 'USD',
+            priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+            availability: 'https://schema.org/InStock',
+            url,
+            ...(priceUnit === 'hour'
+              ? { eligibleQuantity: { '@type': 'QuantitativeValue', unitText: 'HUR', value: 1 } }
+              : { eligibleQuantity: { '@type': 'QuantitativeValue', unitText: 'DAY', value: 1 } }),
+          },
+        }
+      : {}),
     amenityFeature: location.amenities.map((a) => ({
       '@type': 'LocationFeatureSpecification',
       name: a,
@@ -71,7 +86,8 @@ export default function PropertyJsonLd({ location }: Props) {
           maximumAttendeeCapacity: location.maxCapacity || location.maxGuests,
         }
       : {}),
-    ...(location.reviewRating && location.reviewCount
+    // Only include aggregateRating if reviews are verified
+    ...(location.reviewsVerified && location.reviewRating && location.reviewCount
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',

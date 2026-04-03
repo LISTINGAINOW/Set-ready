@@ -8,6 +8,10 @@ Disallow: /dashboard/
 Disallow: /book/
 Disallow: /auth/
 
+# Disallow filter/search query pages to prevent duplicate content
+Disallow: /locations?*
+Disallow: /search?*
+
 # Crawl delay for responsible crawling
 Crawl-delay: 1
 

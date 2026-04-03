@@ -311,6 +311,10 @@ export default function BookingModal({
     }
 
     setIsOpen(true);
+    // Track modal open event
+    if (typeof window !== 'undefined' && (window as Window & { plausible?: (event: string, opts?: { props?: Record<string, unknown> }) => void }).plausible) {
+      (window as Window & { plausible: (event: string, opts?: { props?: Record<string, unknown> }) => void }).plausible('BookingModalOpen', { props: { propertyId: locationId } });
+    }
   };
 
   const closeModal = () => setIsOpen(false);

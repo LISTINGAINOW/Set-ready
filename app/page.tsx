@@ -91,7 +91,7 @@ export default async function Home() {
               alt={heroImageAlt}
               fill
               priority
-              sizes="100vw"
+              sizes="(max-width: 768px) 100vw, 100vw"
               className="-z-30 object-cover"
             />
             <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(0,0,0,0.35)_0%,rgba(0,0,0,0.45)_50%,rgba(0,0,0,0.55)_100%)]" />
