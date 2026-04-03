@@ -773,6 +773,7 @@ type ResendPayload = {
   from: string;
   to: string | string[];
   bcc?: string | string[];
+  replyTo?: string;
   subject: string;
   html: string;
   text: string;
@@ -1244,4 +1245,177 @@ export async function sendPaymentFailed(
   };
 
   return sendEmailWithRetry(payload, booking.id, "payment_failed");
+}
+
+// ── New Email Functions for Stripe Webhooks ──────────────────────────────────
+
+// ── Booking Confirmed (to renter) ─────────────────────────────────────────────
+export async function sendBookingConfirmedToRenter(
+  booking: BookingRecord
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+  const dates = formatBookingDates(booking.booking_start, booking.booking_end);
+  const amount = booking.damage_deposit_amount
+    ? `$${booking.damage_deposit_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+    : "See booking details";
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Booking Confirmed — ${propertyName}`,
+    html: buildBookingConfirmationHtml(firstName, propertyName, dates, amount),
+    text: `Hi ${firstName},\n\nYour booking for ${propertyName} is confirmed!\n\nDates: ${dates}\nAmount: ${amount}\n\nView details: https://setvenue.com/dashboard/bookings\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "booking_confirmed");
+}
+
+// ── New Booking (to owner) ────────────────────────────────────────────────────
+function buildNewBookingToOwnerHtml(booking: BookingRecord, propertyName: string): string {
+  const renterName = esc(booking.contact_name);
+  const renterEmail = esc(booking.contact_email);
+  const venue = esc(propertyName);
+  const dates = esc(formatBookingDates(booking.booking_start, booking.booking_end));
+  const amount = booking.damage_deposit_amount
+    ? `$${booking.damage_deposit_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+    : "See booking details";
+
+  const rows = [
+    infoRow("Booking ID", `<span style="font-family:monospace;font-size:12px;">${esc(booking.id)}</span>`),
+    infoRow("Renter", renterName),
+    infoRow("Email", `<a href="mailto:${renterEmail}" style="color:#2563eb;text-decoration:none;">${renterEmail}</a>`),
+    infoRow("Company", esc(booking.company_name || "—")),
+    infoRow("Production Type", esc(booking.production_type)),
+    infoRow("Dates", dates),
+    infoRow("Amount", `<strong style="color:#111827;">${esc(amount)}</strong>`),
+  ].filter(Boolean).join("\n");
+
+  const content = `
+  <tr>
+    <td style="padding:36px 40px 28px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">New booking</p>
+      <h1 style="margin:0 0 6px;font-size:22px;font-weight:700;color:#111827;line-height:1.25;">New Booking for ${venue}</h1>
+      <p style="margin:0;font-size:15px;color:#6b7280;">A renter has booked your property and payment has been confirmed.</p>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0 40px 28px;">
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+        <tr>
+          <td style="padding:16px 20px;background-color:#f9fafb;border-bottom:1px solid #e5e7eb;">
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Booking details</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 20px 16px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              ${rows}
+            </table>
+          </td>
+        </tr>
+      </table>
+      ${cta("https://setvenue.com/dashboard/properties", "Manage your properties")}
+    </td>
+  </tr>`;
+
+  return emailLayout(
+    content,
+    "You received this because someone booked your SetVenue property."
+  );
+}
+
+export async function sendNewBookingToOwner(
+  ownerEmail: string,
+  booking: BookingRecord
+): Promise<{ success: boolean; error?: string }> {
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: ownerEmail,
+    bcc: "admin@setvenue.com",
+    replyTo: booking.contact_email,
+    subject: `New Booking — ${propertyName} by ${booking.contact_name}`,
+    html: buildNewBookingToOwnerHtml(booking, propertyName),
+    text: `New booking for ${propertyName}\n\nRenter: ${booking.contact_name} (${booking.contact_email})\nCompany: ${booking.company_name || "—"}\nProduction Type: ${booking.production_type}\nDates: ${formatBookingDates(booking.booking_start, booking.booking_end)}\nBooking ID: ${booking.id}\n\nManage: https://setvenue.com/dashboard/properties\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "new_booking_to_owner");
+}
+
+// ── Payment Receipt ───────────────────────────────────────────────────────────
+function buildPaymentReceiptHtml(booking: BookingRecord, amount: number, currency: string): string {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const name = esc(firstName);
+  const propertyName = esc(booking.property_name ?? `Property ${booking.property_id}`);
+  const dates = esc(formatBookingDates(booking.booking_start, booking.booking_end));
+  const formattedAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(amount);
+
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">Payment receipt</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Payment Received</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">
+        We've successfully received your payment for <strong>${propertyName}</strong>. Here's your receipt:
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+        <tr>
+          <td style="padding:16px 20px;background-color:#f9fafb;border-bottom:1px solid #e5e7eb;">
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Payment summary</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 20px 16px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              ${infoRow("Booking ID", `<span style="font-family:monospace;font-size:12px;">${esc(booking.id)}</span>`)}
+              ${infoRow("Property", propertyName)}
+              ${infoRow("Dates", dates)}
+              ${infoRow("Amount Paid", `<strong style="color:#111827;font-size:16px;">${esc(formattedAmount)}</strong>`)}
+              ${infoRow("Payment Date", new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }))}
+            </table>
+          </td>
+        </tr>
+      </table>
+      <p style="margin:0 0 16px;font-size:14px;color:#6b7280;line-height:1.7;">
+        Keep this receipt for your records. If you need a copy, you can access it from your dashboard.
+      </p>
+      ${cta("https://setvenue.com/dashboard/bookings", "View booking details")}
+    </td>
+  </tr>`;
+
+  return emailLayout(
+    content,
+    "You received this receipt because you made a payment on SetVenue."
+  );
+}
+
+export async function sendPaymentReceipt(
+  booking: BookingRecord,
+  amount: number,
+  currency: string
+): Promise<{ success: boolean; error?: string }> {
+  const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
+  const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
+  const formattedAmount = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(amount);
+
+  const payload: ResendPayload = {
+    from: "SetVenue <noreply@setvenue.com>",
+    to: booking.contact_email,
+    bcc: "admin@setvenue.com",
+    subject: `Payment Receipt — ${formattedAmount} for ${propertyName}`,
+    html: buildPaymentReceiptHtml(booking, amount, currency),
+    text: `Payment Receipt\n\nHi ${firstName},\n\nWe've received your payment for ${propertyName}.\n\nAmount: ${formattedAmount}\nBooking ID: ${booking.id}\nDate: ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n\nView details: https://setvenue.com/dashboard/bookings\n\n© ${new Date().getFullYear()} SetVenue`,
+  };
+
+  return sendEmailWithRetry(payload, booking.id, "payment_receipt");
 }

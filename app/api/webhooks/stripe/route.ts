@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import { sendPaymentSuccessful, sendPaymentFailed, type BookingRecord } from '@/lib/email';
+import { sendPaymentSuccessful, sendPaymentFailed, sendBookingConfirmedToRenter, sendNewBookingToOwner, sendPaymentReceipt, type BookingRecord } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
@@ -38,6 +38,56 @@ export async function POST(request: Request) {
 
     // Handle different event types
     switch (event.type) {
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        console.log(`Checkout session completed: ${session.id}`);
+
+        // Update booking status and send emails
+        if (session.metadata?.booking_id) {
+          const { data: bookingData, error } = await supabase
+            .from('booking_requests')
+            .update({
+              status: 'approved',
+              stripe_session_id: session.id,
+              reviewed_at: new Date().toISOString(),
+            })
+            .eq('id', session.metadata.booking_id)
+            .select()
+            .single();
+
+          if (error) {
+            console.error('Failed to update booking:', error);
+          } else if (bookingData) {
+            // Look up property and owner details then send emails — fire-and-forget
+            void (async () => {
+              try {
+                const { data: prop } = await supabase
+                  .from('properties')
+                  .select('property_name, owner_email')
+                  .eq('id', bookingData.property_id)
+                  .single();
+
+                const propertyName = prop?.property_name ?? `Property ${bookingData.property_id}`;
+                const ownerEmail = prop?.owner_email;
+
+                const booking: BookingRecord = { ...bookingData, property_name: propertyName };
+
+                // Send confirmation email to renter
+                await sendBookingConfirmedToRenter(booking);
+
+                // Send new booking notification to owner
+                if (ownerEmail) {
+                  await sendNewBookingToOwner(ownerEmail, booking);
+                }
+              } catch (err) {
+                console.error('Failed to send checkout completion emails:', err);
+              }
+            })();
+          }
+        }
+        break;
+      }
+
       case 'payment_intent.succeeded': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         console.log(`Payment succeeded: ${paymentIntent.id}`);
@@ -71,6 +121,9 @@ export async function POST(request: Request) {
               } catch { /* non-blocking */ }
               const booking: BookingRecord = { ...bookingData, property_name: propertyName };
               await sendPaymentSuccessful(booking);
+              
+              // Send payment receipt
+              await sendPaymentReceipt(booking, paymentIntent.amount / 100, paymentIntent.currency);
             })();
           }
         }
