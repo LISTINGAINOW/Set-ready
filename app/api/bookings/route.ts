@@ -32,6 +32,10 @@ interface BookingRequest {
   baseRate?: number;
   serviceFee?: number;
   total?: number;
+  productionCompany?: string;
+  hasCoi?: boolean;
+  hasFilmPermit?: boolean;
+  holdHarmless?: boolean;
 }
 
 interface Booking extends BookingRequest {
@@ -99,7 +103,7 @@ export async function POST(request: NextRequest) {
       property_id: newBooking.locationId,
       contact_name: newBooking.name,
       contact_email: newBooking.email,
-      company_name: '',
+      company_name: body.productionCompany ?? '',
       production_type: newBooking.productionType,
       booking_start: newBooking.date,
       property_name: propertyName,

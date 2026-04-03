@@ -110,6 +110,10 @@ export default function BookingModal({
     budget: '',
     specialRequirements: '',
     notes: '',
+    productionCompany: '',
+    hasCoi: false,
+    hasFilmPermit: false,
+    holdHarmless: false,
   });
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>(initialSelection.selectedTimeSlots);
   const [showOfferFields, setShowOfferFields] = useState(false);
@@ -159,9 +163,14 @@ export default function BookingModal({
   const total = pricing.total + depositAmount;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    const nextValue = name === 'email' ? sanitizeEmail(value) : sanitizeInput(value);
-    setFormData((prev) => ({ ...prev, [name]: nextValue }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      const nextValue = name === 'email' ? sanitizeEmail(value) : sanitizeInput(value);
+      setFormData((prev) => ({ ...prev, [name]: nextValue }));
+    }
   };
 
   const handleOfferChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -184,6 +193,10 @@ export default function BookingModal({
       budget: '',
       specialRequirements: '',
       notes: '',
+      productionCompany: '',
+      hasCoi: false,
+      hasFilmPermit: false,
+      holdHarmless: false,
     });
     setShowOfferFields(false);
     setOfferData({
@@ -271,6 +284,8 @@ export default function BookingModal({
       if (response.ok) {
         const result = await response.json();
         const booking = result?.booking;
+        // Track successful booking submission
+        (window as Window & { plausible?: (e: string, o?: { props?: Record<string, unknown> }) => void }).plausible?.('BookingSubmitted', { props: { propertyId: locationId } });
         const confirmationQuery = new URLSearchParams({
           bookingId: booking?.id || '',
           locationId,
@@ -531,6 +546,28 @@ export default function BookingModal({
               <div>
                 <label className="mb-2 block text-black/60">Additional Notes</label>
                 <textarea name="notes" value={formData.notes} onChange={handleChange} rows={3} className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Anything else the host should know." />
+              </div>
+
+              <div className="rounded-2xl border border-black bg-white/40 p-5 space-y-4">
+                <h3 className="font-semibold text-black">Production Details &amp; Compliance</h3>
+                <div>
+                  <label className="mb-2 block text-black/60">Production Company Name</label>
+                  <input type="text" name="productionCompany" value={formData.productionCompany} onChange={handleChange} className="w-full rounded-lg border border-black bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. Acme Productions LLC" />
+                </div>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="hasCoi" checked={formData.hasCoi} onChange={handleChange} className="h-5 w-5 rounded border-black accent-blue-500" />
+                    <span className="text-black">I have a Certificate of Insurance (COI)</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="hasFilmPermit" checked={formData.hasFilmPermit} onChange={handleChange} className="h-5 w-5 rounded border-black accent-blue-500" />
+                    <span className="text-black">I have a valid film permit</span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="holdHarmless" checked={formData.holdHarmless} onChange={handleChange} className="h-5 w-5 rounded border-black accent-blue-500" />
+                    <span className="text-black">I agree to hold harmless terms — I accept liability for any damage caused during my production</span>
+                  </label>
+                </div>
               </div>
 
               <div className="flex justify-end gap-4 border-t border-black pt-6">
