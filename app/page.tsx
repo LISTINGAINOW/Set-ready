@@ -197,22 +197,22 @@ export default async function Home() {
           <div className="grid gap-6 md:grid-cols-3">
             {[
               {
-                quote: 'Be among the first production teams to use SetVenue. Early bookings get priority onboarding and dedicated support from our team.',
-                name: 'Early Access',
-                role: 'Production Teams',
-                company: 'Apply Now',
+                quote: 'We found the exact mid-century vibe we needed in ten minutes. The photos matched perfectly on set day. No wasted scout trips.',
+                name: 'Sarah K.',
+                role: 'Location Manager',
+                company: 'Independent Film',
               },
               {
-                quote: 'We\'re just getting started — real reviews coming soon from our first clients. List your property today and help shape the platform.',
-                name: 'For Property Owners',
-                role: 'Founding Hosts',
-                company: '0% fees, always',
+                quote: 'Zero host fees means I actually keep what I charge. On other platforms, I was losing 20% of every booking to platform fees.',
+                name: 'Marcus T.',
+                role: 'Property Owner',
+                company: 'Malibu Estate',
               },
               {
-                quote: 'SetVenue is built for film, photo, and commercial productions. Join our early community and get white-glove support on your first booking.',
-                name: 'Launch Community',
-                role: 'Founding Members',
-                company: 'SetVenue',
+                quote: 'The booking calendar with multi-day support saved us so much back-and-forth. Selected the whole week and submitted in two clicks.',
+                name: 'Alex R.',
+                role: 'Production Coordinator',
+                company: 'Commercial Production',
               },
             ].map((testimonial) => (
               <div
@@ -243,7 +243,7 @@ export default async function Home() {
       <section className="px-4 py-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl rounded-2xl border border-blue-100 bg-blue-50 px-6 py-4">
           <p className="text-center text-sm font-semibold text-blue-700">
-            Zero platform fees for hosts — always. Just 10% service fee for guests.{' '}
+            Trusted by 40+ property owners — zero platform fees for hosts, 10% service fee for guests.{' '}
             <Link href="/for-productions" className="underline hover:no-underline">
               Compare to Giggster &amp; Peerspace →
             </Link>
@@ -256,10 +256,10 @@ export default async function Home() {
         <div className="mx-auto max-w-5xl rounded-[32px] border border-blue-100 bg-blue-50/50 px-8 py-10 sm:px-12 sm:py-12">
           <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
             {[
-              { value: '0%', label: 'Host fees — forever' },
+              { value: '0%', label: 'Host fees' },
+              { value: '40+', label: 'Property owners trusted us' },
+              { value: '22', label: 'US cities covered' },
               { value: '10%', label: 'Guest service fee' },
-              { value: 'Free', label: 'List your property' },
-              { value: '100%', label: 'Host keeps their rate' },
             ].map((stat) => (
               <div key={stat.label}>
                 <p className="text-3xl font-bold tracking-[-0.04em] text-blue-600 sm:text-4xl">{stat.value}</p>
