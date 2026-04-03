@@ -1245,3 +1245,259 @@ export async function sendPaymentFailed(
 
   return sendEmailWithRetry(payload, booking.id, "payment_failed");
 }
+
+// ── Drip Emails ───────────────────────────────────────────────────────────────
+// Four lifecycle drip emails triggered by the /api/emails/drip route.
+
+// D1. Welcome Newsletter — sent to new newsletter subscribers
+
+export function buildDripWelcomeNewsletterHtml(firstName: string): string {
+  const name = esc(firstName);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">You're in</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Welcome to the SetVenue insider list, ${name}!</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        You'll now get first access to new venues, production tips, and exclusive deals — straight to your inbox.
+      </p>
+      <p style="margin:0 0 24px;font-size:15px;color:#374151;line-height:1.7;">
+        SetVenue is the marketplace where production companies and event planners find filming locations, studios, and unique event spaces across California and beyond.
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+        <tr>
+          <td style="padding:14px 16px;background-color:#eff6ff;border-radius:8px;border-left:3px solid #2563eb;margin-bottom:8px;">
+            <p style="margin:0;font-size:14px;font-weight:600;color:#1e40af;">Explore venues now</p>
+            <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Browse hundreds of unique properties ready for your next production or event.</p>
+          </td>
+        </tr>
+      </table>
+      ${cta("https://setvenue.com/locations", "Browse locations")}
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You're receiving this because you subscribed to the SetVenue newsletter. <a href=\"https://setvenue.com/unsubscribe\" style=\"color:#9ca3af;\">Unsubscribe</a>"
+  );
+}
+
+export async function sendDripWelcomeNewsletter(
+  to: string,
+  firstName: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("[drip] RESEND_API_KEY not set — skipping welcome-newsletter");
+    return { success: false, error: "RESEND_API_KEY not configured" };
+  }
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "SetVenue <noreply@setvenue.com>",
+      to,
+      subject: `Welcome to SetVenue, ${firstName}! 🎬`,
+      html: buildDripWelcomeNewsletterHtml(firstName),
+      text: `Hi ${firstName},\n\nWelcome to the SetVenue insider list! You'll get first access to new venues, tips, and exclusive deals.\n\nBrowse locations: https://setvenue.com/locations\n\n© ${new Date().getFullYear()} SetVenue`,
+    });
+    if (error) throw new Error(error.message);
+    console.log(`[drip] welcome-newsletter sent to ${to}`, data?.id);
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[drip] welcome-newsletter failed for ${to}:`, msg);
+    return { success: false, error: msg };
+  }
+}
+
+// D2. Host Onboarding — sent when a host lists their first property
+
+export function buildDripHostOnboardingHtml(firstName: string, propertyTitle: string): string {
+  const name = esc(firstName);
+  const title = esc(propertyTitle);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">Host onboarding</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Your property is in review, ${name}!</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        Thanks for listing <strong>${title}</strong> on SetVenue. Our team will review your submission within 2–5 business days.
+      </p>
+      <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">While you wait, here's how to maximize your bookings:</p>
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="padding:14px 16px;background-color:#f9fafb;border-radius:8px;border-left:3px solid #2563eb;margin-bottom:8px;">
+            <p style="margin:0;font-size:14px;font-weight:600;color:#111827;">📸 &nbsp;Add more photos</p>
+            <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Listings with 10+ high-quality photos get 3× more inquiries.</p>
+          </td>
+        </tr>
+        <tr><td style="height:8px;"></td></tr>
+        <tr>
+          <td style="padding:14px 16px;background-color:#f9fafb;border-radius:8px;border-left:3px solid #2563eb;">
+            <p style="margin:0;font-size:14px;font-weight:600;color:#111827;">📅 &nbsp;Keep your calendar current</p>
+            <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Accurate availability means fewer back-and-forth messages with renters.</p>
+          </td>
+        </tr>
+        <tr><td style="height:8px;"></td></tr>
+        <tr>
+          <td style="padding:14px 16px;background-color:#f9fafb;border-radius:8px;border-left:3px solid #2563eb;">
+            <p style="margin:0;font-size:14px;font-weight:600;color:#111827;">⚡ &nbsp;Respond quickly</p>
+            <p style="margin:4px 0 0;font-size:13px;color:#6b7280;">Hosts who reply within 24 hours get the SetVenue Fast Responder badge.</p>
+          </td>
+        </tr>
+      </table>
+      ${cta("https://setvenue.com/dashboard", "Go to your host dashboard")}
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because you submitted a property listing on SetVenue."
+  );
+}
+
+export async function sendDripHostOnboarding(
+  to: string,
+  firstName: string,
+  propertyTitle: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("[drip] RESEND_API_KEY not set — skipping host-onboarding");
+    return { success: false, error: "RESEND_API_KEY not configured" };
+  }
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "SetVenue <noreply@setvenue.com>",
+      to,
+      subject: `Your SetVenue listing is under review — tips to get more bookings`,
+      html: buildDripHostOnboardingHtml(firstName, propertyTitle),
+      text: `Hi ${firstName},\n\nThanks for listing ${propertyTitle} on SetVenue. Our team will review it within 2–5 business days.\n\nTips to maximize bookings:\n• Add 10+ high-quality photos\n• Keep your calendar current\n• Respond to inquiries within 24 hours\n\nView your host dashboard: https://setvenue.com/dashboard\n\n© ${new Date().getFullYear()} SetVenue`,
+    });
+    if (error) throw new Error(error.message);
+    console.log(`[drip] host-onboarding sent to ${to}`, data?.id);
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[drip] host-onboarding failed for ${to}:`, msg);
+    return { success: false, error: msg };
+  }
+}
+
+// D3. Booking Follow-up — sent 7 days after a booking date
+
+export function buildDripBookingFollowUpHtml(
+  firstName: string,
+  propertyTitle: string,
+  bookingDate: string
+): string {
+  const name = esc(firstName);
+  const title = esc(propertyTitle);
+  const dateText = esc(bookingDate);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">How did it go?</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">We hope your shoot went great, ${name}!</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        It's been a week since your booking at <strong>${title}</strong> on ${dateText}. We'd love to hear how it went.
+      </p>
+      <div style="padding:20px 24px;background-color:#eff6ff;border-radius:10px;border:1px solid #bfdbfe;margin:24px 0;">
+        <p style="margin:0 0 8px;font-size:14px;font-weight:600;color:#1e40af;">Leave a review</p>
+        <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;">Your feedback helps other production teams find the right space — and rewards great hosts.</p>
+      </div>
+      <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">
+        Ready to book your next location? We've got hundreds of spaces available across California.
+      </p>
+      ${cta("https://setvenue.com/locations", "Find your next venue")}
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this follow-up because you recently completed a booking on SetVenue."
+  );
+}
+
+export async function sendDripBookingFollowUp(
+  to: string,
+  firstName: string,
+  propertyTitle: string,
+  bookingDate: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("[drip] RESEND_API_KEY not set — skipping booking-followup");
+    return { success: false, error: "RESEND_API_KEY not configured" };
+  }
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "SetVenue <noreply@setvenue.com>",
+      to,
+      subject: `How did your shoot at ${propertyTitle} go?`,
+      html: buildDripBookingFollowUpHtml(firstName, propertyTitle, bookingDate),
+      text: `Hi ${firstName},\n\nIt's been a week since your booking at ${propertyTitle} on ${bookingDate}. We hope it went great!\n\nIf you have a moment, leave a review — it helps other production teams find the right space.\n\nFind your next venue: https://setvenue.com/locations\n\n© ${new Date().getFullYear()} SetVenue`,
+    });
+    if (error) throw new Error(error.message);
+    console.log(`[drip] booking-followup sent to ${to}`, data?.id);
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[drip] booking-followup failed for ${to}:`, msg);
+    return { success: false, error: msg };
+  }
+}
+
+// D4. Abandoned Inquiry — sent 3 days after viewing a property but not booking
+
+export function buildDripAbandonedInquiryHtml(
+  firstName: string,
+  propertyTitle: string
+): string {
+  const name = esc(firstName);
+  const title = esc(propertyTitle);
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">Still interested?</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">You checked out ${title}</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        You viewed <strong>${title}</strong> a few days ago but didn't submit an inquiry. Still looking for the right space?
+      </p>
+      <div style="padding:20px 24px;background-color:#fffbeb;border-radius:10px;border:1px solid #fde68a;margin:24px 0;">
+        <p style="margin:0 0 6px;font-size:14px;font-weight:600;color:#92400e;">⏳ &nbsp;Availability fills up fast</p>
+        <p style="margin:0;font-size:14px;color:#374151;line-height:1.6;">Popular venues on SetVenue book out weeks in advance. If you're interested, now's a good time to reach out.</p>
+      </div>
+      <p style="margin:0 0 20px;font-size:15px;color:#374151;line-height:1.7;">
+        Have questions about the space? Our team can help connect you with the host directly.
+      </p>
+      ${cta("https://setvenue.com/locations", "View available venues")}
+      <p style="margin:20px 0 0;font-size:13px;color:#9ca3af;">Not interested anymore? <a href=\"https://setvenue.com/unsubscribe\" style=\"color:#9ca3af;\">Unsubscribe</a></p>
+    </td>
+  </tr>`;
+  return emailLayout(
+    content,
+    "You received this because you recently viewed a property on SetVenue."
+  );
+}
+
+export async function sendDripAbandonedInquiry(
+  to: string,
+  firstName: string,
+  propertyTitle: string
+): Promise<{ success: boolean; error?: string }> {
+  if (!resend) {
+    console.warn("[drip] RESEND_API_KEY not set — skipping abandoned-inquiry");
+    return { success: false, error: "RESEND_API_KEY not configured" };
+  }
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "SetVenue <noreply@setvenue.com>",
+      to,
+      subject: `Still interested in ${propertyTitle}?`,
+      html: buildDripAbandonedInquiryHtml(firstName, propertyTitle),
+      text: `Hi ${firstName},\n\nYou viewed ${propertyTitle} a few days ago but didn't submit an inquiry. Still looking for the right space?\n\nPopular venues fill up fast — reach out before it's booked.\n\nView venues: https://setvenue.com/locations\n\n© ${new Date().getFullYear()} SetVenue`,
+    });
+    if (error) throw new Error(error.message);
+    console.log(`[drip] abandoned-inquiry sent to ${to}`, data?.id);
+    return { success: true };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[drip] abandoned-inquiry failed for ${to}:`, msg);
+    return { success: false, error: msg };
+  }
+}
