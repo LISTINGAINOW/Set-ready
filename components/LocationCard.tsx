@@ -8,28 +8,8 @@ import AdultVerifiedBadge from '@/components/AdultVerifiedBadge';
 import Link from 'next/link';
 import Image from 'next/image';
 import { isLocationFavorited, subscribeToFavorites, toggleFavoriteLocation } from '@/lib/favorites';
-import dynamic from 'next/dynamic';
-
-// Lazy-load heavy booking components — only needed when the reserve modal opens.
-// With ssr:false these are excluded from the initial JS bundle entirely, saving
-// ~1126 lines × 17+ cards worth of parse/eval cost on grid pages.
-const BookingCalendar = dynamic(() => import('@/components/BookingCalendar'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-48 items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-400">
-      Loading calendar…
-    </div>
-  ),
-});
-
-const BookingModal = dynamic(() => import('@/components/BookingModal'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-12 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-400">
-      Loading…
-    </div>
-  ),
-});
+import BookingCalendar from '@/components/BookingCalendar';
+import BookingModal from '@/components/BookingModal';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
 import { getLocationBlockedDates } from '@/lib/availability';
