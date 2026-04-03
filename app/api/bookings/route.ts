@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import bookingsData from '@/data/bookings.json';
 import locationsData from '@/data/locations.json';
 import { getClientIp, isValidEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
 import { requireAdminSession, requireUserSession } from '@/lib/auth-middleware';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { sendBookingRequestConfirmation, sendOwnerBookingNotification, type BookingRecord } from '@/lib/email';
 
-let inMemoryBookings: Booking[] = (bookingsData.bookings || []) as Booking[];
+export const dynamic = 'force-dynamic';
 
 interface LocationData {
   id: string;
@@ -34,20 +32,56 @@ interface BookingRequest {
   total?: number;
 }
 
-interface Booking extends BookingRequest {
+// Shape returned to callers — maps DB columns back to the original API shape
+interface Booking {
   id: string;
+  locationId: string;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  productionType: string;
+  crewSize?: string;
+  budget?: string;
+  specialRequirements?: string;
+  notes: string;
+  baseRate?: number;
+  serviceFee?: number;
+  total?: number;
   userId?: string;
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;
   propertyName?: string;
 }
 
-async function readBookings(): Promise<Booking[]> {
-  return [...inMemoryBookings];
-}
-
-async function writeBookings(bookings: Booking[]) {
-  inMemoryBookings = bookings;
+// Map a DB row from booking_requests to the legacy Booking shape
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function dbRowToBooking(row: any): Booking {
+  return {
+    id: row.id,
+    locationId: row.property_id,
+    name: row.contact_name,
+    email: row.contact_email,
+    phone: row.contact_phone,
+    date: row.booking_start ? row.booking_start.split('T')[0] : '',
+    startTime: row.start_time ?? '',
+    endTime: row.end_time ?? '',
+    productionType: row.production_type,
+    crewSize: row.crew_size ?? undefined,
+    budget: row.budget ?? undefined,
+    specialRequirements: row.special_requirements ?? undefined,
+    notes: row.notes ?? '',
+    baseRate: row.base_rate ?? undefined,
+    serviceFee: row.service_fee ?? undefined,
+    total: row.total ?? undefined,
+    userId: row.renter_id ?? undefined,
+    // Map DB status values to legacy API shape (approved → confirmed)
+    status: row.status === 'approved' ? 'confirmed' : (row.status as Booking['status']),
+    createdAt: row.created_at,
+    propertyName: row.property_name ?? undefined,
+  };
 }
 
 export async function POST(request: NextRequest) {
@@ -78,22 +112,56 @@ export async function POST(request: NextRequest) {
       userId = verifySessionCookie(sessionCookie) ?? undefined;
     }
 
-    const bookings = await readBookings();
-    const newBooking: Booking = {
-      ...body,
-      id: `booking_${uuidv4().slice(0, 8)}`,
-      userId,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-    };
+    const locationRecord = locations.find((l) => l.id === body.locationId);
+    const propertyName = locationRecord?.name ?? `Property ${body.locationId}`;
 
-    bookings.push(newBooking);
-    await writeBookings(bookings);
+    const supabase = createAdminClient();
+
+    // Insert into Supabase booking_requests table
+    const { data: inserted, error: insertError } = await supabase
+      .from('booking_requests')
+      .insert({
+        property_id: body.locationId,
+        renter_id: userId ?? null,
+        contact_name: body.name,
+        contact_email: body.email,
+        contact_phone: body.phone,
+        production_type: body.productionType,
+        company_name: '',
+        // booking_start stores the date; store time in extra columns
+        booking_start: body.date ? `${body.date}T${body.startTime ?? '00:00'}:00Z` : null,
+        booking_end: body.date ? `${body.date}T${body.endTime ?? '00:00'}:00Z` : null,
+        start_time: body.startTime,
+        end_time: body.endTime,
+        notes: body.notes ?? '',
+        crew_size: body.crewSize ?? null,
+        budget: body.budget ?? null,
+        special_requirements: body.specialRequirements ?? null,
+        base_rate: body.baseRate ?? null,
+        service_fee: body.serviceFee ?? null,
+        total: body.total ?? null,
+        property_name: propertyName,
+        status: 'pending',
+        // Legal defaults — required fields in schema
+        hold_harmless_accepted: false,
+        tos_accepted: false,
+        content_permission_accepted: false,
+        permit_confirmed: false,
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('[booking] Supabase insert error:', insertError);
+      writeAuditLog('booking.db_error', { ip, error: insertError.message });
+      return NextResponse.json({ error: 'Failed to create booking' }, { status: 500 });
+    }
+
+    const newBooking = dbRowToBooking(inserted);
+
     writeAuditLog('booking.created', { ip, bookingId: newBooking.id, locationId: newBooking.locationId, email: newBooking.email });
 
     // Fire-and-forget: send confirmation email to renter + notification to owner
-    const locationRecord = locations.find((l) => l.id === newBooking.locationId);
-    const propertyName = locationRecord?.name ?? `Property ${newBooking.locationId}`;
     const bookingRecord: BookingRecord = {
       id: newBooking.id,
       property_id: newBooking.locationId,
@@ -137,11 +205,23 @@ export async function POST(request: NextRequest) {
 
 // CRIT-3: GET requires auth. Regular users see only their own bookings; admins see all.
 export async function GET(request: NextRequest) {
+  const supabase = createAdminClient();
+
   // Check if admin first
   const adminCheck = requireAdminSession(request);
   if (adminCheck === true) {
     try {
-      const bookings = await readBookings();
+      const { data: rows, error } = await supabase
+        .from('booking_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('[booking] GET admin error:', error);
+        return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
+      }
+
+      const bookings = (rows ?? []).map(dbRowToBooking);
       return NextResponse.json({ bookings });
     } catch (error) {
       return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
@@ -156,20 +236,32 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Look up user email to filter bookings (bookings store email, not userId for legacy reasons)
-    const supabase = createAdminClient();
+    // Look up user email to filter bookings (for legacy email-based matching)
     const { data: user } = await supabase
       .from('users')
       .select('email')
       .eq('id', userId)
       .single();
 
-    const bookings = await readBookings();
-    // Return bookings belonging to this user (by userId or email match)
-    const userBookings = bookings.filter(
-      (b) => b.userId === userId || (user && b.email === user.email)
-    );
-    return NextResponse.json({ bookings: userBookings });
+    // Fetch bookings by renter_id (primary) or contact_email (legacy fallback)
+    const conditions = [`renter_id.eq.${userId}`];
+    if (user?.email) {
+      conditions.push(`contact_email.eq.${user.email}`);
+    }
+
+    const { data: rows, error } = await supabase
+      .from('booking_requests')
+      .select('*')
+      .or(conditions.join(','))
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('[booking] GET user error:', error);
+      return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
+    }
+
+    const bookings = (rows ?? []).map(dbRowToBooking);
+    return NextResponse.json({ bookings });
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
