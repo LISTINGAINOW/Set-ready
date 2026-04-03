@@ -27,7 +27,7 @@ const defaultKeywords = [
   'LA locations',
   'Giggster alternative',
 ];
-const defaultOgImage = '/api/og?type=default&title=SetVenue';
+const defaultOgImage = '/icons/icon-512.png';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: defaultOgImage,
-        width: 1200,
-        height: 630,
+        width: 512,
+        height: 512,
         alt: defaultTitle,
       },
     ],
