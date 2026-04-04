@@ -142,7 +142,7 @@ function LoginContent() {
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600">Remember me</label>
               </div>
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
+                <a href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
               </div>
             </div>
 

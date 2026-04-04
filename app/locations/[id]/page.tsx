@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { CancellationPolicyTier, Location, VerificationBadge } from '@/types/location';
-import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, Siren, Clock3, BadgeCheck, House, ShieldCheck, FileText } from 'lucide-react';
+import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, House, ShieldCheck, FileText } from 'lucide-react';
 import BookingSection from '@/components/BookingSection';
 import BookingModal from '@/components/BookingModal';
 import PhotoGallery from '@/components/PhotoGallery';
@@ -22,6 +22,7 @@ import SimilarProperties from '@/components/SimilarProperties';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ShareButton from '@/components/ShareButton';
 import AdultVerifiedBadge from '@/components/AdultVerifiedBadge';
+import CancellationPolicySection from '@/components/CancellationPolicySection';
 
 const AreaMap = dynamic(() => import('@/components/AreaMap'), {
   ssr: false,
@@ -29,6 +30,13 @@ const AreaMap = dynamic(() => import('@/components/AreaMap'), {
     <div className="rounded-2xl border border-black bg-white/60 p-6 text-sm text-black/60">
       Loading approximate location map…
     </div>
+  ),
+});
+
+const AvailabilityCalendar = dynamic(() => import('@/components/AvailabilityCalendar'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center py-10 text-sm text-black/40">Loading availability…</div>
   ),
 });
 
@@ -48,23 +56,6 @@ function getPrimaryPhoto(location: Location) {
   return location.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80';
 }
 
-const cancellationPolicyContent: Record<CancellationPolicyTier, { summary: string; refundWindow: string; details: string }> = {
-  Flexible: {
-    summary: 'Full refund if cancelled 24+ hours before the booking start time.',
-    refundWindow: '24+ hours before booking',
-    details: 'Best for productions that need room to shift dates without penalty.',
-  },
-  Moderate: {
-    summary: 'Full refund if cancelled 48+ hours before the booking start time.',
-    refundWindow: '48+ hours before booking',
-    details: 'Balanced protection for both hosts and guests on medium-lead bookings.',
-  },
-  Strict: {
-    summary: '50% refund if cancelled 72+ hours before the booking start time.',
-    refundWindow: '72+ hours before booking',
-    details: 'Best for premium dates and properties that block off significant host time.',
-  },
-};
 
 function getDefaultHouseRules(location: Location, maxGuests?: number) {
   return [
@@ -143,7 +134,6 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   const gallery = location.images?.length ? location.images : [getPrimaryPhoto(location)];
   const locationReviews = reviews.filter((review) => review.propertyId === location.id);
   const cancellationPolicyTier = location.cancellationPolicy || 'Moderate';
-  const cancellationPolicy = cancellationPolicyContent[cancellationPolicyTier];
   const houseRules = location.houseRules?.length ? location.houseRules : getDefaultHouseRules(location, maxGuestsValue);
 
   // Compliance banner removed from browse view — TOT/STR info is for hosts only (list-property page)
@@ -339,42 +329,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             </div>
 
             <div className="mb-10 grid gap-6 xl:grid-cols-2">
-              <div className="rounded-2xl border border-black bg-white/70 p-5 shadow-sm sm:p-6">
-                <div className="flex items-start gap-3">
-                  <div className="rounded-xl bg-blue-600/10 p-3 text-blue-600">
-                    <Siren className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Cancellation policy</p>
-                    <h2 className="mt-2 text-2xl font-bold text-black">{cancellationPolicyTier}</h2>
-                  </div>
-                </div>
-                <p className="mt-4 text-sm leading-6 text-black/80 sm:text-base">{cancellationPolicy.summary}</p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl border border-black/10 bg-black p-4 text-white">
-                    <div className="flex items-center gap-2 text-sm text-blue-300">
-                      <Clock3 className="h-4 w-4" />
-                      Refund window
-                    </div>
-                    <p className="mt-2 text-lg font-semibold">{cancellationPolicy.refundWindow}</p>
-                  </div>
-                  <div className="rounded-xl border border-blue-600/20 bg-blue-600/10 p-4">
-                    <div className="flex items-center gap-2 text-sm text-blue-600">
-                      <BadgeCheck className="h-4 w-4" />
-                      What to expect
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-black/80">{cancellationPolicy.details}</p>
-                  </div>
-                </div>
-                <div className="mt-5 rounded-xl border border-black/10 bg-white p-4">
-                  <p className="text-sm font-semibold text-black">Refund rules</p>
-                  <ul className="mt-3 space-y-2 text-sm text-black/70">
-                    <li>• Cancellation timing is measured against the scheduled booking start time.</li>
-                    <li>• Refunds apply to the booking amount before any non-refundable payment processing charges.</li>
-                    <li>• Guests should cancel through the platform so the timeline is documented clearly.</li>
-                  </ul>
-                </div>
-              </div>
+              <CancellationPolicySection tier={cancellationPolicyTier} />
 
               <div className="rounded-2xl border border-black bg-white/70 p-5 shadow-sm sm:p-6">
                 <div className="flex items-start gap-3">
@@ -432,6 +387,13 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               bookings={location.bookings}
               blockedDates={blockedDates}
             />
+
+            <div className="mt-10">
+              <h2 className="mb-4 text-2xl font-bold text-black">Availability</h2>
+              <div className="rounded-2xl border border-black bg-white/50 p-5 sm:p-8">
+                <AvailabilityCalendar propertyId={location.id} />
+              </div>
+            </div>
 
             <div className="mt-10">
               <h2 className="mb-4 text-2xl font-bold text-black">Reviews & ratings</h2>

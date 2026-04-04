@@ -37,7 +37,7 @@ const footerSections = [
     links: [
       { href: '/legal/privacy', label: 'Privacy Policy' },
       { href: '/legal/terms', label: 'Terms of Service' },
-      { href: '/legal/privacy', label: 'Cookie Policy' },
+      { href: '/privacy#cookies', label: 'Cookie Policy' },
       { href: '/legal/adult-production-policy', label: 'Adult Production Policy' },
     ],
   },
@@ -46,7 +46,7 @@ const footerSections = [
 const socialLinks = [
   { href: 'https://instagram.com/setvenue', label: 'Instagram', icon: Instagram },
   { href: 'https://x.com/SetVenueHQ', label: 'Twitter', icon: Twitter },
-  { href: 'https://linkedin.com', label: 'LinkedIn', icon: Linkedin },
+  { href: 'https://linkedin.com/company/setvenue', label: 'LinkedIn', icon: Linkedin },
 ];
 
 const defaultPreferences = ['new-locations', 'deals', 'production-tips'];
