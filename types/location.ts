@@ -92,4 +92,6 @@ export interface Location {
   businessLicenseType?: string;
   hasLiabilityInsurance?: boolean;
   hasProductionInsurance?: boolean;
+  // Host (owner) user id — used for in-platform messaging
+  hostUserId?: string;
 }

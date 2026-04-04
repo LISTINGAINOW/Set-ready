@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Heart, Menu, Search, X } from 'lucide-react';
+import { Heart, Menu, MessageSquare, Search, X } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFavoriteLocationIds, subscribeToFavorites } from '@/lib/favorites';
@@ -179,6 +179,14 @@ export default function Header() {
               {user ? (
                 <div className="flex items-center gap-3">
                   <Link
+                    href="/messages"
+                    className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/8 text-slate-700 transition hover:border-blue-200 hover:text-blue-600"
+                    aria-label="Messages"
+                    title="Messages"
+                  >
+                    <MessageSquare className="h-4 w-4" />
+                  </Link>
+                  <Link
                     href="/dashboard/owner"
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white transition hover:bg-blue-500"
                     aria-label={`Account: ${user.firstName}`}
@@ -311,6 +319,16 @@ export default function Header() {
                   <span className="rounded-full bg-blue-500 px-2 py-0.5 text-xs font-semibold text-white">{favoriteCount}</span>
                 ) : null}
               </Link>
+              {user && (
+                <Link
+                  href="/messages"
+                  className={`flex min-h-[48px] items-center rounded-xl px-3 text-sm font-medium transition ${
+                    pathname === '/messages' || pathname.startsWith('/messages/') ? 'bg-blue-50 text-blue-600' : 'text-slate-900 hover:bg-slate-50 hover:text-blue-600'
+                  }`}
+                >
+                  Messages
+                </Link>
+              )}
             </nav>
           </div>
 

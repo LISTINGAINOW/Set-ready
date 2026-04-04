@@ -24,6 +24,7 @@ type DbProperty = {
   featured: boolean;
   approved: boolean;
   status: string;
+  user_id?: string | null;
   tot_license_number?: string | null;
   business_license_number?: string | null;
   business_license_type?: string | null;
@@ -60,6 +61,7 @@ function toLocation(p: DbProperty): Location {
     businessLicenseType: p.business_license_type ?? undefined,
     hasLiabilityInsurance: p.has_liability_insurance ?? false,
     hasProductionInsurance: p.has_production_insurance ?? false,
+    hostUserId: p.user_id ?? undefined,
   };
 }
 

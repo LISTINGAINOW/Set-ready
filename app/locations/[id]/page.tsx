@@ -32,6 +32,13 @@ const AreaMap = dynamic(() => import('@/components/AreaMap'), {
   ),
 });
 
+const AvailabilityCalendar = dynamic(() => import('@/components/AvailabilityCalendar'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center py-10 text-sm text-black/40">Loading availability…</div>
+  ),
+});
+
 type VerifiedLocation = Location & {
   isVerified?: boolean;
   verificationBadges?: VerificationBadge[];
