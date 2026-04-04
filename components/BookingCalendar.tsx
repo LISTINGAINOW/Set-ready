@@ -194,7 +194,7 @@ export default function BookingCalendar({
   };
 
   return (
-    <div className={`rounded-3xl border p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)] ${isHostMode ? 'border-white/10 bg-black/20 text-white' : 'border-black bg-white'}`}>
+    <div className={`rounded-3xl border p-8 shadow-[0_20px_60px_rgba(0,0,0,0.08)] ${isHostMode ? 'border-white/10 bg-black/20 text-white' : 'border-black bg-white'}`}>
       <div className={`flex flex-col gap-3 pb-5 sm:flex-row sm:items-center sm:justify-between ${isHostMode ? 'border-b border-white/10' : 'border-b border-black/10'}`}>
         <div>
           <h3 className={`text-2xl font-bold ${isHostMode ? 'text-white' : 'text-black'}`}>{isHostMode ? 'Availability controls' : 'Availability'}</h3>
@@ -277,7 +277,7 @@ export default function BookingCalendar({
             </button>
           </div>
 
-          <div className={`mt-6 grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-[0.2em] ${isHostMode ? 'text-white/40' : 'text-black/40'}`}>
+          <div className={`mt-6 grid grid-cols-7 gap-2 text-center text-sm font-semibold uppercase tracking-[0.15em] ${isHostMode ? 'text-white/40' : 'text-black/40'}`}>
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
               <div key={day} className="py-2">
                 {day}
@@ -300,7 +300,7 @@ export default function BookingCalendar({
                   onClick={() => handleDayClick(day)}
                   disabled={isDisabled && !isHostMode}
                   className={[
-                    'relative min-h-[78px] rounded-2xl border p-3 text-left transition',
+                    'relative min-h-[88px] rounded-2xl border p-3.5 text-left transition',
                     !day.inMonth ? 'border-transparent bg-transparent text-white/20' : '',
                     isHostMode && day.inMonth && !day.isPast && !day.isBlocked ? 'border-white/10 bg-white/5 text-white hover:border-blue-500 hover:bg-blue-500/10' : '',
                     isHostMode && day.isBlocked ? 'border-blue-500/40 bg-blue-500/20 text-white' : '',
@@ -317,7 +317,7 @@ export default function BookingCalendar({
                     !isSelected && selectionMode === 'range' && day.inMonth && !day.isPast ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50' : '',
                   ].join(' ')}
                 >
-                  <span className="text-sm font-semibold">{day.dayNumber}</span>
+                  <span className="text-base font-bold">{day.dayNumber}</span>
                   {day.isBlocked && (
                     <span className={`absolute bottom-3 left-3 text-[11px] font-medium ${isHostMode || (isSelected && isEdge) ? 'text-blue-100' : 'text-blue-600'}`}>
                       Blocked
