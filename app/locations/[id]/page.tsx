@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { CancellationPolicyTier, Location, VerificationBadge } from '@/types/location';
 import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, Siren, Clock3, BadgeCheck, House, ShieldCheck, FileText } from 'lucide-react';
 import BookingSection from '@/components/BookingSection';
+import MessageButton from '@/components/MessageButton';
 import BookingModal from '@/components/BookingModal';
 import PhotoGallery from '@/components/PhotoGallery';
 import ReviewsList from '@/components/ReviewsList';
@@ -434,6 +435,13 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             />
 
             <div className="mt-10">
+              <h2 className="mb-4 text-2xl font-bold text-black">Availability</h2>
+              <div className="rounded-2xl border border-black bg-white/50 p-5 sm:p-8">
+                <AvailabilityCalendar propertyId={location.id} />
+              </div>
+            </div>
+
+            <div className="mt-10">
               <h2 className="mb-4 text-2xl font-bold text-black">Reviews & ratings</h2>
               <ReviewsList propertyId={location.id} initialReviews={locationReviews} />
             </div>
@@ -445,6 +453,17 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <div className="mt-6">
               <QuickQuestion propertyId={location.id} propertyName={location.name} />
             </div>
+
+            {location.hostUserId && (
+              <div className="mt-6">
+                <MessageButton
+                  propertyId={location.id}
+                  propertyName={location.name}
+                  hostId={location.hostUserId}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:border-blue-400 hover:text-blue-600"
+                />
+              </div>
+            )}
           </div>
         </div>
 

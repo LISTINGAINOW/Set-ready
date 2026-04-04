@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { CalendarRange, CheckCircle2, Lock, Plus, Trash2 } from 'lucide-react';
 import BookingCalendar from '@/components/BookingCalendar';
+import AvailabilityCalendar from '@/components/AvailabilityCalendar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getHostListings, type HostListing } from '@/lib/host-dashboard-data';
@@ -117,12 +118,47 @@ export default function HostAvailabilityPage() {
         <Card className="border-blue-500/20 bg-white/[0.03] shadow-none"><CardHeader className="pb-2"><CardTitle className="text-sm text-blue-100">Blocked days</CardTitle></CardHeader><CardContent><div className="text-3xl font-bold text-white">{availabilityMetrics.totalBlockedDays}</div></CardContent></Card>
       </div>
 
+      {/* API-backed availability calendar — select a listing to manage blocked dates */}
+      <Card className="border-blue-500/20 bg-white/[0.03] shadow-none">
+        <CardHeader>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <CardTitle className="text-white">Block dates (live)</CardTitle>
+              <p className="mt-2 text-sm text-blue-100/70">Click a start date then an end date to block a range. Click a red date to unblock it. Changes are saved instantly.</p>
+            </div>
+            <select
+              value={selectedListingId}
+              onChange={(event) => setSelectedListingId(event.target.value)}
+              className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none focus:border-blue-500"
+            >
+              {listings.map((listing) => (
+                <option key={listing.id} value={listing.id} className="bg-slate-950">
+                  {listing.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {selectedListingId ? (
+            <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+              <AvailabilityCalendar
+                propertyId={selectedListingId}
+                hostMode={true}
+              />
+            </div>
+          ) : (
+            <p className="text-sm text-blue-100/60">Select a listing above to manage its availability.</p>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="border-blue-500/20 bg-white/[0.03] shadow-none">
           <CardHeader>
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <CardTitle className="text-white">Calendar controls</CardTitle>
+                <CardTitle className="text-white">Calendar controls (legacy mock)</CardTitle>
                 <p className="mt-2 text-sm text-blue-100/70">Tap any date to block or unblock it instantly. Guest calendars inherit these blocked dates.</p>
               </div>
               <select
