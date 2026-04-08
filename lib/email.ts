@@ -81,6 +81,15 @@ function infoRow(label: string, value: string): string {
 </tr>`;
 }
 
+function toAbsoluteSetVenueUrl(urlOrPath: string): string {
+  if (/^https?:\/\//i.test(urlOrPath)) {
+    return urlOrPath;
+  }
+
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://setvenue.com').replace(/\/$/, '');
+  return `${siteUrl}${urlOrPath.startsWith('/') ? urlOrPath : `/${urlOrPath}`}`;
+}
+
 // ── 1. Verification Email (existing — dark theme, unchanged) ─────────────────
 
 export async function sendVerificationEmail(
@@ -88,7 +97,7 @@ export async function sendVerificationEmail(
   firstName: string,
   verificationLink: string
 ) {
-  const fullLink = `https://setvenue.com${verificationLink}`;
+  const fullLink = toAbsoluteSetVenueUrl(verificationLink);
   const year = new Date().getFullYear();
 
   const html = `<!DOCTYPE html>
@@ -180,6 +189,44 @@ export async function sendVerificationEmail(
     subject: "Verify your SetVenue account",
     html,
     text: `Hi ${firstName},\n\nVerify your SetVenue email address:\n${fullLink}\n\nThis link expires in 24 hours. If you didn't create a SetVenue account, ignore this email.\n\n\u00A9 ${year} SetVenue`,
+  });
+}
+
+export async function sendPasswordResetEmail(to: string, firstName: string, resetLink: string) {
+  const fullLink = toAbsoluteSetVenueUrl(resetLink);
+  const name = esc(firstName || 'there');
+  const year = new Date().getFullYear();
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">Password reset</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">Reset your password</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${name},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        We received a request to reset your SetVenue password. Use the secure link below to choose a new password.
+      </p>
+      <div style="padding:18px 20px;background-color:#eff6ff;border-radius:10px;border:1px solid #bfdbfe;margin:24px 0;">
+        <p style="margin:0;font-size:14px;color:#1e3a8a;line-height:1.7;">For your security, this link expires in 1 hour and can only be used once.</p>
+      </div>
+      ${cta(fullLink, 'Reset password')}
+      <p style="margin:24px 0 8px;font-size:13px;color:#6b7280;line-height:1.6;">If the button doesn’t work, copy and paste this link into your browser:</p>
+      <p style="margin:0;font-size:12px;color:#2563eb;word-break:break-all;line-height:1.6;">
+        <a href="${fullLink}" style="color:#2563eb;text-decoration:none;">${fullLink}</a>
+      </p>
+    </td>
+  </tr>`;
+
+  if (!resend) {
+    console.warn("RESEND_API_KEY not set — skipping email send");
+    return;
+  }
+
+  await resend.emails.send({
+    from: "SetVenue <noreply@setvenue.com>",
+    to,
+    subject: 'Reset your SetVenue password',
+    html: emailLayout(content, 'If you did not request a password reset, you can safely ignore this email and your password will stay the same.'),
+    text: `Hi ${firstName || 'there'},\n\nWe received a request to reset your SetVenue password. Reset it here:\n${fullLink}\n\nThis link expires in 1 hour. If you did not request a reset, you can safely ignore this email.\n\n© ${year} SetVenue`,
   });
 }
 
@@ -730,9 +777,11 @@ export interface BookingRecord {
   booking_start?: string | null;
   booking_end?: string | null;
   damage_deposit_amount?: number;
+  total_amount?: number;
   status?: string;
   property_name?: string; // optionally pre-fetched from properties table
 }
+
 
 function formatBookingDates(start?: string | null, end?: string | null): string {
   const fmt = (d: string) =>
@@ -1022,8 +1071,9 @@ export async function sendPaymentSuccessful(
   const firstName = booking.contact_name.split(" ")[0] ?? booking.contact_name;
   const propertyName = booking.property_name ?? `Property ${booking.property_id}`;
   const dates = formatBookingDates(booking.booking_start, booking.booking_end);
-  const amount = booking.damage_deposit_amount
-    ? `$${booking.damage_deposit_amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+  const amountValue = booking.total_amount ?? booking.damage_deposit_amount;
+  const amount = typeof amountValue === 'number'
+    ? `$${amountValue.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
     : "See booking details";
 
   const payload: ResendPayload = {
@@ -1104,6 +1154,7 @@ export interface SimpleBookingNotice {
   budget?: string;
   specialRequirements?: string;
   notes?: string;
+  notificationType?: 'request' | 'confirmed';
 }
 
 function buildOwnerBookingNotificationHtml(notice: SimpleBookingNotice): string {
@@ -1116,6 +1167,15 @@ function buildOwnerBookingNotificationHtml(notice: SimpleBookingNotice): string 
   const timeStr = notice.startTime && notice.endTime
     ? esc(`${notice.startTime} – ${notice.endTime}`)
     : "";
+  const isConfirmed = notice.notificationType === 'confirmed';
+  const eyebrow = isConfirmed ? 'Booking confirmed' : 'New booking request';
+  const heading = isConfirmed
+    ? `Confirmed Booking for ${venue}`
+    : `New Booking Request for ${venue}`;
+  const intro = isConfirmed
+    ? 'A renter has completed payment and the booking is now confirmed for your property.'
+    : 'A renter has submitted a booking request for your property.';
+  const ctaLabel = isConfirmed ? 'View confirmed booking' : 'View in admin dashboard';
 
   const rows = [
     infoRow("Booking ID", `<span style="font-family:monospace;font-size:12px;">${esc(notice.bookingId)}</span>`),
@@ -1127,14 +1187,15 @@ function buildOwnerBookingNotificationHtml(notice: SimpleBookingNotice): string 
     timeStr ? infoRow("Time", timeStr) : "",
     notice.crewSize ? infoRow("Crew size", esc(notice.crewSize)) : "",
     notice.budget ? infoRow("Budget", esc(notice.budget)) : "",
+    isConfirmed ? infoRow("Status", "Paid and confirmed") : "",
   ].filter(Boolean).join("\n");
 
   const content = `
   <tr>
     <td style="padding:36px 40px 28px;">
-      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">New booking request</p>
-      <h1 style="margin:0 0 6px;font-size:22px;font-weight:700;color:#111827;line-height:1.25;">New Booking Request for ${venue}</h1>
-      <p style="margin:0;font-size:15px;color:#6b7280;">A renter has submitted a booking request for your property.</p>
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">${eyebrow}</p>
+      <h1 style="margin:0 0 6px;font-size:22px;font-weight:700;color:#111827;line-height:1.25;">${heading}</h1>
+      <p style="margin:0;font-size:15px;color:#6b7280;">${intro}</p>
     </td>
   </tr>
   <tr>
@@ -1142,7 +1203,7 @@ function buildOwnerBookingNotificationHtml(notice: SimpleBookingNotice): string 
       <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
         <tr>
           <td style="padding:16px 20px;background-color:#f9fafb;border-bottom:1px solid #e5e7eb;">
-            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Request details</p>
+            <p style="margin:0;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Booking details</p>
           </td>
         </tr>
         <tr>
@@ -1157,13 +1218,15 @@ function buildOwnerBookingNotificationHtml(notice: SimpleBookingNotice): string 
         <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">${notice.specialRequirements ? "Special requirements" : "Notes"}</p>
         <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap;">${esc(notice.specialRequirements || notice.notes || "")}</p>
       </div>` : ""}
-      ${cta("https://setvenue.com/admin/bookings", "View in admin dashboard")}
+      ${cta("https://setvenue.com/admin/bookings", ctaLabel)}
     </td>
   </tr>`;
 
   return emailLayout(
     content,
-    "You received this because a new booking was submitted for your SetVenue property."
+    isConfirmed
+      ? 'You received this because a SetVenue booking was paid and confirmed for your property.'
+      : 'You received this because a new booking was submitted for your SetVenue property.'
   );
 }
 
@@ -1176,16 +1239,83 @@ export async function sendOwnerBookingNotification(
     return;
   }
   try {
+    const isConfirmed = notice.notificationType === 'confirmed';
     await resend.emails.send({
       from: "SetVenue <noreply@setvenue.com>",
       to: ownerEmail,
       replyTo: notice.renterEmail,
-      subject: `New Booking Request for ${notice.propertyName} — from ${notice.renterName}`,
+      subject: isConfirmed
+        ? `Confirmed Booking for ${notice.propertyName} — ${notice.renterName}`
+        : `New Booking Request for ${notice.propertyName} — from ${notice.renterName}`,
       html: buildOwnerBookingNotificationHtml(notice),
-      text: `New booking request\n\nProperty: ${notice.propertyName}\nFrom: ${notice.renterName} (${notice.renterEmail})\nType: ${notice.productionType}\nDate: ${notice.date}${notice.startTime ? `\nTime: ${notice.startTime} – ${notice.endTime}` : ""}\nBooking ID: ${notice.bookingId}\n\nReview at: https://setvenue.com/admin/bookings\n\n© ${new Date().getFullYear()} SetVenue`,
+      text: `${isConfirmed ? 'Confirmed booking' : 'New booking request'}\n\nProperty: ${notice.propertyName}\nFrom: ${notice.renterName} (${notice.renterEmail})\nType: ${notice.productionType}\nDate: ${notice.date}${notice.startTime ? `\nTime: ${notice.startTime} – ${notice.endTime}` : ""}\nBooking ID: ${notice.bookingId}${isConfirmed ? '\nStatus: Paid and confirmed' : ''}\n\nReview at: https://setvenue.com/admin/bookings\n\n© ${new Date().getFullYear()} SetVenue`,
     });
   } catch (err) {
     console.error("[email] Failed to send owner notification:", err);
+  }
+}
+
+export interface NewMessageNotification {
+  conversationId: string;
+  propertyName: string;
+  senderName: string;
+  senderEmail?: string;
+  recipientName?: string;
+  messagePreview: string;
+}
+
+function buildNewMessageNotificationHtml(notification: NewMessageNotification): string {
+  const propertyName = esc(notification.propertyName);
+  const senderName = esc(notification.senderName);
+  const recipientName = esc(notification.recipientName || 'there');
+  const preview = esc(notification.messagePreview);
+  const conversationUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/messages/${notification.conversationId}`;
+
+  const content = `
+  <tr>
+    <td style="padding:40px 40px 36px;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#2563eb;">New message</p>
+      <h1 style="margin:0 0 20px;font-size:26px;font-weight:700;color:#111827;line-height:1.25;">New message about ${propertyName}</h1>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">Hi ${recipientName},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.7;">
+        <strong>${senderName}</strong> sent you a new message on SetVenue.
+      </p>
+      <div style="padding:20px 24px;background-color:#f9fafb;border-radius:10px;border:1px solid #e5e7eb;margin:24px 0;">
+        <p style="margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;">Message preview</p>
+        <p style="margin:0;font-size:14px;color:#374151;line-height:1.7;white-space:pre-wrap;">${preview}</p>
+      </div>
+      ${cta(conversationUrl, 'Open conversation')}
+    </td>
+  </tr>`;
+
+  return emailLayout(
+    content,
+    'You received this because someone sent you a message on SetVenue.'
+  );
+}
+
+export async function sendNewMessageNotification(
+  to: string,
+  notification: NewMessageNotification
+): Promise<void> {
+  if (!resend) {
+    console.warn('[email] RESEND_API_KEY not set — skipping new message notification');
+    return;
+  }
+
+  const conversationUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/messages/${notification.conversationId}`;
+
+  try {
+    await resend.emails.send({
+      from: 'SetVenue <noreply@setvenue.com>',
+      to,
+      replyTo: notification.senderEmail,
+      subject: `New message about ${notification.propertyName} on SetVenue`,
+      html: buildNewMessageNotificationHtml(notification),
+      text: `New message about ${notification.propertyName} on SetVenue\n\nFrom: ${notification.senderName}\n\n${notification.messagePreview}\n\nOpen conversation: ${conversationUrl}\n\n© ${new Date().getFullYear()} SetVenue`,
+    });
+  } catch (err) {
+    console.error('[email] Failed to send new message notification:', err);
   }
 }
 

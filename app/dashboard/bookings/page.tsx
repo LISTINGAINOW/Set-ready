@@ -26,7 +26,7 @@ export default function BookingsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const filter = searchParams.get('filter');
+    const filter = searchParams?.get('filter');
     if (filter && ['all', 'pending', 'confirmed', 'rejected', 'cancelled'].includes(filter)) {
       setActiveTab(filter);
     }
@@ -62,7 +62,7 @@ export default function BookingsPage() {
       const res = await fetch(`/api/bookings/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'confirmed' }),
+        body: JSON.stringify({ action: 'approve' }),
       });
       if (res.ok) {
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'confirmed' } : b));
@@ -79,7 +79,7 @@ export default function BookingsPage() {
       const res = await fetch(`/api/bookings/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'rejected' }),
+        body: JSON.stringify({ action: 'reject' }),
       });
       if (res.ok) {
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'rejected' } : b));
@@ -107,7 +107,7 @@ export default function BookingsPage() {
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams?.toString() || '');
     if (tabId === 'all') {
       params.delete('filter');
     } else {

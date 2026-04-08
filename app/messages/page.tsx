@@ -1,14 +1,10 @@
 "use client";
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { MessageSquare, Search, ChevronRight } from 'lucide-react';
-import messagesData from '@/data/messages.json';
+import { useRouter } from 'next/navigation';
+import { MessageSquare, Search, ChevronRight, Loader2, AlertCircle } from 'lucide-react';
 import type { MessageConversation } from '@/types/message';
-
-const conversations = (messagesData.conversations as MessageConversation[]).slice().sort((a, b) => {
-  return new Date(b.lastMessageAt).getTime() - new Date(a.lastMessageAt).getTime();
-});
 
 function formatTimestamp(timestamp: string) {
   return new Date(timestamp).toLocaleString('en-US', {
@@ -20,7 +16,59 @@ function formatTimestamp(timestamp: string) {
 }
 
 export default function MessagesPage() {
+  const router = useRouter();
   const [search, setSearch] = useState('');
+  const [conversations, setConversations] = useState<MessageConversation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadConversations() {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch('/api/conversations', {
+          credentials: 'include',
+          cache: 'no-store',
+        });
+
+        if (response.status === 401) {
+          router.push('/login?redirect=/messages');
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to load conversations.');
+        }
+
+        if (!isMounted) return;
+
+        const nextConversations = Array.isArray(data.conversations)
+          ? (data.conversations as MessageConversation[])
+          : [];
+
+        setConversations(nextConversations);
+      } catch (err) {
+        if (!isMounted) return;
+        setError(err instanceof Error ? err.message : 'Failed to load conversations.');
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadConversations();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
 
   const filteredConversations = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -32,7 +80,7 @@ export default function MessagesPage() {
         conversation.propertyTitle,
         conversation.guestName,
         conversation.hostName,
-        conversation.bookingId,
+        conversation.bookingId ?? '',
         conversation.messages[conversation.messages.length - 1]?.body ?? '',
       ]
         .join(' ')
@@ -40,7 +88,7 @@ export default function MessagesPage() {
 
       return haystack.includes(query);
     });
-  }, [search]);
+  }, [conversations, search]);
 
   const totalUnread = conversations.reduce((sum, conversation) => sum + conversation.unreadCount, 0);
 
@@ -72,67 +120,92 @@ export default function MessagesPage() {
         </label>
       </div>
 
-      <div className="space-y-4">
-        {filteredConversations.map((conversation) => {
-          const lastMessage = conversation.messages[conversation.messages.length - 1];
+      {isLoading && (
+        <div className="rounded-2xl border border-black/10 bg-white px-6 py-16 text-center shadow-sm">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+          <p className="mt-4 text-sm text-black/60 sm:text-base">Loading your conversations…</p>
+        </div>
+      )}
 
-          return (
-            <Link
-              key={conversation.id}
-              href={`/messages/${conversation.id}`}
-              className="block rounded-2xl border border-black bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-600/30 hover:shadow-md sm:p-6"
-            >
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-xl font-semibold text-black">{conversation.propertyTitle}</h2>
-                    {conversation.unreadCount > 0 && (
-                      <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
-                        {conversation.unreadCount} unread
+      {!isLoading && error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-12 text-center shadow-sm">
+          <AlertCircle className="mx-auto h-8 w-8 text-red-600" />
+          <h3 className="mt-4 text-xl font-semibold text-black">Couldn't load your inbox</h3>
+          <p className="mt-2 text-sm text-black/60 sm:text-base">{error}</p>
+        </div>
+      )}
+
+      {!isLoading && !error && filteredConversations.length > 0 && (
+        <div className="space-y-4">
+          {filteredConversations.map((conversation) => {
+            const lastMessage = conversation.messages[conversation.messages.length - 1];
+
+            return (
+              <Link
+                key={conversation.id}
+                href={`/messages/${conversation.id}`}
+                className="block rounded-2xl border border-black bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-600/30 hover:shadow-md sm:p-6"
+              >
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="text-xl font-semibold text-black">{conversation.propertyTitle}</h2>
+                      {conversation.unreadCount > 0 && (
+                        <span className="rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
+                          {conversation.unreadCount} unread
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-2 text-sm text-black/60 sm:text-base">
+                      {conversation.guestName} ↔ {conversation.hostName}
+                    </p>
+                    <p className="mt-4 line-clamp-2 text-sm text-black/75 sm:text-base">{lastMessage?.body ?? 'No messages yet.'}</p>
+                  </div>
+
+                  <div className="flex flex-col gap-3 lg:items-end">
+                    <p className="text-sm text-black/50">{formatTimestamp(conversation.lastMessageAt)}</p>
+                    <div className="flex flex-wrap gap-2 lg:justify-end">
+                      {conversation.bookingId && (
+                        <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-xs font-medium text-black/70">
+                          Booking #{conversation.bookingId.replace('booking_', '')}
+                        </span>
+                      )}
+                      <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-xs font-medium text-black/70">
+                        Property #{conversation.propertyId}
                       </span>
-                    )}
-                  </div>
-                  <p className="mt-2 text-sm text-black/60 sm:text-base">
-                    {conversation.guestName} ↔ {conversation.hostName}
-                  </p>
-                  <p className="mt-4 line-clamp-2 text-sm text-black/75 sm:text-base">{lastMessage?.body}</p>
-                </div>
-
-                <div className="flex flex-col gap-3 lg:items-end">
-                  <p className="text-sm text-black/50">{formatTimestamp(conversation.lastMessageAt)}</p>
-                  <div className="flex flex-wrap gap-2 lg:justify-end">
-                    <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-xs font-medium text-black/70">
-                      Booking #{conversation.bookingId.replace('booking_', '')}
-                    </span>
-                    <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-xs font-medium text-black/70">
-                      Property #{conversation.propertyId}
-                    </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-4 text-sm text-black/60">
-                <div className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  <span>{conversation.messages.length} messages</span>
+                <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-4 text-sm text-black/60">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    <span>{conversation.messages.length} messages</span>
+                  </div>
+                  <span className="inline-flex items-center gap-2 font-medium text-blue-600">
+                    Open conversation
+                    <ChevronRight className="h-4 w-4" />
+                  </span>
                 </div>
-                <span className="inline-flex items-center gap-2 font-medium text-blue-600">
-                  Open conversation
-                  <ChevronRight className="h-4 w-4" />
-                </span>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
 
-      {filteredConversations.length === 0 && (
+      {!isLoading && !error && filteredConversations.length === 0 && (
         <div className="rounded-2xl border border-dashed border-black/20 bg-white/70 px-6 py-16 text-center shadow-sm">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-600/10 text-blue-600">
             <MessageSquare className="h-8 w-8" />
           </div>
-          <h3 className="mt-5 text-xl font-semibold text-black">No conversations match that search</h3>
-          <p className="mt-2 text-sm text-black/60 sm:text-base">Try another guest name, booking ID, or property title.</p>
+          <h3 className="mt-5 text-xl font-semibold text-black">
+            {conversations.length === 0 ? 'No conversations yet' : 'No conversations match that search'}
+          </h3>
+          <p className="mt-2 text-sm text-black/60 sm:text-base">
+            {conversations.length === 0
+              ? 'When you message a host or guest, your conversation will appear here.'
+              : 'Try another guest name, booking ID, or property title.'}
+          </p>
         </div>
       )}
     </div>
