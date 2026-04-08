@@ -131,6 +131,27 @@ export async function POST(request: Request) {
         break;
       }
 
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        const bookingId = paymentIntent.metadata?.booking_id;
+        if (!bookingId) break;
+
+        const { error } = await supabase
+          .from('booking_requests')
+          .update({
+            status: 'confirmed',
+            payment_status: 'paid',
+            stripe_payment_intent_id: paymentIntent.id,
+            reviewed_at: new Date().toISOString(),
+          })
+          .eq('id', bookingId);
+
+        if (error) {
+          console.error('Failed to update booking after payment_intent.succeeded:', error);
+        }
+        break;
+      }
+
       case 'payment_intent.payment_failed': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
         const bookingId = paymentIntent.metadata?.booking_id;
