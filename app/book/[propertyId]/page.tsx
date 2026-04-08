@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { getCsrfToken } from '@/lib/client-security';
 import {
   ArrowLeft,
   ArrowRight,
@@ -203,9 +204,8 @@ const inputClass =
 // ── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function BookPropertyPage() {
-  const params = useParams();
-  const router = useRouter();
-  const propertyId = params.propertyId as string;
+  const params = useParams<{ propertyId?: string }>() ?? {};
+  const propertyId = params.propertyId ?? '';
 
   // Ephemeral booking ID used for uploads before the DB record is created
   const [ephemeralId] = useState(() => `pre_${crypto.randomUUID?.() ?? Date.now()}`);
@@ -340,27 +340,49 @@ export default function BookPropertyPage() {
       if (!idPath) throw new Error('ID document is required');
       if (!coiPath) throw new Error('Certificate of Insurance is required');
 
-      const res = await fetch('/api/bookings/protected', {
+      const bookingStart = renter.bookingStart ? new Date(renter.bookingStart) : null;
+      const bookingEnd = renter.bookingEnd ? new Date(renter.bookingEnd) : null;
+
+      if (!bookingStart || Number.isNaN(bookingStart.getTime())) {
+        throw new Error('Booking start is required');
+      }
+
+      if (!bookingEnd || Number.isNaN(bookingEnd.getTime())) {
+        throw new Error('Booking end is required');
+      }
+
+      const notes = [
+        renter.notes.trim() ? `Notes: ${renter.notes.trim()}` : '',
+        renter.companyName.trim() ? `Company: ${renter.companyName.trim()}` : '',
+        `ID document: ${idPath}`,
+        `COI document: ${coiPath}`,
+        coiExpiry ? `COI expiry: ${coiExpiry}` : '',
+        holdHarmlessAccepted ? 'Hold harmless accepted: yes' : '',
+        tosAccepted ? 'Terms accepted: yes' : '',
+        contentPermissionAccepted ? 'Content permission accepted: yes' : '',
+        permitConfirmed ? 'Permit confirmation: yes' : '',
+        depositAcknowledged ? 'Damage deposit acknowledged: yes' : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const res = await fetch('/api/bookings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': getCsrfToken(),
+        },
         body: JSON.stringify({
-          propertyId,
-          companyName: renter.companyName,
-          contactName: renter.contactName,
-          contactEmail: renter.contactEmail,
-          contactPhone: renter.contactPhone,
+          locationId: propertyId,
+          name: renter.contactName,
+          email: renter.contactEmail,
+          phone: renter.contactPhone,
+          date: bookingStart.toISOString().slice(0, 10),
+          startTime: bookingStart.toISOString().slice(11, 16),
+          endTime: bookingEnd.toISOString().slice(11, 16),
           productionType: renter.productionType,
-          idDocumentPath: idPath,
-          coiDocumentPath: coiPath,
-          coiExpiryDate: coiExpiry,
-          damageDepositAmount,
-          holdHarmlessAccepted,
-          tosAccepted,
-          contentPermissionAccepted,
-          permitConfirmed,
-          bookingStart: renter.bookingStart || undefined,
-          bookingEnd: renter.bookingEnd || undefined,
-          notes: renter.notes || undefined,
+          notes: notes || undefined,
+          securityDeposit: damageDepositAmount,
         }),
       });
 

@@ -1,153 +1,217 @@
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
-import { sendPaymentSuccessful, sendPaymentFailed, type BookingRecord } from '@/lib/email';
+import { createAdminClient } from '@/utils/supabase/admin';
+import {
+  sendOwnerBookingNotification,
+  sendPaymentFailed,
+  sendPaymentSuccessful,
+  type BookingRecord,
+} from '@/lib/email';
+import { getPropertySummary } from '@/lib/booking-payment-pipeline';
+import { getStripeClient } from '@/lib/stripe';
+
+function toBookingRecord(
+  booking: {
+    id: string;
+    property_id: string;
+    contact_name: string;
+    contact_email: string;
+    company_name: string | null;
+    production_type: string;
+    booking_start: string | null;
+    booking_end: string | null;
+    damage_deposit_amount: number | null;
+    total_amount: number | null;
+    status: string;
+    notes: string | null;
+  },
+  propertyName?: string | null
+): BookingRecord {
+  return {
+    id: booking.id,
+    property_id: booking.property_id,
+    contact_name: booking.contact_name,
+    contact_email: booking.contact_email,
+    company_name: booking.company_name ?? '',
+    production_type: booking.production_type,
+    booking_start: booking.booking_start,
+    booking_end: booking.booking_end,
+    damage_deposit_amount: Number(booking.damage_deposit_amount ?? 0),
+    total_amount: Number(booking.total_amount ?? 0),
+    status: booking.status,
+    property_name: propertyName ?? undefined,
+  };
+}
 
 export async function POST(request: Request) {
   try {
-    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
-
-    if (!stripeSecretKey) {
-      return new Response('Missing Stripe secret key', { status: 500 });
+    if (!webhookSecret) {
+      return new Response('Missing Stripe webhook secret', { status: 400 });
     }
 
-    const stripe = new Stripe(stripeSecretKey);
-
+    const stripe = getStripeClient();
     const body = await request.text();
     const headersList = await headers();
     const sig = headersList.get('stripe-signature');
 
-    if (!sig || !webhookSecret) {
-      return new Response('Missing signature or webhook secret', { status: 400 });
+    if (!sig) {
+      return new Response('Missing stripe signature', { status: 400 });
     }
 
-    // Verify the webhook signature
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    } catch (err: any) {
-      console.error(`Webhook signature verification failed: ${err.message}`);
-      return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Unknown webhook signature error';
+      console.error(`Webhook signature verification failed: ${message}`);
+      return new Response(`Webhook Error: ${message}`, { status: 400 });
     }
 
-    const supabase = createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-      process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-    );
+    const supabase = createAdminClient();
 
-    // Handle different event types
     switch (event.type) {
-      case 'payment_intent.succeeded': {
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(`Payment succeeded: ${paymentIntent.id}`);
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const bookingId = session.metadata?.booking_id;
+        if (!bookingId) break;
 
-        // Update booking status in database
-        if (paymentIntent.metadata?.booking_id) {
-          const { data: bookingData, error } = await supabase
-            .from('booking_requests')
-            .update({
-              status: 'approved',
-              stripe_payment_intent_id: paymentIntent.id,
-              reviewed_at: new Date().toISOString(),
-            })
-            .eq('id', paymentIntent.metadata.booking_id)
-            .select()
-            .single();
+        const { data, error } = await supabase
+          .from('booking_requests')
+          .update({
+            status: 'confirmed',
+            payment_status: 'paid',
+            stripe_payment_intent_id:
+              typeof session.payment_intent === 'string' ? session.payment_intent : null,
+            stripe_checkout_session_id: session.id,
+            payment_failed_reason: null,
+            reviewed_at: new Date().toISOString(),
+          })
+          .eq('id', bookingId)
+          .select(`
+            id,
+            property_id,
+            contact_name,
+            contact_email,
+            contact_phone,
+            company_name,
+            production_type,
+            booking_start,
+            booking_end,
+            notes,
+            damage_deposit_amount,
+            total_amount,
+            status
+          `)
+          .single();
 
-          if (error) {
-            console.error('Failed to update booking:', error);
-          } else if (bookingData) {
-            // Look up property name then send confirmation email — fire-and-forget
-            void (async () => {
-              let propertyName: string | undefined;
-              try {
-                const { data: prop } = await supabase
-                  .from('properties')
-                  .select('property_name')
-                  .eq('id', bookingData.property_id)
-                  .single();
-                propertyName = prop?.property_name ?? undefined;
-              } catch { /* non-blocking */ }
-              const booking: BookingRecord = { ...bookingData, property_name: propertyName };
-              await sendPaymentSuccessful(booking);
-            })();
-          }
+        if (error || !data) {
+          console.error('Failed to update booking after checkout.session.completed:', error);
+          break;
+        }
+
+        const property = await getPropertySummary(data.property_id);
+        const bookingRecord = toBookingRecord(data, property?.property_name ?? null);
+        await sendPaymentSuccessful(bookingRecord);
+
+        if (property?.owner_email) {
+          await sendOwnerBookingNotification(property.owner_email, {
+            bookingId: data.id,
+            propertyName: property.property_name ?? 'Property',
+            renterName: data.contact_name,
+            renterEmail: data.contact_email,
+            renterPhone: data.contact_phone,
+            productionType: data.production_type,
+            date: data.booking_start ? new Date(data.booking_start).toLocaleDateString('en-US') : 'TBD',
+            startTime: data.booking_start ? new Date(data.booking_start).toISOString().slice(11, 16) : undefined,
+            endTime: data.booking_end ? new Date(data.booking_end).toISOString().slice(11, 16) : undefined,
+            notes: data.notes ?? undefined,
+          });
         }
         break;
       }
 
       case 'payment_intent.payment_failed': {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        console.log(`Payment failed: ${paymentIntent.id}`);
+        const bookingId = paymentIntent.metadata?.booking_id;
+        if (!bookingId) break;
 
-        // Update booking status
-        if (paymentIntent.metadata?.booking_id) {
-          const failReason = paymentIntent.last_payment_error?.message ?? 'Payment could not be processed.';
-          const { data: bookingData, error } = await supabase
-            .from('booking_requests')
-            .update({
-              status: 'rejected',
-              admin_notes: `Payment failed: ${failReason}`,
-            })
-            .eq('id', paymentIntent.metadata.booking_id)
-            .select()
-            .single();
+        const failReason =
+          paymentIntent.last_payment_error?.message ?? 'Payment could not be processed.';
 
-          if (error) {
-            console.error('Failed to update booking:', error);
-          } else if (bookingData) {
-            // Look up property name then send failure email — fire-and-forget
-            void (async () => {
-              let propertyName: string | undefined;
-              try {
-                const { data: prop } = await supabase
-                  .from('properties')
-                  .select('property_name')
-                  .eq('id', bookingData.property_id)
-                  .single();
-                propertyName = prop?.property_name ?? undefined;
-              } catch { /* non-blocking */ }
-              const booking: BookingRecord = { ...bookingData, property_name: propertyName };
-              await sendPaymentFailed(booking, failReason);
-            })();
-          }
+        const { data, error } = await supabase
+          .from('booking_requests')
+          .update({
+            status: 'pending_payment',
+            payment_status: 'failed',
+            stripe_payment_intent_id: paymentIntent.id,
+            payment_failed_reason: failReason,
+          })
+          .eq('id', bookingId)
+          .select(`
+            id,
+            property_id,
+            contact_name,
+            contact_email,
+            contact_phone,
+            company_name,
+            production_type,
+            booking_start,
+            booking_end,
+            notes,
+            damage_deposit_amount,
+            total_amount,
+            status
+          `)
+          .single();
+
+        if (error || !data) {
+          console.error('Failed to update booking after payment failure:', error);
+          break;
+        }
+
+        const property = await getPropertySummary(data.property_id);
+        await sendPaymentFailed(toBookingRecord(data, property?.property_name ?? null), failReason);
+        break;
+      }
+
+      case 'checkout.session.expired': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const bookingId = session.metadata?.booking_id;
+        if (!bookingId) break;
+
+        const { error } = await supabase
+          .from('booking_requests')
+          .update({
+            status: 'pending_payment',
+            payment_status: 'expired',
+            stripe_checkout_session_id: session.id,
+          })
+          .eq('id', bookingId);
+
+        if (error) {
+          console.error('Failed to mark checkout session expired:', error);
         }
         break;
       }
 
       case 'charge.refunded': {
         const charge = event.data.object as Stripe.Charge;
-        console.log(`Charge refunded: ${charge.id}`);
+        const bookingId = charge.metadata?.booking_id;
+        if (!bookingId) break;
 
-        // Update booking status
-        if (charge.metadata?.booking_id) {
-          const { error } = await supabase
-            .from('booking_requests')
-            .update({
-              status: 'cancelled',
-              admin_notes: `Refund processed: ${charge.amount / 100} ${charge.currency.toUpperCase()}`,
-            })
-            .eq('id', charge.metadata.booking_id);
+        const { error } = await supabase
+          .from('booking_requests')
+          .update({
+            status: 'cancelled',
+            payment_status: 'refunded',
+            payment_failed_reason: `Refund processed: ${charge.amount / 100} ${charge.currency.toUpperCase()}`,
+          })
+          .eq('id', bookingId);
 
-          if (error) {
-            console.error('Failed to update booking:', error);
-          }
+        if (error) {
+          console.error('Failed to update refunded booking:', error);
         }
-        break;
-      }
-
-      case 'invoice.paid': {
-        const invoice = event.data.object as Stripe.Invoice;
-        console.log(`Invoice paid: ${invoice.id}`);
-        // Handle invoice payment
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        const invoice = event.data.object as Stripe.Invoice;
-        console.log(`Invoice payment failed: ${invoice.id}`);
-        // Send email to renter about failed payment
         break;
       }
 
@@ -155,10 +219,10 @@ export async function POST(request: Request) {
         console.log(`Unhandled event type: ${event.type}`);
     }
 
-    // Acknowledge receipt of event
     return new Response(JSON.stringify({ received: true }), { status: 200 });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown webhook error';
     console.error('Webhook handler error:', error);
-    return new Response(error.message, { status: 500 });
+    return new Response(message, { status: 500 });
   }
 }

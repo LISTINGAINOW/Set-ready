@@ -1,17 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-02-25.clover',
-    })
-  : null;
+import { getCheckoutSession } from '@/lib/stripe';
+import { getBookingById, getPropertySummary, mapBookingRequestToApi } from '@/lib/booking-payment-pipeline';
 
 export async function GET(request: NextRequest) {
-  if (!stripe) {
-    return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 });
-  }
-
   const sessionId = request.nextUrl.searchParams.get('session_id');
 
   if (!sessionId) {
@@ -19,18 +10,34 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['line_items'],
-    });
+    const session = await getCheckoutSession(sessionId);
+    const bookingId = session.metadata?.booking_id;
 
-    const locationItem = session.line_items?.data.find(
-      (item) => item.description?.startsWith('Location Rental:')
+    if (!bookingId) {
+      return NextResponse.json({ error: 'Checkout session is missing booking metadata' }, { status: 404 });
+    }
+
+    const booking = await getBookingById(bookingId);
+    if (!booking) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
+    const property = await getPropertySummary(booking.property_id);
+    const locationItem = session.line_items?.data.find((item) =>
+      item.description?.startsWith('Location Rental:')
     );
 
     return NextResponse.json({
-      locationTitle: locationItem?.description?.replace('Location Rental: ', '') ?? 'Location',
-      amountTotal: session.amount_total ?? 0,
-      customerEmail: session.customer_email ?? session.customer_details?.email ?? '',
+      bookingId,
+      paymentStatus: booking.payment_status ?? 'pending',
+      bookingStatus: booking.status,
+      locationTitle:
+        property?.property_name ??
+        locationItem?.description?.replace('Location Rental: ', '') ??
+        'Location',
+      amountTotal: session.amount_total ?? Math.round(Number(booking.total_amount ?? 0) * 100),
+      customerEmail: session.customer_email ?? session.customer_details?.email ?? booking.contact_email,
+      booking: mapBookingRequestToApi(booking, property?.property_name ?? null),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to retrieve session';

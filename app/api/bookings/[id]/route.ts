@@ -1,136 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
-import bookingsData from '@/data/bookings.json';
-import locationsData from '@/data/locations.json';
 import { requireAdminSession, requireUserSession } from '@/lib/auth-middleware';
 import { createAdminClient } from '@/utils/supabase/admin';
 import {
   sendBookingApproved,
-  sendBookingRejected,
   sendBookingCancelled,
+  sendBookingRejected,
   type BookingRecord,
 } from '@/lib/email';
+import {
+  getBookingById,
+  getPropertySummary,
+  mapBookingRequestToApi,
+  type BookingRequestRow,
+} from '@/lib/booking-payment-pipeline';
 
-interface Booking {
-  id: string;
-  locationId: string;
-  name: string;
-  email: string;
-  phone: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  productionType: string;
-  notes: string;
-  userId?: string;
-  status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
-  createdAt: string;
-}
+async function loadAuthorizedBooking(request: NextRequest, bookingId: string) {
+  const isAdmin = requireAdminSession(request) === true;
+  const booking = await getBookingById(bookingId);
 
-// In-memory store for new bookings (doesn't persist across serverless invocations)
-let inMemoryBookings: Booking[] = (bookingsData.bookings || []) as Booking[];
-
-interface LocationData { id: string; name: string; }
-const locations = locationsData as unknown as LocationData[];
-
-async function readBookings(): Promise<Booking[]> {
-  // Combine static data with in-memory bookings
-  return [...inMemoryBookings];
-}
-
-async function writeBookings(bookings: Booking[]) {
-  // Update in-memory store only
-  inMemoryBookings = bookings;
-}
-
-// CRIT-4: Helper to verify a user owns a booking
-async function userOwnsBooking(userId: string, booking: Booking): Promise<boolean> {
-  if (booking.userId === userId) return true;
-  // Fall back to email match for legacy bookings created before userId tracking
-  const supabase = createAdminClient();
-  const { data: user } = await supabase.from('users').select('email').eq('id', userId).single();
-  return !!user && booking.email === user.email;
-}
-
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const { id } = await params;
-
-    // CRIT-4: require auth — only booking owner or admin can modify
-    const isAdmin = requireAdminSession(request) === true;
-    let userId: string | null = null;
-    if (!isAdmin) {
-      const result = requireUserSession(request);
-      if (typeof result !== 'string') return result;
-      userId = result;
-    }
-
-    const body = await request.json();
-    const { status, reason } = body as { status: string; reason?: string };
-
-    if (!status || !['pending', 'confirmed', 'rejected', 'cancelled'].includes(status)) {
-      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
-    }
-
-    const bookings = await readBookings();
-    const bookingIndex = bookings.findIndex(b => b.id === id);
-    if (bookingIndex === -1) {
-      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
-    }
-
-    // Non-admin users can only update their own booking
-    if (!isAdmin && userId) {
-      const owns = await userOwnsBooking(userId, bookings[bookingIndex]);
-      if (!owns) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-    }
-
-    const prevStatus = bookings[bookingIndex].status;
-    bookings[bookingIndex].status = status as Booking['status'];
-    await writeBookings(bookings);
-
-    // Fire-and-forget status change emails (only on actual change)
-    if (status !== prevStatus) {
-      const booking = bookings[bookingIndex];
-      const locationRecord = locations.find((l) => l.id === booking.locationId);
-      const propertyName = locationRecord?.name ?? `Property ${booking.locationId}`;
-      const bookingRecord: BookingRecord = {
-        id: booking.id,
-        property_id: booking.locationId,
-        contact_name: booking.name,
-        contact_email: booking.email,
-        company_name: '',
-        production_type: booking.productionType,
-        booking_start: booking.date,
-        property_name: propertyName,
-      };
-      if (status === 'confirmed') {
-        const bookingUrl = `https://setvenue.com/dashboard/bookings`;
-        sendBookingApproved(bookingRecord, bookingUrl).catch((err) => {
-          console.error('[booking] Failed to send approval email:', err);
-        });
-      } else if (status === 'rejected') {
-        sendBookingRejected(
-          bookingRecord,
-          reason || 'Unfortunately the dates or production type are not available. Please try different dates or browse other venues.'
-        ).catch((err) => {
-          console.error('[booking] Failed to send rejection email:', err);
-        });
-      } else if (status === 'cancelled') {
-        sendBookingCancelled(bookingRecord).catch((err) => {
-          console.error('[booking] Failed to send cancellation email:', err);
-        });
-      }
-    }
-
-    return NextResponse.json({ booking: bookings[bookingIndex] });
-  } catch (error) {
-    console.error('Booking update error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  if (!booking) {
+    return { error: NextResponse.json({ error: 'Booking not found' }, { status: 404 }) };
   }
+
+  if (isAdmin) {
+    return { booking, isAdmin, userId: null as string | null };
+  }
+
+  const userId = requireUserSession(request);
+  if (typeof userId !== 'string') {
+    return { error: userId };
+  }
+
+  if (booking.renter_id && booking.renter_id !== userId) {
+    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }) };
+  }
+
+  return { booking, isAdmin, userId };
+}
+
+function toBookingRecord(booking: BookingRequestRow, propertyName?: string | null): BookingRecord {
+
+  return {
+    id: booking.id,
+    property_id: booking.property_id,
+    contact_name: booking.contact_name,
+    contact_email: booking.contact_email,
+    company_name: booking.company_name ?? '',
+    production_type: booking.production_type,
+    booking_start: booking.booking_start,
+    booking_end: booking.booking_end,
+    damage_deposit_amount: Number(booking.damage_deposit_amount ?? 0),
+    status: booking.status,
+    property_name: propertyName ?? undefined,
+  };
 }
 
 export async function GET(
@@ -139,31 +61,130 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-
-    const isAdmin = requireAdminSession(request) === true;
-    let userId: string | null = null;
-    if (!isAdmin) {
-      const result = requireUserSession(request);
-      if (typeof result !== 'string') return result;
-      userId = result;
+    const result = await loadAuthorizedBooking(request, id);
+    if ('error' in result) {
+      return result.error;
     }
 
-    const bookings = await readBookings();
-    const booking = bookings.find(b => b.id === id);
-    if (!booking) {
-      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
-    }
-
-    if (!isAdmin && userId) {
-      const owns = await userOwnsBooking(userId, booking);
-      if (!owns) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-    }
-
-    return NextResponse.json({ booking });
+    const property = await getPropertySummary(result.booking.property_id);
+    return NextResponse.json({
+      booking: {
+        ...mapBookingRequestToApi(result.booking, property?.property_name ?? null),
+        address: property?.address ?? null,
+        city: property?.city ?? null,
+        state: property?.state ?? null,
+        ownerName: property?.owner_name ?? null,
+        ownerEmail: property?.owner_email ?? null,
+      },
+    });
   } catch (error) {
     console.error('Booking GET error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const result = await loadAuthorizedBooking(request, id);
+    if ('error' in result) {
+      return result.error;
+    }
+
+    const body = (await request.json()) as {
+      action?: 'approve' | 'reject' | 'cancel';
+      status?: string;
+      reason?: string;
+      adminNotes?: string;
+    };
+
+    let nextStatus = body.status?.trim() ?? '';
+    if (body.action === 'approve') nextStatus = 'approved';
+    if (body.action === 'reject') nextStatus = 'rejected';
+    if (body.action === 'cancel') nextStatus = 'cancelled';
+    if (nextStatus === 'confirmed') nextStatus = 'confirmed';
+
+    const allowedStatuses = ['approved', 'confirmed', 'rejected', 'cancelled', 'pending_payment'];
+    if (!allowedStatuses.includes(nextStatus)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    if (!result.isAdmin && nextStatus !== 'cancelled') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const supabase = createAdminClient();
+    const updatePayload: Record<string, unknown> = {
+      status: nextStatus,
+      reviewed_at: new Date().toISOString(),
+      admin_notes: body.adminNotes ?? body.reason ?? null,
+    };
+
+    if (nextStatus === 'cancelled') {
+      updatePayload.payment_status = 'cancelled';
+    }
+
+    if (nextStatus === 'confirmed') {
+      updatePayload.payment_status = 'paid';
+    }
+
+    const { data, error } = await supabase
+      .from('booking_requests')
+      .update(updatePayload)
+      .eq('id', id)
+      .select(`
+        id,
+        property_id,
+        renter_id,
+        company_name,
+        contact_name,
+        contact_email,
+        contact_phone,
+        production_type,
+        booking_start,
+        booking_end,
+        notes,
+        damage_deposit_amount,
+        base_rate,
+        service_fee,
+        total_amount,
+        selected_time_slots,
+        status,
+        payment_status,
+        stripe_payment_intent_id,
+        stripe_checkout_session_id,
+        payment_failed_reason,
+        reviewed_at,
+        created_at,
+        updated_at
+      `)
+      .single();
+
+    if (error || !data) {
+      throw error ?? new Error('Failed to update booking');
+    }
+
+    const property = await getPropertySummary(data.property_id);
+    const bookingRecord = toBookingRecord(data, property?.property_name ?? null);
+
+    if (nextStatus === 'approved') {
+      const bookingUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/producer/bookings`;
+      void sendBookingApproved(bookingRecord, bookingUrl);
+    } else if (nextStatus === 'rejected') {
+      void sendBookingRejected(
+        bookingRecord,
+        body.reason || body.adminNotes || 'Unfortunately this booking could not be approved.'
+      );
+    } else if (nextStatus === 'cancelled') {
+      void sendBookingCancelled(bookingRecord);
+    }
+
+    return NextResponse.json({ booking: mapBookingRequestToApi(data, property?.property_name ?? null) });
+  } catch (error) {
+    console.error('Booking update error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -174,34 +195,29 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-
-    // CRIT-4: require auth — only booking owner or admin can delete
-    const isAdmin = requireAdminSession(request) === true;
-    let userId: string | null = null;
-    if (!isAdmin) {
-      const result = requireUserSession(request);
-      if (typeof result !== 'string') return result;
-      userId = result;
+    const result = await loadAuthorizedBooking(request, id);
+    if ('error' in result) {
+      return result.error;
     }
 
-    const bookings = await readBookings();
-    const booking = bookings.find(b => b.id === id);
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from('booking_requests')
+      .update({
+        status: 'cancelled',
+        payment_status: 'cancelled',
+        reviewed_at: new Date().toISOString(),
+      })
+      .eq('id', id);
 
-    if (!booking) {
-      return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    if (error) {
+      throw error;
     }
 
-    // Non-admin users can only delete their own booking
-    if (!isAdmin && userId) {
-      const owns = await userOwnsBooking(userId, booking);
-      if (!owns) {
-        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-      }
-    }
+    const property = await getPropertySummary(result.booking.property_id);
+    void sendBookingCancelled(toBookingRecord(result.booking, property?.property_name ?? null));
 
-    const filtered = bookings.filter(b => b.id !== id);
-    await writeBookings(filtered);
-    return NextResponse.json({ message: 'Booking deleted' });
+    return NextResponse.json({ message: 'Booking cancelled' });
   } catch (error) {
     console.error('Booking delete error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

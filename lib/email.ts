@@ -730,6 +730,7 @@ export interface BookingRecord {
   booking_start?: string | null;
   booking_end?: string | null;
   damage_deposit_amount?: number;
+  total_amount?: number;
   status?: string;
   property_name?: string; // optionally pre-fetched from properties table
 }

@@ -1,22 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import bookingsData from '@/data/bookings.json';
-import locationsData from '@/data/locations.json';
-import { getClientIp, isValidEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
+import {
+  getClientIp,
+  isValidEmail,
+  sanitizeObject,
+  validateCsrf,
+  writeAuditLog,
+} from '@/lib/security';
 import { requireAdminSession, requireUserSession } from '@/lib/auth-middleware';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { sendBookingRequestConfirmation, sendOwnerBookingNotification, type BookingRecord } from '@/lib/email';
+import {
+  createPendingPaymentBooking,
+  getPropertySummary,
+  mapBookingRequestToApi,
+  normalizeBookingNotes,
+  type BookingRequestRow,
+} from '@/lib/booking-payment-pipeline';
 
-let inMemoryBookings: Booking[] = (bookingsData.bookings || []) as Booking[];
-
-interface LocationData {
-  id: string;
-  name: string;
-  hostEmail?: string;
-}
-const locations = locationsData as unknown as LocationData[];
-
-interface BookingRequest {
+interface BookingRequestPayload {
   locationId: string;
   name: string;
   email: string;
@@ -28,26 +28,13 @@ interface BookingRequest {
   crewSize?: string;
   budget?: string;
   specialRequirements?: string;
-  notes: string;
+  notes?: string;
   baseRate?: number;
   serviceFee?: number;
+  securityDeposit?: number;
   total?: number;
-}
-
-interface Booking extends BookingRequest {
-  id: string;
-  userId?: string;
-  status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
-  createdAt: string;
-  propertyName?: string;
-}
-
-async function readBookings(): Promise<Booking[]> {
-  return [...inMemoryBookings];
-}
-
-async function writeBookings(bookings: Booking[]) {
-  inMemoryBookings = bookings;
+  selectedTimeSlots?: string[];
+  securityDepositRequiredWhen?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -56,13 +43,30 @@ export async function POST(request: NextRequest) {
   try {
     if (!validateCsrf(request)) {
       writeAuditLog('booking.csrf_failed', { ip });
-      return NextResponse.json({ error: 'Security validation failed. Refresh and try again.' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Security validation failed. Refresh and try again.' },
+        { status: 403 }
+      );
+    }
+
+    const userId = requireUserSession(request);
+    if (typeof userId !== 'string') {
+      return userId;
     }
 
     const sanitizedPayload = sanitizeObject((await request.json()) as Record<string, unknown>);
-    const body = sanitizedPayload as unknown as BookingRequest;
+    const body = sanitizedPayload as unknown as BookingRequestPayload;
 
-    if (!body.locationId || !body.name || !body.email || !body.phone || !body.date || !body.startTime || !body.endTime || !body.productionType) {
+    if (
+      !body.locationId ||
+      !body.name ||
+      !body.email ||
+      !body.phone ||
+      !body.date ||
+      !body.startTime ||
+      !body.endTime ||
+      !body.productionType
+    ) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -70,107 +74,132 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Please provide a valid email address' }, { status: 400 });
     }
 
-    // Attach userId from session if present (optional for booking creation)
-    let userId: string | undefined;
-    const sessionCookie = request.cookies.get('ds-session')?.value;
-    if (sessionCookie) {
-      const { verifySessionCookie } = await import('@/lib/auth-middleware');
-      userId = verifySessionCookie(sessionCookie) ?? undefined;
+    const property = await getPropertySummary(body.locationId);
+    if (!property) {
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 });
     }
 
-    const bookings = await readBookings();
-    const newBooking: Booking = {
-      ...body,
-      id: `booking_${uuidv4().slice(0, 8)}`,
-      userId,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-    };
-
-    bookings.push(newBooking);
-    await writeBookings(bookings);
-    writeAuditLog('booking.created', { ip, bookingId: newBooking.id, locationId: newBooking.locationId, email: newBooking.email });
-
-    // Fire-and-forget: send confirmation email to renter + notification to owner
-    const locationRecord = locations.find((l) => l.id === newBooking.locationId);
-    const propertyName = locationRecord?.name ?? `Property ${newBooking.locationId}`;
-    const bookingRecord: BookingRecord = {
-      id: newBooking.id,
-      property_id: newBooking.locationId,
-      contact_name: newBooking.name,
-      contact_email: newBooking.email,
-      company_name: '',
-      production_type: newBooking.productionType,
-      booking_start: newBooking.date,
-      property_name: propertyName,
-    };
-    sendBookingRequestConfirmation(bookingRecord).catch((err) => {
-      console.error('[booking] Failed to send renter confirmation email:', err);
+    const booking = await createPendingPaymentBooking({
+      propertyId: body.locationId,
+      renterId: userId,
+      contactName: body.name,
+      contactEmail: body.email,
+      contactPhone: body.phone,
+      productionType: body.productionType,
+      bookingDate: body.date,
+      startTime: body.startTime,
+      endTime: body.endTime,
+      notes: normalizeBookingNotes({
+        notes: body.notes,
+        specialRequirements: body.specialRequirements,
+        budget: body.budget,
+        crewSize: body.crewSize,
+        securityDepositRequiredWhen: body.securityDepositRequiredWhen,
+      }),
+      companyName: '',
+      securityDepositAmount: Number(body.securityDeposit ?? 0),
+      baseRate: Number(body.baseRate ?? 0),
+      serviceFee: Number(body.serviceFee ?? 0),
+      totalAmount: Number(body.total ?? 0),
+      selectedTimeSlots: Array.isArray(body.selectedTimeSlots) ? body.selectedTimeSlots : [],
     });
-    if (locationRecord?.hostEmail) {
-      sendOwnerBookingNotification(locationRecord.hostEmail, {
-        bookingId: newBooking.id,
-        propertyName,
-        renterName: newBooking.name,
-        renterEmail: newBooking.email,
-        renterPhone: newBooking.phone,
-        productionType: newBooking.productionType,
-        date: newBooking.date,
-        startTime: newBooking.startTime,
-        endTime: newBooking.endTime,
-        crewSize: newBooking.crewSize,
-        budget: newBooking.budget,
-        specialRequirements: newBooking.specialRequirements,
-        notes: newBooking.notes,
-      }).catch((err) => {
-        console.error('[booking] Failed to send owner notification email:', err);
-      });
-    }
 
-    return NextResponse.json({ booking: newBooking, message: 'Booking request created' }, { status: 201 });
+    writeAuditLog('booking.pending_payment_created', {
+      ip,
+      bookingId: booking.id,
+      propertyId: booking.property_id,
+      email: booking.contact_email,
+      renterId: userId,
+    });
+
+    return NextResponse.json(
+      {
+        booking: mapBookingRequestToApi(booking, property.property_name),
+        message: 'Pending payment booking created',
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Booking API error:', error);
-    writeAuditLog('booking.error', { ip, error: error instanceof Error ? error.message : 'unknown_error' });
+    writeAuditLog('booking.error', {
+      ip,
+      error: error instanceof Error ? error.message : 'unknown_error',
+    });
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-// CRIT-3: GET requires auth. Regular users see only their own bookings; admins see all.
 export async function GET(request: NextRequest) {
-  // Check if admin first
-  const adminCheck = requireAdminSession(request);
-  if (adminCheck === true) {
-    try {
-      const bookings = await readBookings();
-      return NextResponse.json({ bookings });
-    } catch (error) {
-      return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
-    }
-  }
-
-  // Otherwise require user session — fail-closed
-  const userId = requireUserSession(request);
-  // If userId is not a plain string, it's an error response — return it
-  if (typeof userId !== 'string') {
-    return userId;
-  }
+  const adminResult = requireAdminSession(request);
+  const supabase = createAdminClient();
 
   try {
-    // Look up user email to filter bookings (bookings store email, not userId for legacy reasons)
-    const supabase = createAdminClient();
-    const { data: user } = await supabase
-      .from('users')
-      .select('email')
-      .eq('id', userId)
-      .single();
+    let query = supabase
+      .from('booking_requests')
+      .select(`
+        id,
+        property_id,
+        renter_id,
+        company_name,
+        contact_name,
+        contact_email,
+        contact_phone,
+        production_type,
+        booking_start,
+        booking_end,
+        notes,
+        damage_deposit_amount,
+        base_rate,
+        service_fee,
+        total_amount,
+        selected_time_slots,
+        status,
+        payment_status,
+        stripe_payment_intent_id,
+        stripe_checkout_session_id,
+        payment_failed_reason,
+        reviewed_at,
+        created_at,
+        updated_at
+      `)
+      .order('created_at', { ascending: false });
 
-    const bookings = await readBookings();
-    // Return bookings belonging to this user (by userId or email match)
-    const userBookings = bookings.filter(
-      (b) => b.userId === userId || (user && b.email === user.email)
-    );
-    return NextResponse.json({ bookings: userBookings });
+    if (adminResult !== true) {
+      const userId = requireUserSession(request);
+      if (typeof userId !== 'string') {
+        return userId;
+      }
+
+      query = query.eq('renter_id', userId);
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      throw error;
+    }
+
+    const bookings = (data ?? []) as BookingRequestRow[];
+    const propertyIds = Array.from(new Set(bookings.map((booking) => booking.property_id).filter(Boolean)));
+
+    let propertyNameMap: Record<string, string> = {};
+    if (propertyIds.length > 0) {
+      const { data: properties } = await supabase
+        .from('properties')
+        .select('id, property_name')
+        .in('id', propertyIds);
+
+      propertyNameMap = Object.fromEntries(
+        (properties ?? []).map((property) => [String(property.id), property.property_name ?? 'Property'])
+      );
+    }
+
+    return NextResponse.json({
+      bookings: bookings.map((booking) =>
+        mapBookingRequestToApi(booking, propertyNameMap[booking.property_id] ?? null)
+      ),
+    });
   } catch (error) {
+    console.error('Booking GET error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
