@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     const sessionCookie = request.cookies.get('ds-session')?.value;
     if (sessionCookie) {
       const { verifySessionCookie } = await import('@/lib/auth-middleware');
-      userId = verifySessionCookie(sessionCookie) ?? undefined;
+      userId = (await verifySessionCookie(sessionCookie)) ?? undefined;
     }
 
     const bookings = await readBookings();
@@ -149,7 +149,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Otherwise require user session — fail-closed
-  const userId = requireUserSession(request);
+  const userId = await requireUserSession(request);
   // If userId is not a plain string, it's an error response — return it
   if (typeof userId !== 'string') {
     return userId;

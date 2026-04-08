@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
 
   // CRIT-5: Require authentication before accepting any upload
-  const userId = requireUserSession(request);
+  const userId = await requireUserSession(request);
   if (typeof userId !== 'string') return userId;
 
   try {

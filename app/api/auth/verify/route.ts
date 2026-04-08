@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (user.emailVerified) {
       const response = NextResponse.json({ message: 'Email already verified', user: sanitizeUser(user) });
-      response.cookies.set('ds-session', createSessionCookieValue(user.id), {
+      response.cookies.set('ds-session', createSessionCookieValue(user.id, user.sessionVersion), {
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       message: 'Email verified successfully. You now have access to protected routes.',
       user: sanitizeUser(updatedUser),
     });
-    response.cookies.set('ds-session', createSessionCookieValue(user.id), {
+    response.cookies.set('ds-session', createSessionCookieValue(updatedUser.id, updatedUser.sessionVersion), {
       httpOnly: true,
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',

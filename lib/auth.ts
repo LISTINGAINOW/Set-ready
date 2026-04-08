@@ -9,6 +9,7 @@ export interface UserRecord {
   email: string;
   passwordHash: string;
   emailVerified: boolean;
+  sessionVersion: number;
   verificationToken?: string;
   verificationSentAt?: string;
   resetPasswordTokenHash?: string;
@@ -30,7 +31,7 @@ export function hashAuthToken(token: string): string {
 }
 
 export function sanitizeUser(user: UserRecord) {
-  const { passwordHash, verificationToken, resetPasswordTokenHash, ...safeUser } = user;
+  const { passwordHash, sessionVersion, verificationToken, resetPasswordTokenHash, ...safeUser } = user;
   return safeUser;
 }
 
@@ -42,6 +43,7 @@ function dbRowToUserRecord(row: Record<string, unknown>): UserRecord {
     email: String(row.email),
     passwordHash: String(row.password_hash),
     emailVerified: Boolean(row.email_verified),
+    sessionVersion: Number(row.session_version ?? 1),
     verificationToken: row.verification_token ? String(row.verification_token) : undefined,
     verificationSentAt: row.verification_sent_at ? String(row.verification_sent_at) : undefined,
     resetPasswordTokenHash: row.reset_password_token_hash ? String(row.reset_password_token_hash) : undefined,
@@ -82,6 +84,7 @@ export async function createUser(user: UserRecord): Promise<void> {
     last_name: user.lastName,
     password_hash: user.passwordHash,
     email_verified: user.emailVerified,
+    session_version: user.sessionVersion,
     verification_token: user.verificationToken ?? null,
     verification_sent_at: user.verificationSentAt ?? null,
     reset_password_token_hash: user.resetPasswordTokenHash ?? null,
@@ -119,10 +122,22 @@ export async function setUserPasswordResetToken(userId: string, tokenHash: strin
 
 export async function updateUserPassword(userId: string, passwordHash: string): Promise<void> {
   const supabase = createAdminClient();
+
+  const { data: existingUser, error: readError } = await supabase
+    .from('users')
+    .select('session_version')
+    .eq('id', userId)
+    .single();
+
+  if (readError || !existingUser) throw new Error(readError?.message || 'User not found');
+
+  const nextSessionVersion = Number(existingUser.session_version ?? 1) + 1;
+
   const { error } = await supabase
     .from('users')
     .update({
       password_hash: passwordHash,
+      session_version: nextSessionVersion,
       reset_password_token_hash: null,
       reset_password_expires_at: null,
       reset_password_sent_at: null,

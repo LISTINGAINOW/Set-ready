@@ -1,4 +1,5 @@
 alter table public.users
+  add column if not exists session_version integer not null default 1,
   add column if not exists reset_password_token_hash text,
   add column if not exists reset_password_expires_at timestamptz,
   add column if not exists reset_password_sent_at timestamptz;

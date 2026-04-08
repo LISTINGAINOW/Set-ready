@@ -4,7 +4,7 @@ import { requireUserSession } from '@/lib/auth-middleware';
 
 export async function GET(request: NextRequest) {
   // CRIT-2: user_id comes from the authenticated session, NOT from a query param
-  const userId = requireUserSession(request);
+  const userId = await requireUserSession(request);
   if (typeof userId !== 'string') return userId;
 
   const { searchParams } = new URL(request.url);

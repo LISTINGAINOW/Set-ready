@@ -62,7 +62,7 @@ export async function PATCH(
     const isAdmin = requireAdminSession(request) === true;
     let userId: string | null = null;
     if (!isAdmin) {
-      const result = requireUserSession(request);
+      const result = await requireUserSession(request);
       if (typeof result !== 'string') return result;
       userId = result;
     }
@@ -143,7 +143,7 @@ export async function GET(
     const isAdmin = requireAdminSession(request) === true;
     let userId: string | null = null;
     if (!isAdmin) {
-      const result = requireUserSession(request);
+      const result = await requireUserSession(request);
       if (typeof result !== 'string') return result;
       userId = result;
     }
@@ -179,7 +179,7 @@ export async function DELETE(
     const isAdmin = requireAdminSession(request) === true;
     let userId: string | null = null;
     if (!isAdmin) {
-      const result = requireUserSession(request);
+      const result = await requireUserSession(request);
       if (typeof result !== 'string') return result;
       userId = result;
     }

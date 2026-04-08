@@ -77,10 +77,10 @@ function signSessionValue(value: string) {
   return createHash('sha256').update(`${value}.${getSessionSecret()}`).digest('hex');
 }
 
-export function createSessionCookieValue(userId: string) {
+export function createSessionCookieValue(userId: string, sessionVersion: number) {
   const issuedAt = Date.now().toString();
   const nonce = randomBytes(12).toString('hex');
-  const payload = `${userId}.${issuedAt}.${nonce}`;
+  const payload = `${userId}.${sessionVersion}.${issuedAt}.${nonce}`;
   const signature = signSessionValue(payload);
   return `${payload}.${signature}`;
 }
