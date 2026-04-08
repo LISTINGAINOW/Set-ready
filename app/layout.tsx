@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import { Inter } from 'next/font/google';
 import 'leaflet/dist/leaflet.css';
 import './globals.css';
@@ -9,6 +8,7 @@ import MobileBottomNav from '@/components/MobileBottomNav';
 import AIAssistant from '@/components/AIAssistant';
 import PWARegister from '@/components/PWARegister';
 import SessionSecurity from '@/components/SessionSecurity';
+import CookieConsent from '@/components/CookieConsent';
 import { ToastProvider } from '@/components/ui/toast';
 import CompareFloatingBar from '@/components/CompareFloatingBar';
 
@@ -187,12 +187,6 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <Script
-          defer
-          data-domain="setvenue.com"
-          src="https://plausible.io/js/script.js"
-          strategy="afterInteractive"
-        />
         <ToastProvider>
           <PWARegister />
           <SessionSecurity />
@@ -201,6 +195,7 @@ export default function RootLayout({
             {children}
           </div>
           <Footer />
+          <CookieConsent />
           <CompareFloatingBar />
           <AIAssistant />
           <MobileBottomNav />
