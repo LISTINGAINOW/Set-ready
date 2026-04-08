@@ -1,9 +1,8 @@
 import { createHash, randomBytes, timingSafeEqual } from 'crypto';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import type { NextRequest } from 'next/server';
 
-// CRIT-6: SESSION_SECRET must be set — no hardcoded fallback
 function getSessionSecret(): string {
   const secret = process.env.SESSION_SECRET;
   if (!secret) {
@@ -62,7 +61,6 @@ export function getPasswordStrength(password: string) {
   return { score, label: 'Strong' };
 }
 
-// MED-8: Log to console (Vercel Function Logs) instead of ephemeral /tmp
 export function writeAuditLog(action: string, details: Record<string, unknown> = {}) {
   console.log(JSON.stringify({ timestamp: new Date().toISOString(), action, ...details }));
 }
@@ -79,10 +77,10 @@ function signSessionValue(value: string) {
   return createHash('sha256').update(`${value}.${getSessionSecret()}`).digest('hex');
 }
 
-export function createSessionCookieValue(userId: string) {
+export function createSessionCookieValue(userId: string, sessionVersion: number) {
   const issuedAt = Date.now().toString();
   const nonce = randomBytes(12).toString('hex');
-  const payload = `${userId}.${issuedAt}.${nonce}`;
+  const payload = `${userId}.${sessionVersion}.${issuedAt}.${nonce}`;
   const signature = signSessionValue(payload);
   return `${payload}.${signature}`;
 }
@@ -112,35 +110,50 @@ export function validateCsrf(request: NextRequest) {
 }
 
 function ensureRateLimitDir() {
-  const { mkdirSync } = require('fs') as typeof import('fs');
   if (!existsSync(RATE_LIMIT_DIR)) mkdirSync(RATE_LIMIT_DIR, { recursive: true });
 }
 
-export function recordAuthRateLimit(ip: string, route: string) {
+function loadRateLimitStore() {
   ensureRateLimitDir();
-  const now = Date.now();
-  const isLogin = route.includes('/login');
-  const windowMs = isLogin ? 15 * 60 * 1000 : 60 * 60 * 1000;
-  const maxAttempts = isLogin ? 5 : 3;
 
-  let store: Record<string, number[]> = {};
-  if (existsSync(RATE_LIMIT_FILE)) {
-    try {
-      store = JSON.parse(readFileSync(RATE_LIMIT_FILE, 'utf8'));
-    } catch {
-      store = {};
-    }
+  if (!existsSync(RATE_LIMIT_FILE)) {
+    return {} as Record<string, number[]>;
   }
 
-  const key = `${route}:${ip}`;
+  try {
+    return JSON.parse(readFileSync(RATE_LIMIT_FILE, 'utf8')) as Record<string, number[]>;
+  } catch {
+    return {} as Record<string, number[]>;
+  }
+}
+
+function saveRateLimitStore(store: Record<string, number[]>) {
+  ensureRateLimitDir();
+  writeFileSync(RATE_LIMIT_FILE, JSON.stringify(store), 'utf8');
+}
+
+export function recordRateLimit(key: string, maxAttempts: number, windowMs: number) {
+  const now = Date.now();
+  const store = loadRateLimitStore();
   const recent = (store[key] || []).filter((ts) => now - ts < windowMs);
   recent.push(now);
   store[key] = recent;
-  writeFileSync(RATE_LIMIT_FILE, JSON.stringify(store), 'utf8');
+  saveRateLimitStore(store);
 
   return {
     blocked: recent.length > maxAttempts,
     remaining: Math.max(0, maxAttempts - recent.length),
     resetInMs: recent.length ? windowMs - (now - recent[0]) : windowMs,
   };
+}
+
+export function recordAuthRateLimit(ip: string, route: string) {
+  const isLogin = route.includes('/login');
+  const windowMs = isLogin ? 15 * 60 * 1000 : 60 * 60 * 1000;
+  const maxAttempts = isLogin ? 5 : 3;
+  return recordRateLimit(`${route}:${ip}`, maxAttempts, windowMs);
+}
+
+export function recordEmailRateLimit(email: string, route: string, maxAttempts = 3, windowMs = 60 * 60 * 1000) {
+  return recordRateLimit(`${route}:email:${sanitizeEmail(email)}`, maxAttempts, windowMs);
 }

@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
       email,
       passwordHash: hashPassword(password),
       emailVerified: false,
+      sessionVersion: 1,
       verificationToken,
       verificationSentAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-    response.cookies.set('ds-session', createSessionCookieValue(newUser.id), {
+    response.cookies.set('ds-session', createSessionCookieValue(newUser.id, newUser.sessionVersion), {
       httpOnly: true,
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',

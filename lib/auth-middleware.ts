@@ -6,6 +6,7 @@
 import { createHash, timingSafeEqual } from 'crypto';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 // ─── User session ────────────────────────────────────────────────────────────
 
@@ -19,18 +20,31 @@ function signPayload(payload: string, secret: string): string {
   return createHash('sha256').update(`${payload}.${secret}`).digest('hex');
 }
 
+async function getCurrentSessionVersion(userId: string): Promise<number | null> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from('users')
+    .select('session_version')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return Number(data.session_version ?? 1);
+}
+
 /**
  * Parses and verifies a ds-session cookie value.
- * Format: `${userId}.${issuedAt}.${nonce}.${signature}`
- * Returns the userId on success, null on failure.
+ * Format: `${userId}.${sessionVersion}.${issuedAt}.${nonce}.${signature}`
+ * Returns the parsed session fields on success, null on failure.
  */
-export function verifySessionCookie(cookieValue: string): string | null {
+export async function parseSessionCookie(
+  cookieValue: string
+): Promise<{ userId: string; sessionVersion: number } | null> {
   try {
     const secret = getSessionSecret();
     const parts = cookieValue.split('.');
-    if (parts.length < 4) return null;
+    if (parts.length < 5) return null;
 
-    // Last part is the signature; everything before it is the payload
     const signature = parts[parts.length - 1];
     const payload = parts.slice(0, -1).join('.');
     const expected = signPayload(payload, secret);
@@ -40,25 +54,36 @@ export function verifySessionCookie(cookieValue: string): string | null {
     if (sigBuf.length !== expBuf.length) return null;
     if (!timingSafeEqual(sigBuf, expBuf)) return null;
 
-    // First segment is userId
-    return parts[0];
+    const [userId, rawSessionVersion] = parts;
+    const sessionVersion = Number(rawSessionVersion);
+    if (!userId || !Number.isInteger(sessionVersion) || sessionVersion < 1) return null;
+
+    const currentSessionVersion = await getCurrentSessionVersion(userId);
+    if (currentSessionVersion === null || currentSessionVersion !== sessionVersion) return null;
+
+    return { userId, sessionVersion };
   } catch {
     return null;
   }
+}
+
+export async function verifySessionCookie(cookieValue: string): Promise<string | null> {
+  const session = await parseSessionCookie(cookieValue);
+  return session?.userId ?? null;
 }
 
 /**
  * Requires an authenticated user session.
  * Returns the authenticated userId string, or a 401 NextResponse.
  */
-export function requireUserSession(
+export async function requireUserSession(
   request: NextRequest
-): string | NextResponse {
+): Promise<string | NextResponse> {
   const cookieValue = request.cookies.get('ds-session')?.value;
   if (!cookieValue) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
-  const userId = verifySessionCookie(cookieValue);
+  const userId = await verifySessionCookie(cookieValue);
   if (!userId) {
     return NextResponse.json({ error: 'Invalid or expired session' }, { status: 401 });
   }

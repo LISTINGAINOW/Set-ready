@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       message: 'Login successful',
       user: sanitizeUser(user),
     });
-    response.cookies.set('ds-session', createSessionCookieValue(user.id), {
+    response.cookies.set('ds-session', createSessionCookieValue(user.id, user.sessionVersion), {
       httpOnly: true,
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
