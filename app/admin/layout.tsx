@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
       <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {NAV.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || (href !== '/admin' && pathname.startsWith(href));
+          const active = pathname === href || (href !== '/admin' && pathname?.startsWith(href));
           return (
             <Link
               key={href}
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </button>
           <div className="hidden lg:flex items-center">
             <span className="text-sm font-semibold text-slate-900">
-              {NAV.find(n => n.href === pathname || (n.href !== '/admin' && pathname.startsWith(n.href)))?.label ?? 'Admin'}
+              {NAV.find(n => n.href === pathname || (n.href !== '/admin' && pathname?.startsWith(n.href)))?.label ?? 'Admin'}
             </span>
           </div>
           <div className="flex lg:hidden items-center gap-2">

@@ -25,6 +25,7 @@ interface StoredUser {
 const NAV_ITEMS = [
   { href: "/dashboard/owner", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/dashboard/owner/listings", label: "My Listings", icon: MapPin },
+  { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/dashboard/owner/inquiries", label: "Inquiries", icon: MessageSquare },
   { href: "/dashboard/owner/profile", label: "Profile", icon: User },
   { href: "/list-property", label: "List a Property", icon: PlusCircle },

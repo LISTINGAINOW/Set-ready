@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Home, MapPin, Calendar, User, Settings, LogOut, Menu, X, Building2, Wallet, CalendarRange, CircleDollarSign, TrendingUp } from "lucide-react";
+import { Home, MapPin, Calendar, User, Settings, LogOut, Menu, X, Building2, Wallet, CalendarRange, CircleDollarSign, TrendingUp, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
@@ -85,6 +85,10 @@ export default function DashboardLayout({
             <Link href="/dashboard/bookings" className="flex items-center space-x-3 px-4 py-3 rounded-lg text-black transition-colors hover:bg-blue-50 hover:text-blue-700" onClick={() => setSidebarOpen(false)}>
               <Wallet className="w-5 h-5" />
               <span>Legacy Bookings</span>
+            </Link>
+            <Link href="/messages" className="flex items-center space-x-3 px-4 py-3 rounded-lg text-black transition-colors hover:bg-blue-50 hover:text-blue-700" onClick={() => setSidebarOpen(false)}>
+              <MessageSquare className="w-5 h-5" />
+              <span>Messages</span>
             </Link>
             <Link href="/dashboard/settings" className="mt-8 flex items-center space-x-3 rounded-lg px-4 py-3 text-black transition-colors hover:bg-blue-50 hover:text-blue-700" onClick={() => setSidebarOpen(false)}>
               <Settings className="w-5 h-5" />
