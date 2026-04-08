@@ -8,8 +8,8 @@ import { getCsrfToken } from '@/lib/client-security';
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get('email') || '';
-  const token = searchParams.get('token') || '';
+  const email = searchParams?.get('email') || '';
+  const token = searchParams?.get('token') || '';
 
   const [status, setStatus] = useState<'verifying' | 'verified' | 'error'>('verifying');
   const [errorMessage, setErrorMessage] = useState('');

@@ -1,32 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/components/ui/toast';
-import { getCsrfToken, isStrongPassword, isValidEmail, sanitizeEmail, sanitizeInput } from '@/lib/client-security';
+import { getCsrfToken, isValidEmail, sanitizeEmail, sanitizeInput } from '@/lib/client-security';
 
 function LoginContent() {
   const router = useRouter();
   const { toast } = useToast();
   const searchParams = useSearchParams();
-  const redirectTarget = searchParams.get('redirect') || '/dashboard';
-  const timeoutReason = searchParams.get('reason') === 'timeout';
+  const redirectTarget = searchParams?.get('redirect') || '/dashboard';
+  const timeoutReason = searchParams?.get('reason') === 'timeout';
+  const resetSuccess = searchParams?.get('reset') === 'success';
+  const resetToken = searchParams?.get('reset');
+  const hasResetToken = Boolean(resetToken && resetToken !== 'success');
 
   const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
   const [error, setError] = useState('');
   const [verificationLink, setVerificationLink] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const passwordChecklist = useMemo(
-    () => [
-      { label: 'At least 8 characters', valid: formData.password.length >= 8 },
-      { label: 'Uppercase letter', valid: /[A-Z]/.test(formData.password) },
-      { label: 'Lowercase letter', valid: /[a-z]/.test(formData.password) },
-      { label: 'Number', valid: /\d/.test(formData.password) },
-    ],
-    [formData.password]
-  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -50,12 +43,6 @@ function LoginContent() {
 
     if (!isValidEmail(formData.email)) {
       setError('Please enter a valid email address.');
-      setLoading(false);
-      return;
-    }
-
-    if (!isStrongPassword(formData.password)) {
-      setError('Password must be at least 8 characters and include uppercase, lowercase, and a number.');
       setLoading(false);
       return;
     }
@@ -84,8 +71,8 @@ function LoginContent() {
       localStorage.setItem('ds-last-activity', String(Date.now()));
       toast({ title: 'Signed in', description: 'Welcome back. Taking you to your dashboard now.', variant: 'success' });
       router.push(redirectTarget);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -106,6 +93,20 @@ function LoginContent() {
               You were signed out after inactivity. Sign in again to continue.
             </div>
           )}
+          {resetSuccess && (
+            <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+              Your password was reset successfully. Sign in with your new password.
+            </div>
+          )}
+          {hasResetToken && (
+            <div className="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              You opened a password reset link.{' '}
+              <Link href={`/reset-password?token=${encodeURIComponent(resetToken || '')}`} className="font-semibold text-blue-700 underline underline-offset-2">
+                Continue resetting your password
+              </Link>
+              .
+            </div>
+          )}
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -119,21 +120,11 @@ function LoginContent() {
             )}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-slate-700">Email address</label>
-              <input id="email" name="email" type="email" autoComplete="email" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="you@example.com" value={formData.email} onChange={handleChange} disabled={loading} />
+              <input id="email" name="email" type="email" autoComplete="email" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="you@example.com" value={formData.email} onChange={handleChange} disabled={loading} />
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-slate-700">Password</label>
-              <input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm" placeholder="••••••••" value={formData.password} onChange={handleChange} disabled={loading} />
-              <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-                <p className="font-semibold text-slate-700">Password requirements</p>
-                <ul className="mt-2 space-y-1">
-                  {passwordChecklist.map((item) => (
-                    <li key={item.label} className={item.valid ? 'text-emerald-600' : 'text-slate-500'}>
-                      {item.valid ? '✓' : '•'} {item.label}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <input id="password" name="password" type="password" autoComplete="current-password" required className="mt-1 block min-h-[48px] w-full appearance-none rounded-lg border border-slate-200 bg-white px-3 py-3 text-sm text-slate-950 placeholder-slate-400 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="••••••••" value={formData.password} onChange={handleChange} disabled={loading} />
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -142,12 +133,14 @@ function LoginContent() {
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-600">Remember me</label>
               </div>
               <div className="text-sm">
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">Forgot your password?</a>
+                <Link href="/reset-password" className="inline-flex min-h-[44px] items-center font-medium text-blue-600 hover:text-blue-500">
+                  Forgot your password?
+                </Link>
               </div>
             </div>
 
             <div>
-              <button type="submit" disabled={loading} className="group relative flex min-h-[48px] w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+              <button type="submit" disabled={loading} className="group relative flex min-h-[48px] w-full justify-center rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
                 {loading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
