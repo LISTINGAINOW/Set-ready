@@ -6,7 +6,8 @@ import { MapPin, DollarSign, Home, Users, Mail, Receipt, Check, X as XIcon, Sire
 import BookingSection from '@/components/BookingSection';
 import BookingModal from '@/components/BookingModal';
 import PhotoGallery from '@/components/PhotoGallery';
-import ReviewsList from '@/components/ReviewsList';
+import ReviewSection from '@/components/ReviewSection';
+import type { Review } from '@/types/review';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
 import InquiryForm from '@/components/InquiryForm';
@@ -14,7 +15,6 @@ import QuickQuestion from '@/components/QuickQuestion';
 import { getPropertyBySlug } from '@/lib/properties';
 import reviewsData from '@/data/reviews.json';
 import { getLocationBlockedDates } from '@/lib/availability';
-import type { Review } from '@/types/review';
 import { getBookingMode, getDisplayAddress, getVerificationHighlights } from '@/lib/location-utils';
 import { calculateBookingPricing, MINIMUM_BOOKING_TOTAL, PRODUCER_FEE_RATE } from '@/lib/pricing';
 import PropertyJsonLd from '@/components/PropertyJsonLd';
@@ -38,7 +38,7 @@ type VerifiedLocation = Location & {
   responseTime?: string;
 };
 
-const reviews: Review[] = reviewsData as Review[];
+const reviews = reviewsData as Review[];
 
 async function getLocation(id: string): Promise<Location | null> {
   return getPropertyBySlug(id);
@@ -434,8 +434,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             />
 
             <div className="mt-10">
-              <h2 className="mb-4 text-2xl font-bold text-black">Reviews & ratings</h2>
-              <ReviewsList propertyId={location.id} initialReviews={locationReviews} />
+              <ReviewSection propertyId={location.id} initialReviews={locationReviews} />
             </div>
 
             <div className="mt-10">

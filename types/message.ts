@@ -10,7 +10,7 @@ export interface ConversationMessage {
 
 export interface MessageConversation {
   id: string;
-  bookingId: string;
+  bookingId?: string;
   propertyId: string;
   propertyTitle: string;
   guestName: string;
