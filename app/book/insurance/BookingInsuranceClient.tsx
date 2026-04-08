@@ -17,7 +17,7 @@ export default function BookingInsuranceClient() {
   const searchParams = useSearchParams();
 
   const continueToConfirmation = (payload: { insuranceStatus: 'uploaded' | 'partner-link' | 'skipped'; insuranceExpiry?: string }) => {
-    const next = new URLSearchParams(searchParams.toString());
+    const next = new URLSearchParams(searchParams?.toString() ?? '');
     next.set('insuranceStatus', payload.insuranceStatus);
     if (payload.insuranceExpiry) next.set('insuranceExpiry', payload.insuranceExpiry);
     router.push(`/booking/confirmation?${next.toString()}`);

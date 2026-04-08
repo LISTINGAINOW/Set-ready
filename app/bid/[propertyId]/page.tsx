@@ -16,7 +16,7 @@ const PRODUCTION_TYPES = [
 export default function BidPage() {
   const params = useParams();
   const router = useRouter();
-  const propertyId = params.propertyId as string;
+  const propertyId = params?.propertyId as string;
 
   const location = locations.find((l: any) => l.id === propertyId || l.slug === propertyId);
 

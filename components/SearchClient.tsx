@@ -198,7 +198,8 @@ function FilterSection({
 
 export default function SearchClient({ allLocations }: Props) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const rawSearchParams = useSearchParams();
+  const searchParams = rawSearchParams!;
 
   const [query, setQuery] = useState(searchParams.get('q') || '');
   const [selectedCities, setSelectedCities] = useState<string[]>(

@@ -205,7 +205,7 @@ const inputClass =
 export default function BookPropertyPage() {
   const params = useParams();
   const router = useRouter();
-  const propertyId = params.propertyId as string;
+  const propertyId = params?.propertyId as string;
 
   // Ephemeral booking ID used for uploads before the DB record is created
   const [ephemeralId] = useState(() => `pre_${crypto.randomUUID?.() ?? Date.now()}`);

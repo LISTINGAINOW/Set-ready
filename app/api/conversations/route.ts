@@ -96,7 +96,7 @@ async function loadUsers(supabase: ReturnType<typeof createAdminClient>, userIds
  * List all conversations for the current user (as host or guest).
  */
 export async function GET(request: NextRequest) {
-  const userIdOrResponse = requireUserSession(request);
+  const userIdOrResponse = await requireUserSession(request);
   if (typeof userIdOrResponse !== 'string') return userIdOrResponse;
   const userId = userIdOrResponse;
 
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
  * Body: { propertyId, propertyName, hostId, initialMessage }
  */
 export async function POST(request: NextRequest) {
-  const userIdOrResponse = requireUserSession(request);
+  const userIdOrResponse = await requireUserSession(request);
   if (typeof userIdOrResponse !== 'string') return userIdOrResponse;
   const guestId = userIdOrResponse;
 

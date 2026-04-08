@@ -29,7 +29,7 @@ export default function MobileBottomNav() {
       aria-label="Mobile navigation"
     >
       {items.map(({ href, label, Icon, badge }) => {
-        const isActive = pathname === href || (href === '/locations' && pathname.startsWith('/locations'));
+        const isActive = pathname === href || (href === '/locations' && pathname?.startsWith('/locations'));
         return (
           <Link
             key={href}

@@ -115,7 +115,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userIdOrResponse = requireUserSession(request);
+  const userIdOrResponse = await requireUserSession(request);
   if (typeof userIdOrResponse !== 'string') return userIdOrResponse;
   const userId = userIdOrResponse;
 
@@ -174,7 +174,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userIdOrResponse = requireUserSession(request);
+  const userIdOrResponse = await requireUserSession(request);
   if (typeof userIdOrResponse !== 'string') return userIdOrResponse;
   const userId = userIdOrResponse;
 
@@ -219,7 +219,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const userIdOrResponse = requireUserSession(request);
+  const userIdOrResponse = await requireUserSession(request);
   if (typeof userIdOrResponse !== 'string') return userIdOrResponse;
   const userId = userIdOrResponse;
 

@@ -13,7 +13,7 @@ interface SessionDetails {
 
 function BookingSuccessContent() {
   const searchParams = useSearchParams();
-  const sessionId = searchParams.get('session_id');
+  const sessionId = searchParams?.get('session_id') ?? null;
   const [details, setDetails] = useState<SessionDetails | null>(null);
   const [loading, setLoading] = useState(true);
 
