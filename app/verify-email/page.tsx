@@ -5,6 +5,8 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getCsrfToken } from '@/lib/client-security';
 
+const DEFAULT_DASHBOARD_REDIRECT = '/dashboard/owner';
+
 function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -42,7 +44,9 @@ function VerifyEmailContent() {
         }
 
         setStatus('verified');
-        router.push('/locations');
+        window.setTimeout(() => {
+          router.push(DEFAULT_DASHBOARD_REDIRECT);
+        }, 2500);
       } catch (error: unknown) {
         if (cancelled) return;
         setStatus('error');
@@ -109,8 +113,17 @@ function VerifyEmailContent() {
         {status === 'verified' && (
           <>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">Success</p>
-            <h1 className="mt-4 text-3xl font-bold">Email verified</h1>
-            <p className="mt-4 text-base text-black/70">Your account is active. Redirecting you now&hellip;</p>
+            <h1 className="mt-4 text-3xl font-bold">Verification complete</h1>
+            <p className="mt-4 text-base text-black/70">Your email has been confirmed and your account is now active.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href={DEFAULT_DASHBOARD_REDIRECT} className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
+                Open dashboard
+              </Link>
+              <Link href="/locations" className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-black px-5 py-3 text-sm font-semibold text-black transition hover:border-blue-600 hover:text-blue-600">
+                Browse locations
+              </Link>
+            </div>
+            <p className="mt-4 text-sm text-black/60">Redirecting automatically in a moment&hellip;</p>
           </>
         )}
 

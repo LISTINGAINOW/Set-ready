@@ -108,7 +108,7 @@ export async function PATCH(
         property_name: propertyName,
       };
       if (status === 'confirmed') {
-        const bookingUrl = `https://setvenue.com/dashboard/bookings`;
+        const bookingUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/producer/bookings`;
         sendBookingApproved(bookingRecord, bookingUrl).catch((err) => {
           console.error('[booking] Failed to send approval email:', err);
         });

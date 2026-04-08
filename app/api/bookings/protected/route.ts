@@ -218,7 +218,7 @@ export async function PATCH(request: NextRequest) {
       const bookingRecord: BookingRecord = { ...data, property_name: propertyName };
 
       if (status === 'approved') {
-        const bookingUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/dashboard/bookings/${id}`;
+        const bookingUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://setvenue.com'}/producer/bookings`;
         void sendBookingApproved(bookingRecord, bookingUrl);
       } else {
         const reason = adminNotes ?? 'Your booking request did not meet our current requirements.';

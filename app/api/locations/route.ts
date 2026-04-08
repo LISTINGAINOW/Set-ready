@@ -3,7 +3,7 @@ import locationsData from '@/data/locations.json';
 
 export async function GET() {
   try {
-    return NextResponse.json(locationsData);
+    return NextResponse.json({ locations: locationsData });
   } catch (error) {
     console.error('Error reading locations:', error);
     return NextResponse.json({ error: 'Failed to load locations' }, { status: 500 });

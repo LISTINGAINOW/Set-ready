@@ -5,6 +5,7 @@ import { Home, MapPin, Calendar, User, Settings, LogOut, Menu, X, Building2, Wal
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
+import { getCsrfToken } from '@/lib/client-security';
 
 interface StoredUser {
   firstName: string;
@@ -32,7 +33,16 @@ export default function DashboardLayout({
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'x-csrf-token': getCsrfToken() },
+      });
+    } catch {
+      // Clear client state even if the network request fails.
+    }
+
     localStorage.removeItem('user');
     setUser(null);
     router.push('/');

@@ -62,7 +62,7 @@ export default function BookingsPage() {
       const res = await fetch(`/api/bookings/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'approve' }),
+        body: JSON.stringify({ status: 'confirmed' }),
       });
       if (res.ok) {
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'confirmed' } : b));
@@ -79,7 +79,7 @@ export default function BookingsPage() {
       const res = await fetch(`/api/bookings/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reject' }),
+        body: JSON.stringify({ status: 'rejected' }),
       });
       if (res.ok) {
         setBookings(prev => prev.map(b => b.id === id ? { ...b, status: 'rejected' } : b));

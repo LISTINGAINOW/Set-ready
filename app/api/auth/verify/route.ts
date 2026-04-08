@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { findUserByEmail, sanitizeUser, verifyUserEmail } from '@/lib/auth';
 import { createSessionCookieValue, getClientIp, sanitizeEmail, sanitizeObject, validateCsrf, writeAuditLog } from '@/lib/security';
+import { sendWelcomeEmail } from '@/lib/email';
+
+const VERIFICATION_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request);
@@ -47,9 +50,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid verification link' }, { status: 400 });
     }
 
+    if (!user.verificationSentAt || Date.now() - new Date(user.verificationSentAt).getTime() > VERIFICATION_WINDOW_MS) {
+      writeAuditLog('auth.verify.failed', { ip, email, userId: user.id, reason: 'expired_token' });
+      return NextResponse.json({ error: 'This verification link has expired. Please register again to receive a fresh link.' }, { status: 400 });
+    }
+
     const updatedUser = await verifyUserEmail(email);
     if (!updatedUser) {
       return NextResponse.json({ error: 'Failed to verify email' }, { status: 500 });
+    }
+
+    try {
+      await sendWelcomeEmail(updatedUser.email, updatedUser.firstName);
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
     }
 
     writeAuditLog('auth.verify.success', { ip, email, userId: user.id });

@@ -19,7 +19,6 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [verificationLink, setVerificationLink] = useState('');
   const [loading, setLoading] = useState(false);
 
   const passwordStrength = useMemo(() => getPasswordStrength(formData.password), [formData.password]);
@@ -45,7 +44,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setVerificationLink('');
     setLoading(true);
 
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
@@ -94,11 +92,10 @@ export default function RegisterPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('ds-last-activity', String(Date.now()));
       setSuccess(data.message || 'Verification email sent. Please check your inbox.');
-      setVerificationLink(data.verificationLink || '');
       toast({ title: 'Account created', description: 'Your verification step is ready. Redirecting now.', variant: 'success' });
 
       window.setTimeout(() => {
-        router.push(data.verificationLink || `/verify-email?email=${encodeURIComponent(formData.email)}`);
+        router.push(`/verify-email?email=${encodeURIComponent(formData.email)}`);
       }, 1200);
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
@@ -122,7 +119,7 @@ export default function RegisterPage() {
             {success && (
               <div className="rounded-lg border border-green-700 bg-green-900/30 px-4 py-3 text-sm text-green-200">
                 <p>{success}</p>
-                {verificationLink && <p className="mt-2 text-green-100/80">Redirecting you to the verification page now…</p>}
+                <p className="mt-2 text-green-100/80">Redirecting you to the verification page now…</p>
               </div>
             )}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

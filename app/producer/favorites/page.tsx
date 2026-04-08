@@ -18,7 +18,7 @@ type Location = {
 
 type Favorite = {
   id: string;
-  locationId: string;
+  propertyId: string;
 };
 
 export default function ProducerFavoritesPage() {
@@ -30,7 +30,7 @@ export default function ProducerFavoritesPage() {
     async function fetchData() {
       try {
         const [favRes, locRes] = await Promise.all([
-          fetch('/api/favorites?producerId=producer_001'),
+          fetch('/api/favorites'),
           fetch('/api/locations'),
         ]);
         const favData = await favRes.json();
@@ -47,15 +47,15 @@ export default function ProducerFavoritesPage() {
   }, []);
 
   const favoriteLocations = locations.filter(loc =>
-    favorites.some(fav => fav.locationId === loc.id)
+    favorites.some(fav => fav.propertyId === loc.id)
   );
 
   const removeFavorite = async (locationId: string) => {
     try {
-      await fetch(`/api/favorites?producerId=producer_001&locationId=${locationId}`, {
+      await fetch(`/api/favorites?propertyId=${locationId}`, {
         method: 'DELETE',
       });
-      setFavorites(prev => prev.filter(fav => fav.locationId !== locationId));
+      setFavorites(prev => prev.filter(fav => fav.propertyId !== locationId));
     } catch (error) {
       console.error('Failed to remove favorite:', error);
     }
