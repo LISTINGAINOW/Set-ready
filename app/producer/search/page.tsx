@@ -21,7 +21,7 @@ type Location = {
 
 type Favorite = {
   id: string;
-  locationId: string;
+  propertyId: string;
 };
 
 const propertyTypes = ['House', 'Apartment', 'Studio', 'Warehouse', 'Cabin', 'Penthouse'];
@@ -48,7 +48,7 @@ export default function ProducerSearchPage() {
       try {
         const [locRes, favRes] = await Promise.all([
           fetch('/api/locations'),
-          fetch('/api/favorites?producerId=producer_001'),
+          fetch('/api/favorites'),
         ]);
         const locData = await locRes.json();
         const favData = await favRes.json();
@@ -106,16 +106,16 @@ export default function ProducerSearchPage() {
   };
 
   const toggleFavorite = async (locationId: string) => {
-    const isFavorited = favorites.some(fav => fav.locationId === locationId);
+    const isFavorited = favorites.some(fav => fav.propertyId === locationId);
     try {
       if (isFavorited) {
-        await fetch(`/api/favorites?producerId=producer_001&locationId=${locationId}`, { method: 'DELETE' });
-        setFavorites(prev => prev.filter(fav => fav.locationId !== locationId));
+        await fetch(`/api/favorites?propertyId=${locationId}`, { method: 'DELETE' });
+        setFavorites(prev => prev.filter(fav => fav.propertyId !== locationId));
       } else {
         const res = await fetch('/api/favorites', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ producerId: 'producer_001', locationId }),
+          body: JSON.stringify({ propertyId: locationId }),
         });
         if (res.ok) {
           const data = await res.json();
@@ -213,7 +213,7 @@ export default function ProducerSearchPage() {
       {filteredLocations.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredLocations.map((location) => {
-            const isFavorited = favorites.some(fav => fav.locationId === location.id);
+            const isFavorited = favorites.some(fav => fav.propertyId === location.id);
             const privacyColorMap = {
               'Private': 'bg-green-900/30 text-green-400',
               'Public': 'bg-yellow-900/30 text-yellow-400',

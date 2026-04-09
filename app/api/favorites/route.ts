@@ -3,8 +3,7 @@ import favoritesData from '@/data/favorites.json';
 
 type Favorite = {
   id: string;
-  producerId: string;
-  locationId: string;
+  propertyId: string;
   createdAt: string;
 };
 
@@ -13,18 +12,22 @@ type FavoritesData = {
 };
 
 // In-memory store (does not persist across serverless invocations)
-let inMemoryFavorites: Favorite[] = favoritesData.favorites || [];
+let inMemoryFavorites: Favorite[] = (favoritesData.favorites || []).map((favorite) => ({
+  id: favorite.id,
+  propertyId: favorite.locationId,
+  createdAt: favorite.createdAt,
+}));
 
-function getFavorites(producerId: string): Favorite[] {
-  return inMemoryFavorites.filter(fav => fav.producerId === producerId);
+function serializeFavorite(favorite: Favorite) {
+  return {
+    ...favorite,
+    locationId: favorite.propertyId,
+  };
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const producerId = searchParams.get('producerId') || 'producer_001'; // default for demo
-
-    const favorites = getFavorites(producerId);
+    const favorites = inMemoryFavorites.map(serializeFavorite);
     return NextResponse.json({ favorites });
   } catch (error) {
     console.error('Error reading favorites:', error);
@@ -35,28 +38,25 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { producerId, locationId } = body;
+    const propertyId = body?.propertyId || body?.locationId;
 
-    if (!producerId || !locationId) {
-      return NextResponse.json({ error: 'Missing producerId or locationId' }, { status: 400 });
+    if (!propertyId) {
+      return NextResponse.json({ error: 'Missing propertyId' }, { status: 400 });
     }
 
-    const existing = inMemoryFavorites.find(
-      fav => fav.producerId === producerId && fav.locationId === locationId
-    );
+    const existing = inMemoryFavorites.find((fav) => fav.propertyId === propertyId);
     if (existing) {
       return NextResponse.json({ error: 'Already in favorites' }, { status: 409 });
     }
 
     const newFavorite: Favorite = {
       id: `fav_${Date.now()}`,
-      producerId,
-      locationId,
+      propertyId,
       createdAt: new Date().toISOString(),
     };
 
     inMemoryFavorites.push(newFavorite);
-    return NextResponse.json({ favorite: newFavorite }, { status: 201 });
+    return NextResponse.json({ favorite: serializeFavorite(newFavorite) }, { status: 201 });
   } catch (error) {
     console.error('Error adding favorite:', error);
     return NextResponse.json({ error: 'Failed to add favorite' }, { status: 500 });
@@ -66,17 +66,14 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const producerId = searchParams.get('producerId') || 'producer_001';
-    const locationId = searchParams.get('locationId');
+    const propertyId = searchParams.get('propertyId') || searchParams.get('locationId');
 
-    if (!locationId) {
-      return NextResponse.json({ error: 'Missing locationId' }, { status: 400 });
+    if (!propertyId) {
+      return NextResponse.json({ error: 'Missing propertyId' }, { status: 400 });
     }
 
     const initialLength = inMemoryFavorites.length;
-    inMemoryFavorites = inMemoryFavorites.filter(
-      fav => !(fav.producerId === producerId && fav.locationId === locationId)
-    );
+    inMemoryFavorites = inMemoryFavorites.filter((fav) => fav.propertyId !== propertyId);
 
     if (inMemoryFavorites.length === initialLength) {
       return NextResponse.json({ error: 'Favorite not found' }, { status: 404 });

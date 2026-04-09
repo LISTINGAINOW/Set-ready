@@ -5,6 +5,7 @@ import { Heart, Menu, Search, X } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFavoriteLocationIds, subscribeToFavorites } from '@/lib/favorites';
+import { getCsrfToken } from '@/lib/client-security';
 import { usePathname, useRouter } from 'next/navigation';
 import PWAInstall from '@/components/PWAInstall';
 
@@ -94,7 +95,16 @@ export default function Header() {
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'x-csrf-token': getCsrfToken() },
+      });
+    } catch {
+      // Clear client state even if the network request fails.
+    }
+
     localStorage.removeItem('user');
     setUser(null);
     setIsMobileMenuOpen(false);

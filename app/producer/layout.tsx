@@ -5,6 +5,7 @@ import { Home, Calendar, Heart, Shield, User, LogOut, Menu, X, Search } from "lu
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AuthGuard from "@/components/AuthGuard";
+import { getCsrfToken } from '@/lib/client-security';
 
 interface StoredUser {
   email: string;
@@ -30,7 +31,16 @@ export default function ProducerLayout({
     }
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: { 'x-csrf-token': getCsrfToken() },
+      });
+    } catch {
+      // Clear client state even if the network request fails.
+    }
+
     localStorage.removeItem('user');
     setUser(null);
     router.push('/');

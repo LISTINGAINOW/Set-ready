@@ -25,7 +25,7 @@ type Location = {
 
 type Favorite = {
   id: string;
-  locationId: string;
+  propertyId: string;
 };
 
 export default function ProducerOverview() {
@@ -54,7 +54,7 @@ export default function ProducerOverview() {
         const locationsData = await locationsRes.json();
         const locations: Location[] = locationsData.locations || [];
 
-        const favRes = await fetch('/api/favorites?producerId=producer_001');
+        const favRes = await fetch('/api/favorites');
         const favData = await favRes.json();
         const favorites: Favorite[] = favData.favorites || [];
 

@@ -17,6 +17,9 @@ type Booking = {
   notes: string;
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;
+  ownerName?: string | null;
+  ownerEmail?: string | null;
+  ownerPhone?: string | null;
 };
 
 type Location = {
@@ -34,8 +37,6 @@ export default function ProducerBookingsPage() {
   const [activeTab, setActiveTab] = useState('All');
   const [loading, setLoading] = useState(true);
 
-  // Demo producer identifier
-  const producerName = 'Alex Morgan';
 
   useEffect(() => {
     async function fetchData() {
@@ -47,8 +48,10 @@ export default function ProducerBookingsPage() {
         const bookingsData = await bookingsRes.json();
         const locationsData = await locationsRes.json();
 
-        // Filter bookings for this producer (by name for demo)
-        const producerBookings = bookingsData.bookings.filter(
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        const producerName = `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'Unknown';
+
+        const producerBookings = (bookingsData.bookings || []).filter(
           (b: Booking) => b.name === producerName
         );
 
@@ -94,9 +97,13 @@ export default function ProducerBookingsPage() {
   const handleCancelBooking = async (bookingId: string) => {
     if (!confirm('Are you sure you want to cancel this booking?')) return;
     try {
-      const res = await fetch(`/api/bookings/${bookingId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' }),
+      });
       if (res.ok) {
-        setBookings(prev => prev.filter(b => b.id !== bookingId));
+        setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: 'cancelled' } : b));
       }
     } catch (error) {
       console.error('Failed to cancel booking:', error);
@@ -196,22 +203,35 @@ export default function ProducerBookingsPage() {
                     {/* Contact info */}
                     <div className="border-t border-slate-200 pt-6">
                       <p className="text-sm text-slate-500 mb-3">Location Owner Contact</p>
-                      <div className="flex flex-wrap gap-4">
-                        <div className="flex items-center space-x-2">
-                          <User className="w-4 h-4 text-slate-500" />
-                          <span className="text-slate-900">Jane Doe (Owner)</span>
+                      {booking.ownerName || booking.ownerEmail || booking.ownerPhone ? (
+                        <div className="flex flex-wrap gap-4">
+                          {booking.ownerName && (
+                            <div className="flex items-center space-x-2">
+                              <User className="w-4 h-4 text-slate-500" />
+                              <span className="text-slate-900">{booking.ownerName} (Owner)</span>
+                            </div>
+                          )}
+                          {booking.ownerEmail && (
+                            <div className="flex items-center space-x-2">
+                              <Mail className="w-4 h-4 text-slate-500" />
+                              <a href={`mailto:${booking.ownerEmail}`} className="text-blue-600 hover:underline">
+                                {booking.ownerEmail}
+                              </a>
+                            </div>
+                          )}
+                          <div className="flex items-center space-x-2">
+                            <Phone className="w-4 h-4 text-slate-500" />
+                            <span className="text-slate-700">
+                              {booking.ownerPhone || 'Owner phone shared after booking confirmation if provided'}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Mail className="w-4 h-4 text-slate-500" />
-                          <a href="mailto:owner@example.com" className="text-blue-600 hover:underline">
-                            owner@example.com
-                          </a>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Phone className="w-4 h-4 text-slate-500" />
-                          <span className="text-slate-700">Owner phone shared after booking confirmation if provided</span>
-                        </div>
-                      </div>
+                      ) : (
+                        <Link href="/messages" className="inline-flex items-center space-x-2 text-blue-600 hover:underline">
+                          <MessageSquare className="w-4 h-4" />
+                          <span>Contact via Messages</span>
+                        </Link>
+                      )}
                     </div>
                   </div>
 
@@ -224,10 +244,13 @@ export default function ProducerBookingsPage() {
                       <MapPin className="w-4 h-4" />
                       <span>View Location</span>
                     </Link>
-                    <button className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                    <Link
+                      href="/messages"
+                      className="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                    >
                       <MessageSquare className="w-4 h-4" />
                       <span>Message Owner</span>
-                    </button>
+                    </Link>
                     {booking.status === 'pending' && (
                       <button
                         onClick={() => handleCancelBooking(booking.id)}

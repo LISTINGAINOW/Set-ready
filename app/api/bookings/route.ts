@@ -12,7 +12,9 @@ let inMemoryBookings: Booking[] = (bookingsData.bookings || []) as Booking[];
 interface LocationData {
   id: string;
   name: string;
+  hostName?: string;
   hostEmail?: string;
+  hostPhone?: string;
 }
 const locations = locationsData as unknown as LocationData[];
 
@@ -40,6 +42,9 @@ interface Booking extends BookingRequest {
   status: 'pending' | 'confirmed' | 'rejected' | 'cancelled';
   createdAt: string;
   propertyName?: string;
+  ownerName?: string;
+  ownerEmail?: string;
+  ownerPhone?: string;
 }
 
 async function readBookings(): Promise<Booking[]> {
@@ -48,6 +53,23 @@ async function readBookings(): Promise<Booking[]> {
 
 async function writeBookings(bookings: Booking[]) {
   inMemoryBookings = bookings;
+}
+
+function enrichBookingsWithOwnerData(bookings: Booking[]) {
+  return bookings.map((booking) => {
+    const locationRecord = locations.find((location) => location.id === booking.locationId);
+
+    if (!locationRecord) {
+      return booking;
+    }
+
+    return {
+      ...booking,
+      ownerName: booking.ownerName ?? locationRecord.hostName ?? null,
+      ownerEmail: booking.ownerEmail ?? locationRecord.hostEmail ?? null,
+      ownerPhone: booking.ownerPhone ?? locationRecord.hostPhone ?? null,
+    };
+  });
 }
 
 export async function POST(request: NextRequest) {
@@ -141,7 +163,7 @@ export async function GET(request: NextRequest) {
   const adminCheck = requireAdminSession(request);
   if (adminCheck === true) {
     try {
-      const bookings = await readBookings();
+      const bookings = enrichBookingsWithOwnerData(await readBookings());
       return NextResponse.json({ bookings });
     } catch (error) {
       return NextResponse.json({ error: 'Failed to fetch bookings' }, { status: 500 });
@@ -164,7 +186,7 @@ export async function GET(request: NextRequest) {
       .eq('id', userId)
       .single();
 
-    const bookings = await readBookings();
+    const bookings = enrichBookingsWithOwnerData(await readBookings());
     // Return bookings belonging to this user (by userId or email match)
     const userBookings = bookings.filter(
       (b) => b.userId === userId || (user && b.email === user.email)

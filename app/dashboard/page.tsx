@@ -248,7 +248,7 @@ export default function DashboardPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <Link href={`/dashboard/bookings/${activity.id}`} className="text-blue-600 hover:text-blue-600 text-sm">
+                      <Link href="/dashboard/bookings" className="text-blue-600 hover:text-blue-600 text-sm">
                         View
                       </Link>
                     </td>
