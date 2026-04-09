@@ -84,7 +84,7 @@ export default async function BookingConfirmationPage({
   }
 
   const sessionCookie = (await cookies()).get('ds-session')?.value;
-  const userId = sessionCookie ? verifySessionCookie(sessionCookie) : null;
+  const userId = sessionCookie ? await verifySessionCookie(sessionCookie) : null;
   if (!userId) {
     return (
       <main className="min-h-screen bg-slate-50 px-4 py-12 text-slate-900">

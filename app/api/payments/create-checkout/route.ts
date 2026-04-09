@@ -5,7 +5,7 @@ import { createCheckoutSession } from '@/lib/stripe';
 import { getBookingById, getPropertySummary } from '@/lib/booking-payment-pipeline';
 
 export async function POST(request: NextRequest) {
-  const userId = requireUserSession(request);
+  const userId = await requireUserSession(request);
   if (typeof userId !== 'string') {
     return userId;
   }
