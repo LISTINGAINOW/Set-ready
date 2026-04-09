@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 let stripeClient: Stripe | null = null;
 
-function getStripeClient() {
+export function getStripeClient() {
   if (stripeClient) return stripeClient;
 
   const apiKey = process.env.STRIPE_SECRET_KEY;
@@ -10,7 +10,9 @@ function getStripeClient() {
     throw new Error('STRIPE_SECRET_KEY is not configured');
   }
 
-  stripeClient = new Stripe(apiKey);
+  stripeClient = new Stripe(apiKey, {
+    apiVersion: '2026-02-25.clover',
+  });
   return stripeClient;
 }
 
@@ -24,7 +26,7 @@ export async function createPaymentIntent(
     const stripe = getStripeClient();
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: Math.round(amount * 100),
       currency,
       metadata,
       receipt_email: customerEmail,
@@ -36,6 +38,65 @@ export async function createPaymentIntent(
     console.error('Error creating payment intent:', error);
     throw error;
   }
+}
+
+export async function createCheckoutSession(input: {
+  customerEmail: string;
+  locationTitle: string;
+  bookingId: string;
+  propertyId: string;
+  baseRate: number;
+  serviceFee: number;
+  origin: string;
+}) {
+  const stripe = getStripeClient();
+
+  return stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    customer_email: input.customerEmail,
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `Location Rental: ${input.locationTitle}`,
+          },
+          unit_amount: Math.round(input.baseRate * 100),
+        },
+        quantity: 1,
+      },
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'SetVenue Service Fee (10%)',
+          },
+          unit_amount: Math.round(input.serviceFee * 100),
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${input.origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${input.origin}/booking/confirmation?bookingId=${encodeURIComponent(input.bookingId)}`,
+    metadata: {
+      booking_id: input.bookingId,
+      property_id: input.propertyId,
+    },
+    payment_intent_data: {
+      metadata: {
+        booking_id: input.bookingId,
+        property_id: input.propertyId,
+      },
+    },
+  });
+}
+
+export async function getCheckoutSession(sessionId: string) {
+  const stripe = getStripeClient();
+  return stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ['line_items'],
+  });
 }
 
 export async function getPaymentIntent(paymentIntentId: string) {
@@ -54,7 +115,7 @@ export async function refundPayment(paymentIntentId: string, reason?: string) {
 
     const refund = await stripe.refunds.create({
       payment_intent: paymentIntentId,
-      reason: (reason as any) || 'requested_by_customer',
+      reason: (reason as Stripe.RefundCreateParams.Reason | undefined) || 'requested_by_customer',
     });
     return refund;
   } catch (error) {
