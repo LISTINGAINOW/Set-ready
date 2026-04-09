@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
         damage_deposit_amount: 0,
         selected_time_slots: [],
         status: 'pending',
-        payment_status: null,
+        payment_status: 'pending',
         // Legal fields from booking form
         hold_harmless_accepted: body.holdHarmless ?? false,
         tos_accepted: false,
