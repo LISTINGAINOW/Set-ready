@@ -13,6 +13,10 @@ type SearchParams = {
   bestUses?: string;
   search?: string;
   priceRange?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  capacityTier?: string;
+  activityType?: string;
   view?: string;
   architecturalStyle?: string | string[];
   locationSetting?: string | string[];
@@ -66,6 +70,21 @@ export const metadata: Metadata = {
 const propertyTypeChips = ['House', 'Studio', 'Warehouse', 'Loft', 'Cabin', 'Penthouse', 'Apartment'];
 const priceRangeChips = ['Under $500/day', '$500–$1K/day', '$1K–$3K/day', '$3K–$5K/day', '$5K+/day'];
 
+const activityTypeOptions = [
+  { value: 'filming', label: 'Filming' },
+  { value: 'photo-shoot', label: 'Photo Shoot' },
+  { value: 'event', label: 'Event' },
+  { value: 'meeting', label: 'Meeting' },
+  { value: 'music-video', label: 'Music Video' },
+  { value: 'commercial', label: 'Commercial' },
+];
+
+const capacityTierChips = [
+  { label: 'Small (1–10)', value: 'small' },
+  { label: 'Medium (11–30)', value: 'medium' },
+  { label: 'Large (31+)', value: 'large' },
+];
+
 const architecturalStyles = ['Modern', 'Contemporary', 'Mid-Century Modern', 'Traditional', 'Victorian', 'Craftsman', 'Mediterranean', 'Spanish Colonial', 'Art Deco', 'Industrial', 'Minimalist', 'Rustic', 'Farmhouse', 'Colonial', 'Cape Cod', 'Tudor', 'Bohemian', 'Tropical', 'Japanese', 'Scandinavian'];
 const locationSettingOptions = ['Beachfront', 'Ocean View', 'Mountain View', 'City View', 'Hillside', 'Desert', 'Forest', 'Lakefront', 'Riverfront', 'Downtown', 'Suburban', 'Rural', 'Gated Community', 'Private Road'];
 const outdoorFeaturesList = ['Pool', 'Hot Tub/Jacuzzi', 'Tennis Court', 'Basketball Court', 'Rooftop Deck', 'Patio/Terrace', 'Balcony', 'Garden/Yard', 'Fire Pit', 'Outdoor Kitchen/BBQ', 'Gazebo', 'Fountain', 'Vineyard', 'Orchard', 'Horse Stables', 'Dock/Marina'];
@@ -116,6 +135,64 @@ function matchesPriceRange(pricePerHour: number, priceRange?: string) {
   return true;
 }
 
+function matchesPriceMinMax(pricePerHour: number, minPrice?: string, maxPrice?: string) {
+  const daily = pricePerHour * 8;
+  if (minPrice) {
+    const min = Number(minPrice);
+    if (!isNaN(min) && daily < min) return false;
+  }
+  if (maxPrice) {
+    const max = Number(maxPrice);
+    if (!isNaN(max) && max > 0 && daily > max) return false;
+  }
+  return true;
+}
+
+function matchesCapacityTier(location: Location, capacityTier?: string) {
+  if (!capacityTier) return true;
+  const cap = (location.maxCapacity ?? location.maxGuests ?? null);
+  // If capacity unknown, don't filter out
+  if (cap === null) return true;
+  if (capacityTier === 'small') return cap >= 1 && cap <= 10;
+  if (capacityTier === 'medium') return cap >= 11 && cap <= 30;
+  if (capacityTier === 'large') return cap >= 31;
+  return true;
+}
+
+function matchesActivityType(location: Location, activityType?: string) {
+  if (!activityType) return true;
+  const loc = location as any;
+  const contentTypes = ((loc.contentTypes || []) as string[]).map((x: string) => x.toLowerCase());
+  const bestUses = ((location.bestUses || []) as string[]).map((x: string) => x.toLowerCase());
+  const contentPerms = ((loc.contentPermissions || []) as string[]).map((x: string) => x.toLowerCase());
+
+  if (activityType === 'filming') {
+    return contentTypes.some((t) => ['film', 'tv', 'mainstream film/tv'].includes(t)) ||
+      bestUses.some((u) => u.includes('film'));
+  }
+  if (activityType === 'photo-shoot') {
+    return contentTypes.some((t) => ['photography', 'photo shoots'].includes(t)) ||
+      bestUses.some((u) => u.includes('photo')) ||
+      contentPerms.some((p) => p.includes('photo'));
+  }
+  if (activityType === 'event') {
+    return contentTypes.some((t) => ['events', 'events/parties'].includes(t)) ||
+      bestUses.some((u) => u.includes('event'));
+  }
+  if (activityType === 'meeting') {
+    return bestUses.some((u) => u.includes('corporate') || u.includes('retreat') || u.includes('meeting'));
+  }
+  if (activityType === 'music-video') {
+    return contentTypes.some((t) => t.includes('music')) ||
+      contentPerms.some((p) => p.includes('music'));
+  }
+  if (activityType === 'commercial') {
+    return contentTypes.some((t) => t.includes('commercial')) ||
+      contentPerms.some((p) => p.includes('commercial'));
+  }
+  return true;
+}
+
 function filterLocations(locations: Location[], filters: SearchParams) {
   return locations.filter((location) => {
     if (filters.propertyType && location.propertyType !== filters.propertyType.toLowerCase()) {
@@ -123,6 +200,18 @@ function filterLocations(locations: Location[], filters: SearchParams) {
     }
 
     if (!matchesPriceRange(location.pricePerHour, filters.priceRange)) {
+      return false;
+    }
+
+    if (!matchesPriceMinMax(location.pricePerHour, filters.minPrice, filters.maxPrice)) {
+      return false;
+    }
+
+    if (!matchesCapacityTier(location, filters.capacityTier)) {
+      return false;
+    }
+
+    if (!matchesActivityType(location, filters.activityType)) {
       return false;
     }
 
@@ -325,6 +414,20 @@ export default async function LocationsPage({
               </div>
 
               <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Activity type</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {activityTypeOptions.map(({ value, label }) => (
+                    <FilterChip
+                      key={value}
+                      href={buildChipHref(params, 'activityType', value)}
+                      label={label}
+                      active={params.activityType === value}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Rate</p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   {priceRangeChips.map((chip) => (
@@ -333,6 +436,51 @@ export default async function LocationsPage({
                       href={buildChipHref(params, 'priceRange', chip)}
                       label={chip}
                       active={params.priceRange === chip}
+                    />
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-black/50">Custom:</span>
+                    <span className="text-xs text-black/40">$</span>
+                    <input
+                      type="number"
+                      form="filter-form"
+                      name="minPrice"
+                      placeholder="Min/day"
+                      defaultValue={params.minPrice || ''}
+                      min="0"
+                      className="w-24 rounded-xl border border-black/20 bg-white px-3 py-2 text-sm text-black outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <span className="text-black/30">–</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-black/40">$</span>
+                    <input
+                      type="number"
+                      form="filter-form"
+                      name="maxPrice"
+                      placeholder="Max/day"
+                      defaultValue={params.maxPrice || ''}
+                      min="0"
+                      className="w-24 rounded-xl border border-black/20 bg-white px-3 py-2 text-sm text-black outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  {(params.minPrice || params.maxPrice) && (
+                    <a href={buildHref(params, { minPrice: undefined, maxPrice: undefined })} className="text-xs text-blue-500 hover:underline">clear</a>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Crew size / Capacity</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {capacityTierChips.map(({ label, value }) => (
+                    <FilterChip
+                      key={value}
+                      href={buildChipHref(params, 'capacityTier', value)}
+                      label={label}
+                      active={params.capacityTier === value}
                     />
                   ))}
                 </div>
@@ -361,7 +509,7 @@ export default async function LocationsPage({
               </div>
             </div>
 
-            <form method="GET" className="rounded-[24px] border border-black bg-[#FAFAFA] p-4 sm:rounded-[28px] sm:p-6">
+            <form id="filter-form" method="GET" className="rounded-[24px] border border-black bg-[#FAFAFA] p-4 sm:rounded-[28px] sm:p-6">
               <div className="mb-5 flex flex-col gap-4 border-b border-black/10 pb-5 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.28em] text-black/50">Browse mode</p>
@@ -390,6 +538,8 @@ export default async function LocationsPage({
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
                 <input type="hidden" name="propertyType" value={params.propertyType || ''} />
                 <input type="hidden" name="priceRange" value={params.priceRange || ''} />
+                <input type="hidden" name="activityType" value={params.activityType || ''} />
+                <input type="hidden" name="capacityTier" value={params.capacityTier || ''} />
                 <input type="hidden" name="view" value={currentView === 'map' ? 'map' : ''} />
                 <select
                   name="amenities"
