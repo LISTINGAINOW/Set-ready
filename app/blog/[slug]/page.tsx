@@ -100,7 +100,7 @@ export default function BlogPostPage({ params }: PageProps) {
       name: 'SetVenue',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://setvenue.com/icons/icon-512.png',
+        url: 'https://setvenue.com/icons/icon-512.png', // logo stays as PNG for schema.org
       },
     },
     keywords: post.tags.join(', '),

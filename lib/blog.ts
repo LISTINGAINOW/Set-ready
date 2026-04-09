@@ -2,7 +2,7 @@ import blogPostsData from '@/data/blog-posts.json';
 
 const SITE_URL = 'https://setvenue.com';
 const BLOG_PATH = '/blog';
-const DEFAULT_OG_IMAGE = '/icons/icon-512.png';
+const DEFAULT_OG_IMAGE = '/api/og?type=default&title=Blog';
 
 export type BlogAuthor = {
   name: string;

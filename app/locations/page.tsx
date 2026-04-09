@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/icons/icon-512.png',
-        width: 512,
-        height: 512,
+        url: '/api/og?type=default&title=Locations',
+        width: 1200,
+        height: 630,
         alt: 'SetVenue locations marketplace',
       },
     ],
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `${locationsPageTitle} | SetVenue`,
     description: locationsPageDescription,
-    images: ['/icons/icon-512.png'],
+    images: ['/api/og?type=default&title=Locations'],
   },
 };
 
