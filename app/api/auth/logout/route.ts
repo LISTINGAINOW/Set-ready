@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { validateCsrf } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
-  if (!validateCsrf(request)) {
-    return NextResponse.json({ error: 'Security validation failed. Refresh the page and try again.' }, { status: 403 });
-  }
+  const csrfValid = validateCsrf(request);
+  const response = csrfValid
+    ? NextResponse.json({ success: true })
+    : NextResponse.json(
+        { error: 'Security validation failed. Refresh the page and try again.' },
+        { status: 403 }
+      );
 
-  const response = NextResponse.json({ success: true });
   response.cookies.set('ds-session', '', {
     httpOnly: true,
     sameSite: 'strict',
@@ -14,6 +17,10 @@ export async function POST(request: NextRequest) {
     path: '/',
     maxAge: 0,
   });
+
+  if (!csrfValid) {
+    console.warn('[auth/logout] CSRF validation failed; cleared ds-session cookie anyway.');
+  }
 
   return response;
 }

@@ -43,7 +43,7 @@ export default function BookingsPage() {
         const bookingsData = await bookingsRes.json();
         const locationsData = await locationsRes.json();
         setBookings(bookingsData.bookings || []);
-        setLocations(locationsData || []);
+        setLocations(locationsData.locations || []);
       } catch (error) {
         console.error('Failed to fetch data', error);
       } finally {
@@ -145,7 +145,7 @@ export default function BookingsPage() {
             className={`px-4 py-3 font-medium text-sm border-b-2 transition-colors ${activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-blue-500 hover:text-blue-700'}`}
             onClick={() => handleTabChange(tab.id)}
           >
-            {tab.label} {getTabCount(tab.id) > 0 && <span className="ml-2 bg-blue-100 text-white text-xs px-2 py-1 rounded-full">{getTabCount(tab.id)}</span>}
+            {tab.label} {getTabCount(tab.id) > 0 && <span className="ml-2 bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">{getTabCount(tab.id)}</span>}
           </button>
         ))}
       </div>
