@@ -28,6 +28,7 @@ interface BookingModalProps {
   securityDeposit?: number;
   securityDepositRequiredWhen?: string;
   initialDate?: string;
+  initialDates?: string[];
   initialTimeSlots?: string[];
   triggerLabel?: string;
   triggerClassName?: string;

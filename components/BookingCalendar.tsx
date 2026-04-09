@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { Ban, ChevronLeft, ChevronRight, Clock, DollarSign, CalendarRange } from 'lucide-react';
+import { Ban, ChevronLeft, ChevronRight, Clock, DollarSign } from 'lucide-react';
 import type { LocationAvailabilityBlock } from '@/types/location';
 import { buildAvailabilityMap, DEFAULT_TIME_SLOTS, formatMonth, formatSelectedDate, getCalendarDays, toDateKey, parseDateKey } from '@/lib/availability';
 
 const SLOT_DURATION_HOURS = 3;
-const SERVICE_FEE_RATE = 0.05;
+const SERVICE_FEE_RATE = 0.10; // Must match PRODUCER_FEE_RATE in lib/pricing.ts
 
 type BookingAvailability = {
   date: string;
@@ -64,8 +64,6 @@ export default function BookingCalendar({
     return now;
   }, []);
   const [currentMonth, setCurrentMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
-  const [selectionMode, setSelectionMode] = useState<'single' | 'range'>('single');
-  const [selectedDate, setSelectedDate] = useState('');
   const [rangeStart, setRangeStart] = useState('');
   const [rangeEnd, setRangeEnd] = useState('');
   const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
@@ -77,13 +75,11 @@ export default function BookingCalendar({
 
   const days = useMemo(() => getCalendarDays({ currentMonth, today, availabilityMap }), [availabilityMap, currentMonth, today]);
 
-  // Compute selected dates for range mode
   const selectedDates = useMemo(() => {
-    if (selectionMode === 'single') return selectedDate ? [selectedDate] : [];
     if (rangeStart && rangeEnd) return getDatesBetween(rangeStart, rangeEnd);
     if (rangeStart) return [rangeStart];
     return [];
-  }, [selectionMode, selectedDate, rangeStart, rangeEnd]);
+  }, [rangeStart, rangeEnd]);
 
   // Check for blocked dates in range
   const blockedInRange = useMemo(() => {
@@ -94,77 +90,68 @@ export default function BookingCalendar({
   }, [selectedDates, availabilityMap]);
 
   const numDays = selectedDates.length;
-  const isMultiDay = selectionMode === 'range' && numDays > 1;
+  const isMultiDay = numDays > 1;
+  const activeDate = rangeStart;
 
-  // Pricing calculations
-  const selectedDay = selectedDate ? days.find((day) => day.dateKey === selectedDate) : undefined;
-  const selectedAvailableSlots = selectedDay?.availableSlots || [];
-  const singleDayHours = selectedTimeSlots.length * SLOT_DURATION_HOURS;
-
-  // For multi-day: assume full-day booking per day (all 4 slots = 12 hours)
-  const multiDayHoursPerDay = DEFAULT_TIME_SLOTS.length * SLOT_DURATION_HOURS; // 12 hours
-  const totalHours = isMultiDay
-    ? numDays * multiDayHoursPerDay
-    : singleDayHours;
-
-  // Use daily rate if available for multi-day, otherwise hourly
-  const baseRate = isMultiDay
-    ? (pricePerDay && pricePerDay > 0 ? pricePerDay * numDays : totalHours * hourlyRate)
-    : singleDayHours * hourlyRate;
+  const selectedDay = activeDate ? days.find((day) => day.dateKey === activeDate) : undefined;
+  const selectedAvailableSlots = useMemo(() => {
+    if (selectedDates.length === 0) return [] as string[];
+    const slotSets = selectedDates.map((dateKey) => new Set(availabilityMap.get(dateKey)?.availableSlots || []));
+    return DEFAULT_TIME_SLOTS.filter((slot) => slotSets.every((set) => set.has(slot)));
+  }, [availabilityMap, selectedDates]);
+  const selectedHoursPerDay = selectedTimeSlots.length * SLOT_DURATION_HOURS;
+  const totalHours = selectedHoursPerDay * Math.max(numDays, 1);
+  const isFullDayAcrossRange = selectedTimeSlots.length === DEFAULT_TIME_SLOTS.length;
+  const baseRate = isMultiDay && pricePerDay && pricePerDay > 0 && isFullDayAcrossRange
+    ? pricePerDay * numDays
+    : totalHours * hourlyRate;
 
   const serviceFee = baseRate * SERVICE_FEE_RATE;
   const total = baseRate + serviceFee;
-  const meetsMinimum = isMultiDay ? numDays >= 1 : singleDayHours >= minimumBookingHours;
+  const meetsMinimum = selectedHoursPerDay >= minimumBookingHours;
 
-  // Notify parent of selection changes
   useEffect(() => {
     onSelectionChange?.({
-      selectedDate: isMultiDay ? rangeStart : selectedDate,
+      selectedDate: rangeStart,
       selectedDates,
-      selectedTimeSlots: isMultiDay ? [...DEFAULT_TIME_SLOTS] : selectedTimeSlots,
+      selectedTimeSlots,
       isMultiDay,
     });
-  }, [onSelectionChange, selectedDate, selectedDates, selectedTimeSlots, isMultiDay, rangeStart]);
+  }, [onSelectionChange, rangeStart, selectedDates, selectedTimeSlots, isMultiDay]);
 
   useEffect(() => {
-    if (selectionMode === 'single' && selectedDate && availabilityMap.has(selectedDate)) {
-      const nextSlots = availabilityMap.get(selectedDate)?.availableSlots || [];
-      setSelectedTimeSlots((current) => current.filter((slot) => nextSlots.includes(slot)));
-    }
-  }, [availabilityMap, selectedDate, selectionMode]);
+    setSelectedTimeSlots((current) => current.filter((slot) => selectedAvailableSlots.includes(slot)));
+  }, [selectedAvailableSlots]);
 
   const handleDayClick = useCallback((day: ReturnType<typeof getCalendarDays>[number]) => {
     if (!day.inMonth || day.isPast) return;
 
     if (mode === 'host') {
-      setSelectedDate(day.dateKey);
+      setRangeStart(day.dateKey);
+      setRangeEnd('');
       setSelectedTimeSlots([]);
       onDayToggle?.(day.dateKey);
       return;
     }
 
-    if (!day.isAvailable && selectionMode === 'single') return;
+    if (!day.isAvailable) return;
 
-    if (selectionMode === 'single') {
-      setSelectedDate(day.dateKey);
+    if (!rangeStart || (rangeStart && rangeEnd)) {
+      setRangeStart(day.dateKey);
+      setRangeEnd('');
       setSelectedTimeSlots([]);
-    } else {
-      // Range selection
-      if (!rangeStart || (rangeStart && rangeEnd)) {
-        // Start new range
-        setRangeStart(day.dateKey);
-        setRangeEnd('');
-      } else {
-        // Complete range
-        if (day.dateKey < rangeStart) {
-          setRangeEnd(rangeStart);
-          setRangeStart(day.dateKey);
-        } else {
-          setRangeEnd(day.dateKey);
-        }
-      }
+      return;
     }
-  }, [mode, selectionMode, rangeStart, rangeEnd, onDayToggle]);
+
+    if (day.dateKey < rangeStart) {
+      setRangeEnd(rangeStart);
+      setRangeStart(day.dateKey);
+    } else if (day.dateKey === rangeStart) {
+      setRangeEnd('');
+    } else {
+      setRangeEnd(day.dateKey);
+    }
+  }, [mode, rangeStart, rangeEnd, onDayToggle]);
 
   const toggleTimeSlot = (slot: string) => {
     setSelectedTimeSlots((current) =>
@@ -176,14 +163,11 @@ export default function BookingCalendar({
     setSelectedTimeSlots([...DEFAULT_TIME_SLOTS]);
   };
 
-  const canBook = isMultiDay
-    ? numDays >= 1 && blockedInRange.length === 0
-    : Boolean(selectedDate && selectedTimeSlots.length > 0 && meetsMinimum);
+  const canBook = Boolean(rangeStart && selectedTimeSlots.length > 0 && meetsMinimum && blockedInRange.length === 0);
 
   const isHostMode = mode === 'host';
 
   const isInRange = (dateKey: string) => {
-    if (selectionMode !== 'range') return false;
     if (!rangeStart) return false;
     if (!rangeEnd) return dateKey === rangeStart;
     return dateKey >= rangeStart && dateKey <= rangeEnd;
@@ -201,9 +185,7 @@ export default function BookingCalendar({
           <p className={`mt-1 text-sm ${isHostMode ? 'text-white/60' : 'text-black/60'}`}>
             {isHostMode
               ? 'Click dates to block or unblock them. Existing bookings stay visible so you can avoid conflicts.'
-              : selectionMode === 'range'
-                ? 'Click a start date, then click an end date to select your shoot dates.'
-                : 'Pick a date, choose time blocks, and see the total instantly.'}
+              : 'Click one date for a single-day booking, or click a second date for a multi-day booking. Then choose the hours you need.'}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -217,45 +199,7 @@ export default function BookingCalendar({
         </div>
       </div>
 
-      {/* Mode toggle — single day vs multi-day range */}
-      {!isHostMode && (
-        <div className="mt-5 flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => {
-              setSelectionMode('single');
-              setRangeStart('');
-              setRangeEnd('');
-            }}
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
-              selectionMode === 'single'
-                ? 'border-blue-500 bg-blue-500 text-white'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600'
-            }`}
-          >
-            <Clock className="h-4 w-4" />
-            Single day
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectionMode('range');
-              setSelectedDate('');
-              setSelectedTimeSlots([]);
-            }}
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
-              selectionMode === 'range'
-                ? 'border-blue-500 bg-blue-500 text-white'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600'
-            }`}
-          >
-            <CalendarRange className="h-4 w-4" />
-            Multi-day / weekly / monthly
-          </button>
-        </div>
-      )}
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_400px]">
         <div>
           <div className="flex items-center justify-between">
             <button
@@ -285,13 +229,15 @@ export default function BookingCalendar({
             ))}
           </div>
 
-          <div className="mt-2 grid grid-cols-7 gap-2">
+          <div className="mt-2 grid grid-cols-7 gap-1.5 lg:gap-2">
             {days.map((day) => {
-              const isSelected = selectionMode === 'single'
-                ? selectedDate === day.dateKey
-                : isInRange(day.dateKey);
-              const isEdge = selectionMode === 'range' && isRangeEdge(day.dateKey);
-              const isDisabled = !day.inMonth || day.isPast || (!isHostMode && selectionMode === 'single' && !day.isAvailable);
+              const isSelected = isInRange(day.dateKey);
+              const isEdge = isRangeEdge(day.dateKey);
+              const isDisabled = !day.inMonth || day.isPast || (!isHostMode && !day.isAvailable);
+
+              // Determine status label and badge style for this cell
+              const isAvailableOpen = day.inMonth && !day.isPast && !day.isBlocked && day.availableSlots.length > 0;
+              const isFullyBooked = day.inMonth && !day.isPast && !day.isBlocked && day.availableSlots.length === 0 && day.bookedSlots.length > 0;
 
               return (
                 <button
@@ -299,38 +245,90 @@ export default function BookingCalendar({
                   type="button"
                   onClick={() => handleDayClick(day)}
                   disabled={isDisabled && !isHostMode}
+                  aria-label={`${day.dateKey}${day.isBlocked ? ', blocked' : ''}${day.isPast ? ', past' : ''}${!day.isAvailable && !day.isPast && !day.isBlocked ? ', unavailable' : ''}${isSelected ? ', selected' : ''}`}
+                  aria-pressed={isSelected}
                   className={[
-                    'relative min-h-[78px] rounded-2xl border p-3 text-left transition',
-                    !day.inMonth ? 'border-transparent bg-transparent text-white/20' : '',
-                    isHostMode && day.inMonth && !day.isPast && !day.isBlocked ? 'border-white/10 bg-white/5 text-white hover:border-blue-500 hover:bg-blue-500/10' : '',
-                    isHostMode && day.isBlocked ? 'border-blue-500/40 bg-blue-500/20 text-white' : '',
-                    !isHostMode && day.inMonth && !isSelected && day.isAvailable ? 'border-black/10 bg-white text-black hover:border-blue-500 hover:shadow-sm' : '',
-                    !isHostMode && day.inMonth && !day.isPast && !day.isAvailable && !isSelected ? 'border-black/10 bg-black/10 text-black/35 line-through' : '',
-                    day.isPast ? (isHostMode ? 'border-white/5 bg-white/[0.03] text-white/25' : 'border-black/5 bg-black/5 text-black/20') : '',
-                    // Single day selected
-                    isSelected && selectionMode === 'single' ? (isHostMode ? 'border-white bg-white/15 shadow-[0_10px_30px_rgba(59,130,246,0.20)]' : 'border-blue-500 bg-blue-500 text-white shadow-[0_10px_30px_rgba(59,130,246,0.25)]') : '',
-                    // Range selected — edge dates (start/end)
-                    isSelected && selectionMode === 'range' && isEdge ? 'border-blue-500 bg-blue-500 text-white shadow-[0_10px_30px_rgba(59,130,246,0.25)]' : '',
-                    // Range selected — middle dates
-                    isSelected && selectionMode === 'range' && !isEdge ? 'border-blue-300 bg-blue-100 text-blue-800' : '',
-                    // Range mode hover on available dates
-                    !isSelected && selectionMode === 'range' && day.inMonth && !day.isPast ? 'cursor-pointer hover:border-blue-400 hover:bg-blue-50' : '',
+                    // Base: clean rounded card, centered content, good padding
+                    'relative flex flex-col items-center justify-center gap-1.5 rounded-2xl border py-3 px-1 text-center transition-all duration-150',
+                    // Height: generous so status label has room to breathe
+                    'min-h-[72px] sm:min-h-[84px] lg:min-h-[92px]',
+                    // Out-of-month: ghost
+                    !day.inMonth ? 'border-transparent bg-transparent pointer-events-none' : '',
+                    // Past days
+                    day.inMonth && day.isPast ? (isHostMode ? 'border-white/5 bg-white/[0.03] cursor-not-allowed' : 'border-black/5 bg-black/[0.03] cursor-not-allowed') : '',
+                    // Host mode — normal open day
+                    isHostMode && day.inMonth && !day.isPast && !day.isBlocked ? 'border-white/10 bg-white/5 hover:border-blue-400 hover:bg-blue-500/10 cursor-pointer' : '',
+                    // Host mode — blocked day
+                    isHostMode && day.isBlocked ? 'border-red-400/40 bg-red-500/15 cursor-pointer' : '',
+                    // Guest mode — available
+                    !isHostMode && isAvailableOpen && !isSelected ? 'border-black/10 bg-white hover:border-blue-500 hover:bg-blue-50 hover:shadow-md cursor-pointer' : '',
+                    // Guest mode — booked/unavailable
+                    !isHostMode && isFullyBooked && !isSelected ? 'border-black/8 bg-black/5 cursor-not-allowed' : '',
+                    // Guest mode — out of stock (no slots, no bookings, not blocked — edge case)
+                    !isHostMode && day.inMonth && !day.isPast && !isAvailableOpen && !isFullyBooked && !day.isBlocked && !isSelected ? 'border-black/8 bg-black/5 cursor-not-allowed' : '',
+                    // Selected edge (start/end)
+                    isSelected && isEdge ? (isHostMode ? 'border-blue-400 bg-blue-500/20 shadow-[0_6px_20px_rgba(59,130,246,0.20)]' : 'border-blue-500 bg-blue-600 shadow-[0_6px_20px_rgba(59,130,246,0.30)] cursor-pointer') : '',
+                    // Selected middle of range
+                    isSelected && !isEdge ? 'border-blue-300 bg-blue-100 cursor-pointer' : '',
                   ].join(' ')}
                 >
-                  <span className="text-sm font-semibold">{day.dayNumber}</span>
-                  {day.isBlocked && (
-                    <span className={`absolute bottom-3 left-3 text-[11px] font-medium ${isHostMode || (isSelected && isEdge) ? 'text-blue-100' : 'text-blue-600'}`}>
-                      Blocked
-                    </span>
-                  )}
-                  {!day.isBlocked && day.availableSlots.length > 0 && !isSelected && (
-                    <span className={`absolute bottom-3 left-3 text-[11px] font-medium ${isHostMode ? 'text-blue-200' : 'text-blue-600'}`}>
-                      {isHostMode ? `${day.availableSlots.length} open` : `${day.availableSlots.length} slots`}
-                    </span>
-                  )}
-                  {!day.isBlocked && day.availableSlots.length === 0 && day.bookedSlots.length > 0 && (
-                    <span className={`absolute bottom-3 left-3 text-[11px] font-medium ${isHostMode ? 'text-white/45' : 'text-black/35'}`}>
-                      Booked
+                  {day.inMonth ? (
+                    <>
+                      {/* Day number — large and prominent */}
+                      <span
+                        className={[
+                          'text-xl font-bold leading-none sm:text-2xl',
+                          day.isPast ? (isHostMode ? 'text-white/20' : 'text-black/20') : '',
+                          isSelected && isEdge && !isHostMode ? 'text-white' : '',
+                          isSelected && isEdge && isHostMode ? 'text-blue-100' : '',
+                          isSelected && !isEdge ? 'text-blue-700' : '',
+                          !isSelected && !day.isPast && isHostMode ? 'text-white' : '',
+                          !isSelected && !day.isPast && !isHostMode ? 'text-gray-900' : '',
+                        ].join(' ')}
+                      >
+                        {day.dayNumber}
+                      </span>
+
+                      {/* Status badge — clearly readable */}
+                      {!day.isPast && (
+                        <div className="flex items-center justify-center">
+                          {day.isBlocked && (
+                            <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                              isHostMode ? 'bg-red-500/20 text-red-300' : 'bg-red-100 text-red-600'
+                            }`}>
+                              Blocked
+                            </span>
+                          )}
+                          {!day.isBlocked && isAvailableOpen && !isSelected && (
+                            <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                              isHostMode ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700'
+                            }`}>
+                              {isHostMode ? `${day.availableSlots.length} open` : 'Open'}
+                            </span>
+                          )}
+                          {!day.isBlocked && isFullyBooked && !isSelected && (
+                            <span className={`rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                              isHostMode ? 'bg-white/10 text-white/40' : 'bg-gray-100 text-gray-500'
+                            }`}>
+                              Booked
+                            </span>
+                          )}
+                          {isSelected && isEdge && !isHostMode && (
+                            <span className="rounded-full bg-white/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                              {rangeEnd && day.dateKey === rangeStart ? 'Start' : rangeEnd && day.dateKey === rangeEnd ? 'End' : 'Selected'}
+                            </span>
+                          )}
+                          {isSelected && !isEdge && (
+                            <span className="rounded-full bg-blue-200 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-blue-700">
+                              ·
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <span className={`text-lg font-light ${isHostMode ? 'text-white/10' : 'text-black/10'}`}>
+                      {day.dayNumber}
                     </span>
                   )}
                 </button>
@@ -340,17 +338,19 @@ export default function BookingCalendar({
         </div>
 
         <div className="space-y-4">
-          {/* Time slots panel (single day mode) */}
-          {selectionMode === 'single' && (
-            <div className={`rounded-2xl border p-5 ${isHostMode ? 'border-white/10 bg-white/[0.03]' : 'border-black/10 bg-black/[0.02]'}`}>
+          <div className={`rounded-2xl border p-5 ${isHostMode ? 'border-white/10 bg-white/[0.03]' : 'border-black/10 bg-black/[0.02]'}`}>
               <div className={`flex items-center gap-2 ${isHostMode ? 'text-white' : 'text-black'}`}>
                 {isHostMode ? <Ban className="h-4 w-4 text-blue-300" /> : <Clock className="h-4 w-4 text-blue-600" />}
                 <h4 className="font-semibold">{isHostMode ? 'Day status' : 'Available time slots'}</h4>
               </div>
 
-              {selectedDate ? (
+              {rangeStart ? (
                 <>
-                  <p className={`mt-2 text-sm ${isHostMode ? 'text-white/60' : 'text-black/60'}`}>{formatSelectedDate(selectedDate)}</p>
+                  <p className={`mt-2 text-sm ${isHostMode ? 'text-white/60' : 'text-black/60'}`}>
+                    {isMultiDay && rangeEnd
+                      ? `${formatSelectedDate(rangeStart)} – ${formatSelectedDate(rangeEnd)}`
+                      : formatSelectedDate(rangeStart)}
+                  </p>
 
                   {isHostMode ? (
                     <div className="mt-4 space-y-3 text-sm">
@@ -368,29 +368,29 @@ export default function BookingCalendar({
                     <div className="mt-4 space-y-3">
                       <div className="flex flex-wrap gap-3">
                         {selectedAvailableSlots.length > 0 ? (
-                          <>
-                            {selectedAvailableSlots.map((slot) => {
-                              const active = selectedTimeSlots.includes(slot);
-                              return (
-                                <button
-                                  key={slot}
-                                  type="button"
-                                  onClick={() => toggleTimeSlot(slot)}
-                                  className={[
-                                    'rounded-full border px-4 py-3 text-sm font-semibold transition',
-                                    active
-                                      ? 'border-blue-500 bg-blue-500 text-white shadow-[0_10px_24px_rgba(59,130,246,0.2)]'
-                                      : 'border-black/10 bg-white text-black hover:border-blue-500 hover:text-blue-600',
-                                  ].join(' ')}
-                                >
-                                  {slot}
-                                </button>
-                              );
-                            })}
-                          </>
+                          selectedAvailableSlots.map((slot) => {
+                            const active = selectedTimeSlots.includes(slot);
+                            return (
+                              <button
+                                key={slot}
+                                type="button"
+                                onClick={() => toggleTimeSlot(slot)}
+                                aria-pressed={active}
+                                aria-label={active ? `Deselect time slot ${slot}` : `Select time slot ${slot}`}
+                                className={[
+                                  'rounded-full border px-4 py-3 text-sm font-semibold transition',
+                                  active
+                                    ? 'border-blue-500 bg-blue-500 text-white shadow-[0_10px_24px_rgba(59,130,246,0.2)]'
+                                    : 'border-black/10 bg-white text-black hover:border-blue-500 hover:text-blue-600',
+                                ].join(' ')}
+                              >
+                                {slot}
+                              </button>
+                            );
+                          })
                         ) : (
                           <div className="rounded-2xl border border-dashed border-black/15 bg-white px-4 py-6 text-sm text-black/50">
-                            {selectedDay?.isBlocked ? 'This date is blocked by the host.' : 'No available slots for this date.'}
+                            {selectedDay?.isBlocked ? 'This date is blocked by the host.' : isMultiDay ? 'No shared time blocks are available across all selected dates.' : 'No available slots for this date.'}
                           </div>
                         )}
                       </div>
@@ -408,168 +408,126 @@ export default function BookingCalendar({
                 </>
               ) : (
                 <div className={`mt-3 rounded-2xl border border-dashed px-4 py-6 text-sm ${isHostMode ? 'border-white/10 bg-black/20 text-white/50' : 'border-black/15 bg-white text-black/50'}`}>
-                  {isHostMode ? 'Select a date to inspect or toggle its availability.' : 'Select an available date to see open booking times.'}
+                  {isHostMode ? 'Select a date to inspect or toggle its availability.' : 'Select a start date to unlock time selection.'}
                 </div>
               )}
             </div>
-          )}
 
-          {/* Multi-day range summary */}
-          {selectionMode === 'range' && (
-            <div className={`rounded-2xl border p-5 ${isHostMode ? 'border-white/10 bg-white/[0.03]' : 'border-black/10 bg-black/[0.02]'}`}>
-              <div className="flex items-center gap-2 text-black">
-                <CalendarRange className="h-4 w-4 text-blue-600" />
-                <h4 className="font-semibold">Date range</h4>
-              </div>
-              {rangeStart ? (
-                <div className="mt-3 space-y-2">
+          <div className={`rounded-2xl border p-5 ${isHostMode ? 'border-white/10 bg-white/[0.03]' : 'border-black/10 bg-black/[0.02]'}`}>
+            <div className="flex items-center gap-2 text-black">
+              <Clock className="h-4 w-4 text-blue-600" />
+              <h4 className="font-semibold">Date selection</h4>
+            </div>
+            {rangeStart ? (
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-black/60">Start</span>
+                  <span className="font-medium text-black">{formatSelectedDate(rangeStart)}</span>
+                </div>
+                {rangeEnd ? (
+                  <>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-black/60">End</span>
+                      <span className="font-medium text-black">{formatSelectedDate(rangeEnd)}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-black/60">Total days</span>
+                      <span className="font-semibold text-blue-600">{numDays} day{numDays !== 1 ? 's' : ''}</span>
+                    </div>
+                  </>
+                ) : (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-black/60">Start</span>
-                    <span className="font-medium text-black">{formatSelectedDate(rangeStart)}</span>
+                    <span className="text-black/60">Selection</span>
+                    <span className="font-semibold text-blue-600">Single day</span>
                   </div>
-                  {rangeEnd ? (
-                    <>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-black/60">End</span>
-                        <span className="font-medium text-black">{formatSelectedDate(rangeEnd)}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-black/60">Total days</span>
-                        <span className="font-semibold text-blue-600">{numDays} day{numDays !== 1 ? 's' : ''}</span>
-                      </div>
-                      {blockedInRange.length > 0 && (
-                        <div className="mt-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-                          ⚠️ {blockedInRange.length} date{blockedInRange.length !== 1 ? 's' : ''} in your range {blockedInRange.length !== 1 ? 'are' : 'is'} blocked. The host will confirm availability.
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-sm text-blue-600">Now click an end date on the calendar.</p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => { setRangeStart(''); setRangeEnd(''); }}
-                    className="mt-2 text-sm font-medium text-slate-500 transition hover:text-red-500"
-                  >
-                    Clear selection
-                  </button>
-                </div>
-              ) : (
-                <div className="mt-3 rounded-2xl border border-dashed border-black/15 bg-white px-4 py-6 text-sm text-black/50">
-                  Click a start date on the calendar to begin selecting your range.
-                </div>
-              )}
-            </div>
-          )}
+                )}
+                {blockedInRange.length > 0 && (
+                  <div className="mt-2 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
+                    ⚠️ {blockedInRange.length} date{blockedInRange.length !== 1 ? 's' : ''} in your range {blockedInRange.length !== 1 ? 'are' : 'is'} blocked. Pick different dates.
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => { setRangeStart(''); setRangeEnd(''); setSelectedTimeSlots([]); }}
+                  className="mt-2 text-sm font-medium text-slate-500 transition hover:text-red-500"
+                >
+                  Clear selection
+                </button>
+              </div>
+            ) : (
+              <div className="mt-3 rounded-2xl border border-dashed border-black/15 bg-white px-4 py-6 text-sm text-black/50">
+                Click a date to start. Click a second date only if you want a multi-day booking.
+              </div>
+            )}
+          </div>
 
-          {/* Pricing summary */}
           <div className={`rounded-2xl border p-5 ${isHostMode ? 'border-blue-500/20 bg-blue-500/10' : 'border-blue-200 bg-blue-50'}`}>
             <div className={`flex items-center gap-2 ${isHostMode ? 'text-white' : 'text-black'}`}>
               <DollarSign className={`h-4 w-4 ${isHostMode ? 'text-blue-300' : 'text-blue-600'}`} />
               <h4 className="font-semibold">{isHostMode ? 'Availability summary' : 'Booking summary'}</h4>
             </div>
             <div className={`mt-4 space-y-3 text-sm ${isHostMode ? 'text-white/70' : 'text-black/70'}`}>
-              {isMultiDay ? (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span>Date range</span>
-                    <span className="font-medium text-black">
-                      {rangeStart && rangeEnd ? `${formatSelectedDate(rangeStart)} – ${formatSelectedDate(rangeEnd)}` : 'Not selected'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Duration</span>
-                    <span className="font-medium text-black">{numDays} day{numDays !== 1 ? 's' : ''}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Rate</span>
-                    <span className="font-medium text-black">
-                      {pricePerDay && pricePerDay > 0
-                        ? `$${pricePerDay.toLocaleString()}/day`
-                        : `$${hourlyRate}/hr × ${multiDayHoursPerDay}hr/day`
-                      }
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Base price</span>
-                    <span className="font-medium text-black">${baseRate.toLocaleString()}</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center justify-between">
-                    <span>Date</span>
-                    <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
-                      {selectedDate ? formatSelectedDate(selectedDate) : 'Not selected'}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>{isHostMode ? 'Open slots' : 'Duration'}</span>
-                    <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
-                      {isHostMode ? (selectedDay?.availableSlots.length || 0) : `${singleDayHours || 0} hours`}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Rate</span>
-                    <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>${hourlyRate}/hr</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>{isHostMode ? 'Booked slots' : 'Base price'}</span>
-                    <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
-                      {isHostMode ? (selectedDay?.bookedSlots.length || 0) : `$${(singleDayHours * hourlyRate).toFixed(2)}`}
-                    </span>
-                  </div>
-                </>
-              )}
-
+              <div className="flex items-center justify-between">
+                <span>{isMultiDay ? 'Date range' : 'Date'}</span>
+                <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
+                  {rangeStart && rangeEnd
+                    ? `${formatSelectedDate(rangeStart)} – ${formatSelectedDate(rangeEnd)}`
+                    : rangeStart
+                      ? formatSelectedDate(rangeStart)
+                      : 'Not selected'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>{isMultiDay ? 'Days' : isHostMode ? 'Open slots' : 'Hours'}</span>
+                <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
+                  {isHostMode ? (selectedDay?.availableSlots.length || 0) : isMultiDay ? `${numDays} days × ${selectedHoursPerDay}h` : `${selectedHoursPerDay || 0} hours`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Rate</span>
+                <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
+                  {pricePerDay && pricePerDay > 0 && isFullDayAcrossRange && isMultiDay
+                    ? `$${pricePerDay.toLocaleString()}/day`
+                    : `$${hourlyRate}/hr`}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>{isHostMode ? 'Booked slots' : 'Base price'}</span>
+                <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
+                  {isHostMode ? (selectedDay?.bookedSlots.length || 0) : `$${baseRate.toFixed(2)}`}
+                </span>
+              </div>
               <div className="flex items-center justify-between">
                 <span>{isHostMode ? 'Status' : 'Service fee'}</span>
                 <span className={`font-medium ${isHostMode ? 'text-white' : 'text-black'}`}>
                   {isHostMode ? (selectedDay?.isBlocked ? 'Blocked' : 'Live') : `$${serviceFee.toFixed(2)}`}
                 </span>
               </div>
-
               <div className={`pt-3 ${isHostMode ? 'border-t border-blue-400/20' : 'border-t border-blue-200'}`}>
                 <div className={`flex items-center justify-between text-base font-bold ${isHostMode ? 'text-white' : 'text-black'}`}>
                   <span>{isHostMode ? 'Guest bookable?' : 'Estimated total'}</span>
-                  <span>{isHostMode ? (selectedDay?.isAvailable ? 'Yes' : 'No') : `$${total.toLocaleString()}`}</span>
+                  <span>{isHostMode ? (selectedDay?.isAvailable ? 'Yes' : 'No') : `$${total.toFixed(2)}`}</span>
                 </div>
               </div>
             </div>
 
             {!isHostMode && (
               <>
-                {selectionMode === 'single' && (
-                  <div className="mt-4 rounded-2xl border border-white bg-white px-4 py-3 text-sm text-black/60">
-                    {selectedTimeSlots.length > 0 ? selectedTimeSlots.join(' • ') : 'Choose one or more 3-hour time blocks.'}
-                  </div>
-                )}
-
-                {selectionMode === 'single' && !meetsMinimum && selectedTimeSlots.length > 0 && (
+                <div className="mt-4 rounded-2xl border border-white bg-white px-4 py-3 text-sm text-black/60">
+                  {selectedTimeSlots.length > 0 ? selectedTimeSlots.join(' • ') : 'Choose one or more 3-hour time blocks.'}
+                </div>
+                {!meetsMinimum && selectedTimeSlots.length > 0 && (
                   <p className="mt-3 text-sm font-medium text-blue-700">
-                    Add more time to reach the {minimumBookingHours}-hour minimum.
+                    Add more time to reach the {minimumBookingHours}-hour minimum on each selected day.
                   </p>
                 )}
-
                 {isMultiDay && numDays >= 7 && (
                   <div className="mt-3 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">
-                    💡 Weekly and monthly bookings often qualify for discounted rates. Mention this in your booking notes!
+                    💡 Weekly and monthly bookings often qualify for discounted rates. Mention this in your booking notes.
                   </div>
                 )}
 
-                <button
-                  type="button"
-                  disabled={!canBook}
-                  onClick={() => canBook && onBook?.({
-                    selectedDate: isMultiDay ? rangeStart : selectedDate,
-                    selectedDates,
-                    selectedTimeSlots: isMultiDay ? [...DEFAULT_TIME_SLOTS] : selectedTimeSlots,
-                    isMultiDay,
-                  })}
-                  className="mt-5 w-full rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
-                >
-                  {isMultiDay ? `Book ${numDays} day${numDays !== 1 ? 's' : ''}` : 'Book'}
-                </button>
+                {/* Book button moved to BookingSection */}
               </>
             )}
           </div>

@@ -5,20 +5,17 @@ import { Heart, Menu, Search, X } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFavoriteLocationIds, subscribeToFavorites } from '@/lib/favorites';
-import { getCsrfToken } from '@/lib/client-security';
 import { usePathname, useRouter } from 'next/navigation';
 import PWAInstall from '@/components/PWAInstall';
 
 const primaryNav = [
-  { href: '/locations', label: 'Browse Locations' },
   { href: '/services', label: 'Services' },
   { href: '/how-it-works', label: 'How It Works' },
-  { href: '/blog', label: 'Blog' },
 ];
 
 const listingNav = [
   { href: '/list-property', label: 'Host' },
-  { href: '/free-listing', label: 'List Free' },
+  { href: '/locations', label: 'Browse Locations' },
 ];
 
 export default function Header() {
@@ -95,16 +92,7 @@ export default function Header() {
     }
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        headers: { 'x-csrf-token': getCsrfToken() },
-      });
-    } catch {
-      // Clear client state even if the network request fails.
-    }
-
+  const handleLogout = () => {
     localStorage.removeItem('user');
     setUser(null);
     setIsMobileMenuOpen(false);
@@ -123,13 +111,13 @@ export default function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 bg-white/88 backdrop-blur-xl supports-[backdrop-filter]:bg-white/72 transition-all duration-300 ${
+        className={`sticky top-0 z-50 bg-white/88 pt-[max(env(safe-area-inset-top),0.35rem)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/72 transition-all duration-300 ${
           isScrolled ? 'shadow-sm border-b border-slate-200' : 'border-b border-black/6'
         }`}
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between gap-4 lg:h-16">
-            <Logo href="/" size="md" showTagline className="min-w-0" />
+          <div className="flex h-14 items-center justify-between gap-3 sm:gap-4 lg:h-16">
+            <Logo href="/" size="md" showTagline className="min-w-0 flex-1 lg:flex-none" />
 
             {/* Desktop nav */}
             <nav className="hidden items-center gap-5 lg:flex">
@@ -371,12 +359,14 @@ export default function Header() {
             <div className="grid grid-cols-2 gap-3">
               <Link
                 href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-slate-200 text-sm font-medium text-slate-900 transition hover:border-blue-200 hover:text-blue-600"
               >
                 Sign in
               </Link>
               <Link
                 href="/register"
+                onClick={() => setIsMobileMenuOpen(false)}
                 className="inline-flex min-h-[48px] items-center justify-center rounded-xl border border-slate-200 bg-white text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
               >
                 Get started

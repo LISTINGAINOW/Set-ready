@@ -39,9 +39,11 @@ export default function BookingSection({
   bookings = [],
   blockedDates = [],
 }: BookingSectionProps) {
-  const [selection, setSelection] = useState<{ selectedDate: string; selectedTimeSlots: string[] }>({
+  const [selection, setSelection] = useState<{ selectedDate: string; selectedDates?: string[]; selectedTimeSlots: string[]; isMultiDay?: boolean }>({
     selectedDate: '',
+    selectedDates: [],
     selectedTimeSlots: [],
+    isMultiDay: false,
   });
 
   return (
@@ -62,7 +64,11 @@ export default function BookingSection({
           <div>
             <h3 className="text-xl font-bold text-black">Ready to lock it in?</h3>
             <p className="mt-1 text-sm text-black/60">
-              Your selected date and time slots will be prefilled in the booking request.
+              {selection.selectedDate && selection.selectedTimeSlots.length > 0
+                ? (selection.selectedDates?.length || 0) > 1
+                  ? `${selection.selectedDates?.length} days selected — dates and hours will be prefilled in the booking request.`
+                  : 'Your selected date and time will be prefilled in the booking request.'
+                : 'Choose one day or a date range, then pick one or more time blocks to continue.'}
             </p>
           </div>
           <div className="w-full sm:w-auto sm:min-w-[240px]">
@@ -78,8 +84,9 @@ export default function BookingSection({
               securityDeposit={securityDeposit}
               securityDepositRequiredWhen={securityDepositRequiredWhen}
               initialDate={selection.selectedDate}
+              initialDates={selection.selectedDates || []}
               initialTimeSlots={selection.selectedTimeSlots}
-              triggerLabel={selection.selectedDate && selection.selectedTimeSlots.length > 0 ? 'Book selected time' : 'Request Booking'}
+              triggerLabel={selection.selectedDate && selection.selectedTimeSlots.length > 0 ? `Book ${(selection.selectedDates?.length || 1)} day${(selection.selectedDates?.length || 1) === 1 ? '' : 's'}` : 'Request Booking'}
             />
           </div>
         </div>

@@ -1,31 +1,11 @@
 import Link from 'next/link';
-import { ArrowRight, CalendarDays, Camera, CheckCircle2, Search } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const steps = [
-  {
-    number: '01',
-    title: 'Browse Locations',
-    description: 'Find your perfect space',
-    icon: Search,
-  },
-  {
-    number: '02',
-    title: 'Check Availability',
-    description: 'Pick your dates',
-    icon: CalendarDays,
-  },
-  {
-    number: '03',
-    title: 'Book Instantly',
-    description: 'Secure your spot',
-    icon: CheckCircle2,
-  },
-  {
-    number: '04',
-    title: 'Create',
-    description: 'Bring your vision to life',
-    icon: Camera,
-  },
+  { number: '01', title: 'Browse Locations', description: 'Find your perfect space' },
+  { number: '02', title: 'Check Availability', description: 'Pick your dates' },
+  { number: '03', title: 'Book Instantly', description: 'Secure your spot' },
+  { number: '04', title: 'Create', description: 'Bring your vision to life' },
 ];
 
 export default function HowItWorks() {
@@ -48,8 +28,6 @@ export default function HowItWorks() {
 
             <div className="mt-10 grid gap-4 lg:grid-cols-4">
               {steps.map((step, index) => {
-                const Icon = step.icon;
-
                 return (
                   <div
                     key={step.number}
@@ -59,15 +37,13 @@ export default function HowItWorks() {
                       <div className="absolute left-[calc(100%_-_12px)] top-1/2 hidden h-px w-8 -translate-y-1/2 bg-gradient-to-r from-blue-300 to-transparent lg:block" />
                     )}
 
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
-                        <Icon className="h-6 w-6" />
+                    <div className="flex items-start gap-4">
+                      <span className="text-4xl font-bold tracking-[0.1em] text-blue-600">{step.number}</span>
+                      <div>
+                        <h3 className="text-lg font-semibold tracking-[-0.03em] text-black">{step.title}</h3>
+                        <p className="mt-1 text-sm text-black/70">{step.description}</p>
                       </div>
-                      <span className="text-sm font-semibold tracking-[0.24em] text-blue-600">{step.number}</span>
                     </div>
-
-                    <h3 className="mt-8 text-xl font-semibold tracking-[-0.03em] text-black">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-black/70">{step.description}</p>
                   </div>
                 );
               })}

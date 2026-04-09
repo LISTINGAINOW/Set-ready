@@ -10,6 +10,7 @@ const footerSections = [
   {
     title: 'Company',
     links: [
+      { href: '/locations', label: 'Browse Locations' },
       { href: '/about', label: 'About' },
       { href: '/how-it-works', label: 'How It Works' },
       { href: '/blog', label: 'Blog' },
@@ -20,8 +21,9 @@ const footerSections = [
     title: 'Property Owners',
     links: [
       { href: '/list-property', label: 'List Your Property' },
+      { href: '/free-listing', label: 'Claim Free Spot' },
       { href: '/earn', label: 'Earnings Calculator' },
-      { href: '/free-listing', label: 'Free Listing Offer' },
+      { href: '/free-listing', label: 'List Free' },
     ],
   },
   {

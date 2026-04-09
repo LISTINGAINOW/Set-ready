@@ -92,4 +92,7 @@ export interface Location {
   businessLicenseType?: string;
   hasLiabilityInsurance?: boolean;
   hasProductionInsurance?: boolean;
+  // Hero/cover photo (exterior-preferred)
+  heroImage?: string;
+  priceLabel?: string;
 }

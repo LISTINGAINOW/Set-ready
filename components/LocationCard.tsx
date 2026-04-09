@@ -8,26 +8,10 @@ import AdultVerifiedBadge from '@/components/AdultVerifiedBadge';
 import Link from 'next/link';
 import Image from 'next/image';
 import { isLocationFavorited, subscribeToFavorites, toggleFavoriteLocation } from '@/lib/favorites';
-import dynamic from 'next/dynamic';
-
-// Lazy-load heavy booking components — only needed when the reserve modal opens.
-const BookingCalendar = dynamic(() => import('@/components/BookingCalendar'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-48 items-center justify-center rounded-2xl bg-slate-50 text-sm text-slate-400">
-      Loading calendar…
-    </div>
-  ),
-});
-
-const BookingModal = dynamic(() => import('@/components/BookingModal'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-12 items-center justify-center rounded-full bg-slate-100 text-sm text-slate-400">
-      Loading…
-    </div>
-  ),
-});
+import { shimmerDataURL } from '@/lib/image-utils';
+import { derivePhotoVariants } from '@/lib/photo-variants';
+import BookingCalendar from '@/components/BookingCalendar';
+import BookingModal from '@/components/BookingModal';
 import TrustBadges from '@/components/TrustBadges';
 import CompareButton from '@/components/CompareButton';
 import { getLocationBlockedDates } from '@/lib/availability';
@@ -41,6 +25,8 @@ type VerifiedLocation = Location & {
 
 interface LocationCardProps {
   location: VerifiedLocation;
+  /** Mark hero image as priority (above-the-fold). Defaults to false (lazy). */
+  priority?: boolean;
 }
 
 const fallbackPhotos: Record<string, string> = {
@@ -53,12 +39,18 @@ const fallbackPhotos: Record<string, string> = {
   cabin: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1200&q=80',
 };
 
+const isHeic = (url: string) => /\.heic$/i.test(url);
+
 function getPrimaryPhoto(location: Location) {
-  const firstPhoto = location.images?.find((photo) => typeof photo === 'string' && photo.trim().length > 0);
-  return firstPhoto || fallbackPhotos[location.propertyType] || fallbackPhotos.house;
+  // Skip HEIC images — not renderable in browsers
+  const candidates = [
+    location.heroImage,
+    ...(location.images || []),
+  ].filter((url): url is string => typeof url === 'string' && url.trim().length > 0 && !isHeic(url));
+  return candidates[0] || fallbackPhotos[location.propertyType] || fallbackPhotos.house;
 }
 
-export default function LocationCard({ location }: LocationCardProps) {
+export default function LocationCard({ location, priority = false }: LocationCardProps) {
   const { toast } = useToast();
   const [isReserveOpen, setIsReserveOpen] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
@@ -77,6 +69,8 @@ export default function LocationCard({ location }: LocationCardProps) {
   const rating = location.reviewRating || 4.8;
   const reviewCount = location.reviewCount || 12;
   const heroPhoto = getPrimaryPhoto(location);
+  const heroVariants = derivePhotoVariants(heroPhoto);
+  const blurPlaceholder = shimmerDataURL(700, 525);
   const blockedDates = getLocationBlockedDates(location.id);
   const bookingMode = getBookingMode(location);
   const verificationBadges = [...getVerificationHighlights(location), ...(location.verificationBadges || [])];
@@ -111,10 +105,13 @@ export default function LocationCard({ location }: LocationCardProps) {
           <Link href={`/locations/${location.id}`} className="block">
             <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
               <Image
-                src={heroPhoto}
+                src={heroVariants.medium}
                 alt={location.name}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                priority={priority}
+                placeholder="blur"
+                blurDataURL={blurPlaceholder}
                 className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/32 via-black/0 to-transparent" />
@@ -130,8 +127,14 @@ export default function LocationCard({ location }: LocationCardProps) {
                 {location.name}
               </Link>
               <div className="mt-2 flex items-baseline gap-1">
-                <span className="text-xl font-bold tracking-[-0.03em] text-slate-950">${location.pricePerHour}</span>
-                <span className="text-sm font-medium text-slate-400">/ hour</span>
+                {location.pricePerHour && location.pricePerHour > 0 ? (
+                  <>
+                    <span className="text-xl font-bold tracking-[-0.03em] text-slate-950">${location.pricePerHour}</span>
+                    <span className="text-sm font-medium text-slate-400">/ hour</span>
+                  </>
+                ) : (
+                  <span className="text-lg font-semibold text-slate-600">{location.priceLabel || 'Contact for Pricing'}</span>
+                )}
               </div>
               <div className="mt-2 flex items-center gap-2 text-sm text-slate-500">
                 <MapPin className="h-4 w-4 text-blue-500" />
@@ -209,12 +212,14 @@ export default function LocationCard({ location }: LocationCardProps) {
                 });
               }}
               className="btn-press min-w-[160px] flex-1 rounded-full border border-black/10 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:border-blue-200 hover:text-blue-600"
+              aria-label={bookingMode === 'instant' ? `Instant book ${location.name}` : `Request booking for ${location.name}`}
             >
               {bookingMode === 'instant' ? 'Instant book' : 'Request booking'}
             </button>
             <Link
               href={`/locations/${location.id}`}
               className="btn-press min-w-[160px] flex-1 rounded-full border border-slate-200 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-900 transition hover:bg-blue-600 hover:text-white hover:border-blue-600"
+              aria-label={`View details for ${location.name}`}
             >
               View details
             </Link>
@@ -256,11 +261,11 @@ export default function LocationCard({ location }: LocationCardProps) {
                   <div>
                     <h3 className="text-xl font-bold text-black">Continue to booking</h3>
                     <p className="mt-1 text-sm text-black/60">
-                      {selection.isMultiDay && (selection.selectedDates?.length || 0) > 1
-                        ? `${selection.selectedDates?.length} days selected — dates will be prefilled in the booking request.`
-                        : selection.selectedDate && selection.selectedTimeSlots.length > 0
-                        ? 'Your selected date and time will be prefilled in the booking request.'
-                        : 'Choose a date and one or more time blocks to continue.'}
+                      {selection.selectedDate && selection.selectedTimeSlots.length > 0
+                        ? (selection.selectedDates?.length || 0) > 1
+                          ? `${selection.selectedDates?.length} days selected — dates and hours will be prefilled in the booking request.`
+                          : 'Your selected date and time will be prefilled in the booking request.'
+                        : 'Choose one day or a date range, then pick one or more time blocks to continue.'}
                     </p>
                   </div>
                   <div className="w-full sm:w-auto sm:min-w-[260px]">
@@ -274,13 +279,12 @@ export default function LocationCard({ location }: LocationCardProps) {
                       securityDeposit={location.securityDeposit}
                       securityDepositRequiredWhen={location.securityDepositRequiredWhen}
                       initialDate={selection.selectedDate}
+                      initialDates={selection.selectedDates || []}
                       initialTimeSlots={selection.selectedTimeSlots}
                       triggerLabel={
-                        selection.isMultiDay && (selection.selectedDates?.length || 0) > 1
-                          ? `Book ${selection.selectedDates?.length} days`
-                          : selection.selectedDate && selection.selectedTimeSlots.length > 0
-                            ? 'Book selected time'
-                            : 'Log in to book'
+                        selection.selectedDate && selection.selectedTimeSlots.length > 0
+                          ? `Book ${(selection.selectedDates?.length || 1)} day${(selection.selectedDates?.length || 1) === 1 ? '' : 's'}`
+                          : 'Select dates above'
                       }
                     />
                   </div>
