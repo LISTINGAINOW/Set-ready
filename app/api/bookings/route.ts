@@ -121,6 +121,7 @@ export async function POST(request: NextRequest) {
         tos_accepted: false,
         content_permission_accepted: false,
         permit_confirmed: body.hasFilmPermit ?? false,
+        has_coi: body.hasCoi ?? false,
       })
       .select()
       .single();

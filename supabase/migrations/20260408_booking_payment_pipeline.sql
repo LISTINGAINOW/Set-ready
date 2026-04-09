@@ -5,7 +5,9 @@ ALTER TABLE public.booking_requests
   ADD COLUMN IF NOT EXISTS service_fee NUMERIC(10, 2),
   ADD COLUMN IF NOT EXISTS total_amount NUMERIC(10, 2),
   ADD COLUMN IF NOT EXISTS selected_time_slots JSONB NOT NULL DEFAULT '[]'::jsonb,
-  ADD COLUMN IF NOT EXISTS payment_failed_reason TEXT;
+  ADD COLUMN IF NOT EXISTS payment_failed_reason TEXT,
+  ADD COLUMN IF NOT EXISTS stripe_payment_intent_id TEXT,
+  ADD COLUMN IF NOT EXISTS has_coi BOOLEAN NOT NULL DEFAULT FALSE;
 
 ALTER TABLE public.booking_requests DROP CONSTRAINT IF EXISTS booking_requests_status_check;
 ALTER TABLE public.booking_requests
